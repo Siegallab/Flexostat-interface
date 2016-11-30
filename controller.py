@@ -1,3 +1,5 @@
+##### THIS CODE DEFINES THE OBJECT CONTROLLER TO BE USED IN OTHER CODE WITH SPECIFIC DIRECTIONS####
+
 from numpy import array, ones
 from mytimer import mytimer
 from math import log10 # I dont know if I will have all of these. Gonna hve to install
