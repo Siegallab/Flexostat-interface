@@ -1,6 +1,6 @@
 from numpy import array, ones
 from mytimer import mytimer
-from math import log10
+from math import log10 # I dont know if I will have all of these. Gonna hve to install
 from time import time, sleep
 
 import json
@@ -10,10 +10,10 @@ import serial
 import traceback
 import types
 
-debug = False
+debug = False #what does this do
 
 
-class Controller(object):
+class Controller(object): #define new class
     def __init__(self, cparams, logfiles, pparams, cport, pport):
         """Initialize the controller.
         
