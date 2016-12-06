@@ -29,3 +29,13 @@ later instances of the application, espeically on MacOS and *nix.
 
 MacOS (and probably linux):
 * Pumping volumes that take longer than 'period' seconds to process will result in a negative timer value being set, which in turn causes a timer overflow and the program to sleep for nearly 2^32 seconds (many years).
+
+Related Files
+-------------------
+servostat.py is the main function to be run
+    controller.py contains the code behind the Controller object used in servostat.py
+        mytimer.py is used in controller.py
+    network.py is used in servostat.py to
+    stacktracer.py is used in servostat.py to 
+    
+    
