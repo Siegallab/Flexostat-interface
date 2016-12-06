@@ -1,21 +1,24 @@
 ##### THIS CODE DEFINES THE OBJECT CONTROLLER TO BE USED IN OTHER CODE WITH SPECIFIC DIRECTIONS####
 
-from numpy import array, ones
-from mytimer import mytimer
-from math import log10 # I dont know if I will have all of these. Gonna hve to install
-from time import time, sleep
+from numpy import array, ones #Array creates arrays, a data type that is like a more restricted list (https://docs.python.org/2/library/array.html)
+                                                                                                    #(https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html)
+                                #Ones creats an array of the specified dimensions full of 1s (https://docs.scipy.org/doc/numpy/reference/generated/numpy.ones.html)
+from mytimer import mytimer #Either cusom created or obsolete, con't find online
+from math import log10 #Log10 function
+from time import time, sleep #Time.time() gives you the time. time.sleep(secs) causes the program to sleep for the goven number of seconds. 
+                             #(https://docs.python.org/2/library/time.html)
 
-import json
-import threading
-import sys
-import serial
-import traceback
-import types
+import json #Javascript object notation (https://docs.python.org/2/library/json.html)
+import threading #constructs higher-level threading interfaces on top of the lower level thread module. (https://docs.python.org/2/library/threading.html)
+import sys #system specific parameters and functions (https://docs.python.org/2/library/sys.html)
+import serial #Can't find info online. Maybe custom built
+import traceback # Print of recieve stack traceback (https://docs.python.org/2/library/traceback.html)
+import types # defines names for some object types that are used by the standard Python interpreter (https://docs.python.org/2/library/types.html)
 
 debug = False #what does this do
 
 
-class Controller(object): #define new class
+class Controller(object): #define new object type
     def __init__(self, cparams, logfiles, pparams, cport, pport):
         """Initialize the controller.
         
