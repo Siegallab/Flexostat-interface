@@ -11,7 +11,7 @@ from time import time, sleep #Time.time() gives you the time. time.sleep(secs) c
 import json #Javascript object notation (https://docs.python.org/2/library/json.html)
 import threading #constructs higher-level threading interfaces on top of the lower level thread module. (https://docs.python.org/2/library/threading.html)
 import sys #system specific parameters and functions (https://docs.python.org/2/library/sys.html)
-import serial #Can't find info online. Maybe custom built
+import serial #Can't find info online but defintely a thing. 
 import traceback # Print of recieve stack traceback (https://docs.python.org/2/library/traceback.html)
 import types # defines names for some object types that are used by the standard Python interpreter (https://docs.python.org/2/library/types.html)
 
