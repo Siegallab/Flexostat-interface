@@ -1,19 +1,19 @@
-from controller import Controller
-from ConfigParser import SafeConfigParser
-from network import CTBasicServer
+from controller import Controller # Import the Controller object from the controller.py script
+from ConfigParser import SafeConfigParser #Configuration file parser (https://docs.python.org/2/library/configparser.html)
+from network import CTBasicServer #Import object defined in network.py
 
-import argparse
-import serial
-import stacktracer
-import sys
-import threading
-import time
-import traceback
+import argparse # Parser for command line options (https://docs.python.org/3/library/argparse.html)
+import serial   # #Can't find info online but defintely a thing. Seems to involve handleing the serial input ports.
+import stacktracer # imports all fucntions from stacktracer.py (
+import sys #system specific parameters and functions (https://docs.python.org/2/library/sys.html)
+import threading #constructs higher-level threading interfaces on top of the lower level thread module. (https://docs.python.org/2/library/threading.html)
+import time #Time access and conversions (https://docs.python.org/2/library/time.html)
+import traceback # Print or recieve stack traceback (https://docs.python.org/2/library/traceback.html)
 
 
 def Main():
-    parser = argparse.ArgumentParser(description='Turbidostat controller.')
-    parser.add_argument("-c", "--config_filename", default="config.ini",
+    parser = argparse.ArgumentParser(description='Turbidostat controller.') # This section defines the command line inputs
+    parser.add_argument("-c", "--config_filename", default="config.ini", # This creates a command line argument c
                         help="Where to load configuration from.")
     args = parser.parse_args()
 
