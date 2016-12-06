@@ -32,10 +32,10 @@ MacOS (and probably linux):
 
 Related Files
 -------------------
-servostat.py is the main function to be run
-    controller.py contains the code behind the Controller object used in servostat.py
-        mytimer.py is used in controller.py
-    network.py is used in servostat.py to
-    stacktracer.py is used in servostat.py to 
+*servostat.py is the main function to be run
+    *controller.py contains the code behind the Controller object used in servostat.py
+        *mytimer.py is used in controller.py
+    *network.py is used in servostat.py to
+    *stacktracer.py is used in servostat.py to 
     
     
