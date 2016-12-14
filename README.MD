@@ -34,8 +34,13 @@ Related Files
 -------------------
 * servostat.py is the main function to be run
     * controller.py contains the code behind the Controller object used in servostat.py
-        * mytimer.py is used in controller.py
-    * network.py is used in servostat.py to
-    * stacktracer.py is used in servostat.py to 
+        * mytimer.py is used in controller.py to run time related functions
+        * Plugins
+          * pumpdriver plugin is called from plugins folder dependant in info provided by config file
+            * Use either Cheapopumpdrive or ne500pumdriver
+          * controllfun is called from plugins folder dependant in info provided by config file
+            * Use either chemostat of turbidostatController/SQ/_SIN (More details later on which does what)
+    * The CTBasicServer object defined in network.py is used in servostat.py to create a basic network
+    * stacktracer.py is used in servostat.py to create a stack trace as the program runs
     
     
