@@ -29,11 +29,12 @@ class Controller(object): #define new object type
             cport: controller serial port.
             pport: pump serial port.
         """
-        pumpdriver_package = 'plugins.%s' % pparams['pumpdriver']
-        control_function_package = 'plugins.%s' % cparams['controlfun']
+        pumpdriver_package = 'plugins.%s' % pparams['pumpdriver'] # should link to cheapopumdriver/ne500pumpdriver plugin in "plugins" folder
+        # May have to specify which plugin to be used fro both pumpdriver and controlfun
+        control_function_package = 'plugins.%s' % cparams['controlfun'] # should link to turbidostatController/SQ/_SIN plugin in "plugins" folder
         
         # Import pumpdriver
-        pumpdriver = __import__(pumpdriver_package, globals(), locals(),
+        pumpdriver = __import__(pumpdriver_package, globals(), locals(), # import "Pump" function
                                 ['Pump'], -1)
                                 
         # Fetch the control computation, make it a method of self.
