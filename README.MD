@@ -43,4 +43,5 @@ Related Files
     * The CTBasicServer object defined in network.py is used in servostat.py to create a basic network
     * stacktracer.py is used in servostat.py to create a stack trace as the program runs
     
+    * Outputs data in the log files specified in the Log section og the config file
     
