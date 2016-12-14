@@ -32,7 +32,7 @@ MacOS (and probably linux):
 
 Related Files
 -------------------
-* servostat.py is the main function to be run
+* servostat.py is the main function to be run in the command line with a config file
     * controller.py contains the code behind the Controller object used in servostat.py
         * mytimer.py is used in controller.py to run time related functions
         * Plugins
