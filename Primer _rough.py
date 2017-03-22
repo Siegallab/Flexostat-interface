@@ -20,19 +20,19 @@ debug = False #what does this do
 parser = argparse.ArgumentParser(description='Turbidostat controller.') # This section defines the command line inputs
     parser.add_argument("-c", "--config_filename", default="config.ini", # This creates a command line argument c
                         help="Where to load configuration from.")
-    args = parser.parse_args()
+args = parser.parse_args()
 
     # Startup stacktracer for debugging deadlock
-    stacktracer.trace_start("trace.html", interval=60, auto=True)
+stacktracer.trace_start("trace.html", interval=60, auto=True)
     
     # Read configuration from the config file
-    config = SafeConfigParser()
-    print 'Reading config file from', args.config_filename
-    config.read(args.config_filename)
-    controller_params = dict(config.items('controller'))
-    port_names = dict(config.items('ports'))
-    pump_params = dict(config.items('pump'))
-    logs = dict(config.items('log'))
+config = SafeConfigParser()
+print 'Reading config file from', args.config_filename
+config.read(args.config_filename)
+controller_params = dict(config.items('controller'))
+port_names = dict(config.items('ports'))
+pump_params = dict(config.items('pump'))
+logs = dict(config.items('log'))
     
 cport = serial.Serial(port_names['controllerport'],
                           int(controller_params['baudrate']),
@@ -40,12 +40,12 @@ cport = serial.Serial(port_names['controllerport'],
                           writeTimeout=1)
                              
 cport.lock = threading.RLock()
-    if (port_names['pumpport'].upper()!='NONE'):
-        pump_port = serial.Serial(port_names['pumpport'],
+if (port_names['pumpport'].upper()!='NONE'):
+	pump_port = serial.Serial(port_names['pumpport'],
                                   int(pump_params['baudrate']),timeout = 1,
                                   writeTimeout = 1)
         pump_port.lock = threading.RLock()
-    else:
+else:
         pump_port = None
 pumpdriver_package = 'plugins.%s' % pparams['pumpdriver'] # should link to cheapopumdriver/ne500pumpdriver plugin in "plugins" folder
         # May have to specify which plugin to be used fro both pumpdriver and controlfun
@@ -58,9 +58,9 @@ pumpdriver = __import__(pumpdriver_package, globals(), locals(), # import "Pump"
 
 
 with cport.lock:
-    print 'Closing all valves;'
-    cport.write("clo;")
-		print 'sel0'
-		cport.write("sel0;")
-		print 'Dispensing 500'
-		cport.write("pmv0500;")
+	print 'Closing all valves;'
+	cport.write("clo;")
+	print 'sel0'
+	cport.write("sel0;")
+	print 'Dispensing 500'
+	cport.write("pmv0500;")
