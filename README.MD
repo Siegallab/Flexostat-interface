@@ -49,6 +49,10 @@ Related Files
 Primer_auto guide
 -------------------
 
+Make sure your present working directory is ~/Flexostat-interface. (type pwd in command line)
+
+If it is not type cd ~/Flexostat-interface.
+
 The primer auto has 4 inputs to be put into the command line.
 
 * the language: python
