@@ -72,8 +72,8 @@ The code is also directly dependant upon the controller.py script, cheapopumpdri
 
 The functional commands send to the board in the code are sent using the line cport.write().
 the commands are:
-"clo;" - closes all valves
-"sel#;" - opens one selected valve 0 is the solenoid, 1-8 are the cylinder valves
-"pmv####;" - Moves the pump to the specified position between 0 and 2000. To fill the pump a value >0 is used. to empty the pump the command "pmv0000;" is used.
+* "clo;" - closes all valves
+* "sel#;" - opens one selected valve 0 is the solenoid, 1-8 are the cylinder valves
+* "pmv####;" - Moves the pump to the specified position between 0 and 2000. To fill the pump a value >0 is used. to empty the pump the command "pmv0000;" is used.
 
 For further questions and troubleshooting see comments in the code.
