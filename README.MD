@@ -51,16 +51,19 @@ Primer_auto guide
 
 The primer auto has 4 inputs to be put int he command line.
 
-the language: python
-The script: always Primer_auto.py
-The cylinder you want to dispense into: denote using -s
-                                        print an integer between 1 and 8
-The volume you want to dispense: denote using -v
-                                 an integer between 0000 and 2000 always consisting of 4 digits
-                                 (Printing a value >= 2000 will simply cause the pump to fill fully)
-                                 ex. to dispense 500ul print 0500
+* the language: python
+* The script: always Primer_auto.py
+* The cylinder you want to dispense into:
+  * denote using -s
+  * print an integer between 1 and 8
+* The volume you want to dispense:
+  * denote using -v
+  * an integer between 0000 and 2000 always consisting of 4 digits
+  * (Printing a value >= 2000 will simply cause the pump to fill fully)
+  * ex. to dispense 500ul print 0500
                                                                 
 The entire line whould look like:
+
 python Primer_auto.py -s # -v ####
 
 A fifth input is present but does not need to be specified unless specifically needed to. This input is the config file that specifies the parameters for the turbidostat to function on. The code is set to use "config.ini" as a default. This file must be in the same folder as the Primer_auto.py script for the code to run.
