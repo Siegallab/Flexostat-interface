@@ -49,7 +49,7 @@ Related Files
 Primer_auto guide
 -------------------
 
-The primer auto has 4 inputs to be put int he command line.
+The primer auto has 4 inputs to be put into the command line.
 
 * the language: python
 * The script: always Primer_auto.py
@@ -66,11 +66,12 @@ The entire line whould look like:
 
 python Primer_auto.py -s # -v ####
 
-A fifth input is present but does not need to be specified unless specifically needed to. This input is the config file that specifies the parameters for the turbidostat to function on. The code is set to use "config.ini" as a default. This file must be in the same folder as the Primer_auto.py script for the code to run.
+A fifth input is present but does not need to be specified unless specifically needed. This input is the config file that specifies the parameters for the turbidostat to function on. The code is set to use "config.ini" as a default. This file must be in the same folder as the Primer_auto.py script for the code to run.
 
 The code is also directly dependant upon the controller.py script, cheapopumpdriver.py script and a number of imported modules. To avoid issues always run the script in the same directory (Flexostat-interface) as all other flexostat code files. Ensure that all modules imported at the head of the script are installed on the computer being used before running.
 
 The functional commands send to the board in the code are sent using the line cport.write().
+
 the commands are:
 * "clo;" - closes all valves
 * "sel#;" - opens one selected valve 0 is the solenoid, 1-8 are the cylinder valves
