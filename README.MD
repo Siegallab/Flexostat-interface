@@ -70,11 +70,11 @@ A fifth input is present but does not need to be specified unless specifically n
 
 The code is also directly dependant upon the controller.py script, cheapopumpdriver.py script and a number of imported modules. To avoid issues always run the script in the same directory (Flexostat-interface) as all other flexostat code files. Ensure that all modules imported at the head of the script are installed on the computer being used before running.
 
-The functional commands send to the board in the code are sent using the line cport.write().
+The functional commands sent to the board in the code are sent using the line cport.write().
 
 the commands are:
 * "clo;" - closes all valves
-* "sel#;" - opens one selected valve 0 is the solenoid, 1-8 are the cylinder valves
-* "pmv####;" - Moves the pump to the specified position between 0 and 2000. To fill the pump a value >0 is used. to empty the pump the command "pmv0000;" is used.
+* "sel#;" - opens one selected valve. (0 is the solenoid, 1-8 are the cylinder valves)
+* "pmv####;" - Moves the pump to the specified position between 0 and 2000. To fill the pump a value >0 is used. To empty the pump the command "pmv0000;" is used.
 
 For further questions and troubleshooting see comments in the code.
