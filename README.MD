@@ -52,18 +52,18 @@ Git
 
 Whenever changes are made either on the pi, on your computer or on git directly, make sure to update all pertinent repositories.
 
+Change to the right folder:
+* cd Flexostat-interface
+
 always start with:
 * git init
+* git pull
 
 If you make a change on the PI or your computer that is linked to git:
 * If you add a new file or folder:
   * git add **filename**
-  * git commit **filename**
-  * git push origin
-    * Type in username an password when prompted
-* If you make changes to a file or folder:
-  * git commit **filename**
-  * git push origin
+  * git commit -m **filename**
+  * git push
     * Type in username an password when prompted
   
 * If changes have been made on github (Also isnt a bad idea to just do this every time you boot up the pie to be safe):
@@ -146,4 +146,3 @@ Modules
 Board Framework Installation
 -------------------
 
-Why do you refuse to push?
