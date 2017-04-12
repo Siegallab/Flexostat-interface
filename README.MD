@@ -60,7 +60,7 @@ always start with:
 * git pull
 
 If you make a change on the PI or your computer that is linked to git:
-* If you add a new file or folder:
+* If you add a new file or folder or alter a file:
   * git add **filename**
   * git commit -m **filename**
   * git push
@@ -69,6 +69,15 @@ If you make a change on the PI or your computer that is linked to git:
 * If changes have been made on github:
   * git pull
 
+* To view you git configuration settings:
+  * git config --list
+* To view commands that can be used to alter config settings:
+  * git config
+* To view and change origin url:
+  * git remote -v
+  * git remote set-url *siteurl*
+  
+  
 Raspberry Pi SSH Access
 -------------------
 To Access the Pi via SSH type the following command into the command line in terminal:
