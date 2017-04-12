@@ -45,46 +45,76 @@ Related Files
     
     * Outputs data in the log files specified in the Log section of the config file
     * Testing Git Functionality
+    
+Raspberry Pi SSH Access
+-------------------
+To Access the Pi via SSH type the following command into the command line in terminal:
 
+* $ ssh pi@framboise0.bio.nyu.edu
 
+* when prompted type in the password printed on the Pi.
+
+Running the Code
+-------------------
+
+Make sure you are in the right folder:
+* $ cd ~/Flexostat-interface
+Check for existing Log files:
+* $ ls
+  * There is data from a previous run if you see: 
+    * Log.dat (The calculated od measurments based on the blank, times and dilution values)
+    * odlog.dat (The rough uninterpreted values for the OD sensors)
+    * errors.log (A log of any errors that occured)
+    * blank.dat (The base settings established at the begining of a new run. This file will be created if one is not present in the Flexostat-interface folder. If one is present it will be used as a zero baseline of OD measurments.)
+
+Setup for the Run
+* If there was previous data:
+  * create a new directory in the Data folder to store the data:
+    * $ cd Data
+    * $ mkdir *targetdir* 
+  * Change back to the Flexostat-interface directory:
+    * $ cd ../
+  * If you want to add to that data back it up and run the code:
+    * $ cp log.dat odlog.dat error.log Data/*targetdir*
+    * $ python servostat.py
+  * if you want to create new data but with the same zeroed baseline:
+    * $ mv log.dat odlog.dat error.log Data/*targetdir*
+    * $ python servostat.py
+  * if tou want to create new data and a new baseline:
+    * $ mv log.dat odlog.dat error.log blank.dat Data/*targetdir*
+    * $ python servostat.py
+
+ 
 Git
 -------------------
 
 Whenever changes are made either on the pi, on your computer or on git directly, make sure to update all pertinent repositories.
 
 Change to the right folder:
-* cd Flexostat-interface
+* $ cd Flexostat-interface
 
 always start with:
-* git init
-* git pull
+* $ git init
+* $ git pull
 
 If you make a change on the PI or your computer that is linked to git:
-* If you add a new file or folder or alter a file:
-  * git add **filename**
-  * git commit -m **filename**
-  * git push
-    * Type in username an password when prompted
+* $ If you add a new file or folder or alter a file:
+  * $ git add **filename**
+  * $ git commit -m **filename**
+  * $ git push
+    * $ Type in username an password when prompted
   
 * If changes have been made on github:
-  * git pull
+  * $ git pull
 
 * To view you git configuration settings:
-  * git config --list
+  * $ git config --list
 * To view commands that can be used to alter config settings:
-  * git config
+  * $ git config
 * To view and change origin url:
-  * git remote -v
-  * git remote set-url *siteurl*
+  * $ git remote -v
+  * $ git remote set-url *siteurl*
   
-  
-Raspberry Pi SSH Access
--------------------
-To Access the Pi via SSH type the following command into the command line in terminal:
-
-* ssh pi@framboise0.bio.nyu.edu
-
-* when prompted type in the password printed on the Pi.
 
 
 Primer_auto guide
@@ -109,7 +139,7 @@ The primer auto has 4 inputs to be put into the command line.
                                                                 
 The entire line whould look like:
 
-python Primer_auto.py -s # -v ####
+ $ python Primer_auto.py -s # -v ####
 
 A fifth input is present but does not need to be specified unless specifically needed. This input is the config file that specifies the parameters for the turbidostat to function on. The code is set to use "config.ini" as a default. This file must be in the same folder as the Primer_auto.py script for the code to run.
 
@@ -136,22 +166,35 @@ Initial Configuration
 * Setup your username and password.
 * Select Finish and reboot Pi
 
+
+For any other setup needs see: https://www.raspberrypi.org/documentation/setup/
+
+
 The Code
 * install git:
-  * sudo apt-get install git
+  * $ sudo apt-get install git
 * initialize git:
-  * git init
+  * $ git init
 * Clone the Flexostat Repository:
-  * git clone https://github.com/Siegallab/Flexostat-interface
+  * $ git clone https://github.com/Siegallab/Flexostat-interface
 
 Modules
 * boot up terminal
 * Install require modules using the line:
-  * sudo pip install numpy pygments pySerial flask
+  * $ sudo pip install numpy pygments pySerial flask
 * if when code is run the error message shows **modulename** not found run:
-  * sudo pip install **modulename**
+  * $ sudo pip install **modulename**
   * run this for any an all modules not found when running the code until the code runs or a module unrelated error shows
   
 Board Framework Installation
 -------------------
 
+To install the firmware on the boards you must use a PC with the Atmel Studio software installed on it that is connected to the atmel Ice device.
+
+For the OD boards us the 6 pin ISP cable. Plug it to the ICE in the AVR port. Plug it to the board on the group of six pins labeled ISP.
+
+For the Main Board use the same cord plugged into the AVR on the ICE but with the adapted plugged into the midpoint. On the adapter there is a ten pin port labeled AVR JTAG. Plug this into the ten pin group on the main board labelled JTAG.
+
+Follow the installation instructions here: https://depts.washington.edu/soslab/turbidostat/pmwiki/pmwiki.php?n=ConstructionManual.Programming
+
+For issues with the ICE use this guide: http://www.atmel.com/Images/Atmel-42330-Atmel-ICE_UserGuide.pdf
