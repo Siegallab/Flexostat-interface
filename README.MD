@@ -46,6 +46,38 @@ Related Files
     * Outputs data in the log files specified in the Log section of the config file
     * Testing Git Functionality
 
+
+Git
+-------------------
+
+Whenever changes are made either on the pi, on your computer or on git directly, make sure to update all pertinent repositories.
+
+always start with:
+* git init
+
+If you make a change on the PI or your computer that is linked to git:
+* If you add a new file or folder:
+  * git add **filename**
+  * git commit **filename**
+  * git push origin
+    * Type in username an password when prompted
+* If you make changes to a file or folder:
+  * git commit **filename**
+  * git push origin
+    * Type in username an password when prompted
+  
+* If changes have been made on github (Also isnt a bad idea to just do this every time you boot up the pie to be safe):
+  * git pull
+
+Raspberry Pi SSH Access
+-------------------
+To Access the Pi via SSH type the following command into the command line in terminal:
+
+* ssh pi@framboise0.bio.nyu.edu
+
+* when prompted type in the password printed on the Pi.
+
+
 Primer_auto guide
 -------------------
 
@@ -82,3 +114,35 @@ the commands are:
 * "pmv####;" - Moves the pump to the specified position between 0 and 2000. To fill the pump a value >0 is used. To empty the pump the command "pmv0000;" is used.
 
 For further questions and troubleshooting see comments in the code.
+
+
+Raspberry pi settup guide
+-------------------
+
+Initial Configuration
+* First, follow the practical steps in the guide provided with the Pi.
+* Make sure the sd card is inserted and connect ethernet.
+* Connect the Pi using the HDMI cable to the monitor and connect a mouse and Keyboard via usb.
+* In the initial configuration screen, under advance options make sure SSH, SPI and Serial are enabled.
+* Setup your username and password.
+* Select Finish and reboot Pi
+
+The Code
+* install git:
+  * sudo apt-get install git
+* initialize git:
+  * git init
+* Clone the Flexostat Repository:
+  * git clone https://github.com/Siegallab/Flexostat-interface
+
+Modules
+* boot up terminal
+* Install require modules using the line:
+  * sudo pip install numpy pygments pySerial flask
+* if when code is run the error message shows **modulename** not found run:
+  * sudo pip install **modulename**
+  * run this for any an all modules not found when running the code until the code runs or a module unrelated error shows
+  
+Board Framework Installation
+-------------------
+
