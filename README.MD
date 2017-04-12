@@ -66,7 +66,7 @@ If you make a change on the PI or your computer that is linked to git:
   * git push
     * Type in username an password when prompted
   
-* If changes have been made on github (Also isnt a bad idea to just do this every time you boot up the pie to be safe):
+* If changes have been made on github:
   * git pull
 
 Raspberry Pi SSH Access
