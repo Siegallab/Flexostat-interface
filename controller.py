@@ -231,7 +231,7 @@ class Controller(object): #define new object type
         # TODO: number of chambers should be configurable, no?
         ods = map(self.computeOD, self.tx_blank,
                   self.rx_blank, tx, rx)
-        cont = map(self.computeControl, ods, self.z, range(3),
+        cont = map(self.computeControl, ods, self.z, range(8),
                    [time()-self.start_time]*len(self.z))
         
         #u = [q[0] for q in cont]
