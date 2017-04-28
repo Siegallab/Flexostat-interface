@@ -99,11 +99,18 @@ always start with:
 
 If you make a change on the PI or your computer that is linked to git:
 * $ If you add a new file or folder or alter a file:
-  * $ git add **filename**
-  * $ git commit -m **filename**
+  * $ git add --all
+  * $ git commit -m "*Comment*"
   * $ git push
     * $ Type in username an password when prompted
-  
+    
+* $ If you have new data you want to push to git:
+  * $ cd Data/*data directory*
+  * $ git add -f --all
+  * $ git commit -m "*Comment*"
+  * $ git push
+    * $ Type in username an password when prompted
+ 
 * If changes have been made on github:
   * $ git pull
 
