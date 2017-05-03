@@ -57,6 +57,7 @@ To Access the Pi via SSH type the following command into the command line in ter
 Running the Code
 -------------------
 
+
 Make sure you are in the right folder:
 * $ cd ~/Flexostat-interface
 Check for existing Log files:
@@ -83,7 +84,25 @@ Setup for the Run
   * if tou want to create new data and a new baseline:
     * $ mv log.dat odlog.dat error.log blank.dat Data/*targetdir*
     * $ python servostat.py
-
+  * to halt the code:
+    * ctrl c
+    
+    
+With screen:
+* before you run the code type:
+  * $ screen
+    * it wll look almost the same but screen should be running
+  * run code normally
+* to return to normal terminal:
+  * ctrl a d
+* to return to detached screen window:
+  * $ screen -ls
+    * this will show a list of the detached screens you have running
+  * $ screen -r *adress of detached screen from list*
+    * ex $ screen -r 2477.pts-0.server1
+* to halt the code and exit
+  * ctrl c
+  * $ exit
  
 Git
 -------------------
@@ -99,11 +118,18 @@ always start with:
 
 If you make a change on the PI or your computer that is linked to git:
 * $ If you add a new file or folder or alter a file:
-  * $ git add **filename**
-  * $ git commit -m **filename**
+  * $ git add --all
+  * $ git commit -m "*Comment*"
   * $ git push
     * $ Type in username an password when prompted
-  
+    
+* $ If you have new data you want to push to git:
+  * $ cd Data/*data directory*
+  * $ git add -f --all
+  * $ git commit -m "*Comment*"
+  * $ git push
+    * $ Type in username an password when prompted
+ 
 * If changes have been made on github:
   * $ git pull
 
