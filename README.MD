@@ -180,6 +180,24 @@ the commands are:
 
 For further questions and troubleshooting see comments in the code.
 
+Felxoparser_csv guide
+-------------------
+
+Flexoparser_csv has 2 mandatory arguments and 3 optional arguments:
+
+* -i The input file. Must be log.dat output file. The file must be in the same directory as the code or the line must explicity direct to the location of the file.
+* -f The output filename you want. This filename provided will be followed by _OD, _U and _Z for each of the respective outputs. If you want it to output it in a specific directory you must explicity describe it.
+* -o Which types of value you want ouputed, Either od, u, z or all. The default is all
+* -b A machine time at which you want to start parsing the data. Default is the start of the file
+* -e A machine time at which you want to stop parsing the file. Default is the end of the file.
+
+A standard command line prompt without the optional inputs should look like:
+
+$ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data
+
+A standard command line prompt with the optional inputs that will output just od values from time: 1493413783-14934549836 should look like:
+
+$ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data -o od -b 1493413783 -e 14934549836
 
 Raspberry pi settup guide
 -------------------
