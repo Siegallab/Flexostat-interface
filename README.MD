@@ -180,7 +180,7 @@ the commands are:
 
 For further questions and troubleshooting see comments in the code.
 
-Felxoparser_csv guide
+Flexoparser_csv guide
 -------------------
 
 Flexoparser_csv has 2 mandatory arguments and 3 optional arguments:
