@@ -4,21 +4,34 @@ import pandas
 import sys
 import matplotlib
 
+location = '~/Documents/Shmoo_Lab/Flexostat-interface/test_data_'
+od_df = pandas.read_csv('{}od.csv'.format(location), header = None, names = ["Time", "1", "2", "3", "4", "5", "6", "7", "8"])
+u_df = pandas.read_csv('{}u.csv'.format(location), header = None, names = ["Time", "1", "2", "3", "4", "5", "6", "7", "8"])
+z_df = pandas.read_csv('{}z.csv'.format(location), header = None, names = ["Time", "1", "2", "3", "4", "5", "6", "7", "8"])
 
-print "Python version: " + sys.version
-location = '~/Documents/Shmoo_Lab/Flexostat-interface/test_data_od.csv'
-df = pandas.read_csv(location, header=None, names = ["Time", "1", "2", "3", "4", "5", "6", "7", "8"])
+for chamber in range(1,9):
+	od_df.plot.scatter(x='Time', y='{}'.format(chamber))
+	plt.savefig('ch{}_scatter.png'.format(chamber))
 
-#df.plot()
-#plt.scatter(x = df.0, y = df.1, s = 10, c = 'green')
-#plt.savefig('myfile.png')
-df.plot.scatter(x='Time', y='1')
-df.plot.scatter(x='Time', y='2', color='r')
-df.plot.scatter(x='Time', y='3', color='g')
-df.plot.scatter(x='Time', y='4', color='b')
-df.plot.scatter(x='Time', y='5')
-df.plot.scatter(x='Time', y='6')
-df.plot.scatter(x='Time', y='7')
-df.plot.scatter(x='Time', y='8')
+test_data_r = []
+start = u_df.ix[0,0]
 
-plt.savefig('myfile.png')
+for row in u_df.itertuples():
+	new_row = []
+	for element in row:
+		if len(new_row) == 0:
+			new_row.append(element-start)
+			continue
+		if element == 0 or new_row[0] == 0:
+			new_row.append(0)
+		else:
+			new_row.append(round((numpy.log(element)/new_row[0]),6))
+	test_data_r.append(new_row)
+
+numpy.savetxt("test_data_r.csv", test_data_r, delimiter=",")
+
+r_df = pandas.read_csv('{}r.csv'.format(location), header = None, names = ["Time", "1", "2", "3", "4", "5", "6", "7", "8"])
+
+for chamber in range(1,9):
+	r_df.plot.scatter(x='Time', y='{}'.format(chamber))
+	plt.savefig('ch{}_growth_rate.png'.format(chamber))
