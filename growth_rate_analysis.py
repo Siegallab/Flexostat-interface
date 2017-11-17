@@ -55,10 +55,7 @@ def growth_rate_csv(location, data_set):
 	time_start = df.ix[0, 0]
 	previous_time = df.ix[0, 0]
 	time_difference = 0
-
-	if data_set == 'od':
-		ch_start = [df.ix[0,1], df.ix[0,2], df.ix[0,3], df.ix[0,4], df.ix[0,5], df.ix[0,6], df.ix[0,7], df.ix[0,8]]
-
+	previous_row = []
 	for row in df.itertuples():
 		new_row = []
 		row_id = True
@@ -67,17 +64,29 @@ def growth_rate_csv(location, data_set):
 			if row_id:
 				row_id = False
 			elif len(new_row) == 0:
+				print('time: {}'.format(element))
 				new_row.append(element-time_start)
 				time_difference = element - previous_time
 				previous_time = element
 			elif element == 0 or new_row[0] == 0:
-				new_row.append(0)
+				new_row.append(float(0))
 			else:
-				ch_count += 1
 				if data_set == 'od':
-					new_row.append(round((numpy.log(element / ch_start[ch_count]) / time_difference), 6))
+					previous_od = previous_row[ch_count]
+					current_od = element
+					print('\tcurr: {}, prev: {}'.format(element, previous_row[ch_count]))
+					if previous_row[ch_count] == 0:
+						previous_od = 0.001
+					if current_od < 0:
+						new_row.append(round(-(numpy.log(-current_od / previous_od) / time_difference), 6))
+					else:
+						new_row.append(round((numpy.log(current_od / previous_od) / time_difference), 6))
+					ch_count += 1
 				else:
 					new_row.append(round((numpy.log(1 + (element / 15000)) / time_difference), 6))
+			previous_row.append(element)
+			ch_count += 1
+		print(new_row)
 		new_data_r.append(new_row)
 	numpy.savetxt('{}/{}r{}.csv'.format(location, file_prefix, data_set), new_data_r, delimiter = ",")
 	print('Growth rate csv generated and exported.')
