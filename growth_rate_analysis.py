@@ -20,6 +20,14 @@ if argv:
 else:
 	file_prefix = 'test_data_'
 
+def auto_man_input(argv, argv_count, prompt):
+	if argv:
+		parameter = str(sys.argv[argv_count])
+		argv_count += 1
+	else:
+		parameter = raw_input(prompt)
+	return parameter
+
 def machine_to_human(location, data_set):
 	df = pandas.read_csv('{}/{}{}.csv'.format(location, file_prefix, data_set), header=None,
 						 names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
@@ -55,7 +63,7 @@ def growth_rate_csv(location, data_set):
 	time_start = df.ix[0, 0]
 	previous_time = df.ix[0, 0]
 	time_difference = 0
-	previous_row = []
+	previous_od = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	for row in df.itertuples():
 		new_row = []
 		row_id = True
@@ -63,8 +71,8 @@ def growth_rate_csv(location, data_set):
 		for element in row:
 			if row_id:
 				row_id = False
+				continue
 			elif len(new_row) == 0:
-				print('time: {}'.format(element))
 				new_row.append(element-time_start)
 				time_difference = element - previous_time
 				previous_time = element
@@ -72,21 +80,20 @@ def growth_rate_csv(location, data_set):
 				new_row.append(float(0))
 			else:
 				if data_set == 'od':
-					previous_od = previous_row[ch_count]
+					prev_od = previous_od[ch_count]
 					current_od = element
-					print('\tcurr: {}, prev: {}'.format(element, previous_row[ch_count]))
-					if previous_row[ch_count] == 0:
-						previous_od = 0.001
-					if current_od < 0:
-						new_row.append(round(-(numpy.log(-current_od / previous_od) / time_difference), 6))
-					else:
-						new_row.append(round((numpy.log(current_od / previous_od) / time_difference), 6))
-					ch_count += 1
+					#print('\tcurr: {}, prev: {}'.format(element, previous_od[ch_count]))
+					if prev_od <= 0:
+						prev_od = 0.0001
+					if current_od <= 0:
+						current_od = 0.0001
+					#print('\t\tcurr: {}, prev: {}, time diff: {}'.format(current_od, prev_od, time_difference))
+					new_row.append(round((numpy.log(current_od / prev_od) / time_difference), 6))
 				else:
 					new_row.append(round((numpy.log(1 + (element / 15000)) / time_difference), 6))
-			previous_row.append(element)
+			previous_od[ch_count] = element
 			ch_count += 1
-		print(new_row)
+		#print(new_row)
 		new_data_r.append(new_row)
 	numpy.savetxt('{}/{}r{}.csv'.format(location, file_prefix, data_set), new_data_r, delimiter = ",")
 	print('Growth rate csv generated and exported.')
@@ -127,11 +134,7 @@ def generate_graphs(data_set, location, output, limits):
 	print('Graphs have completed.')
 
 def analysis_parameters(location, argv, argv_count):
-	if argv:
-		data_set = str(sys.argv[argv_count])
-		argv_count += 1
-	else:
-		data_set = raw_input('<od> for OD, <u> for dilutions, <z> for something,' +
+	data_set = auto_man_input(argv, argv_count, '<od> for OD, <u> for dilutions, <z> for something,' +
 							 '\n\t<ru> for growth rate based on u, <rod> for growth rate based on od' +
 						 '\n\tEnter data set to analyze: ')
 
@@ -142,13 +145,8 @@ def analysis_parameters(location, argv, argv_count):
 
 	limits = [0,0,0,0]
 	limit_dir = ''
-	if argv:
-		decision = str(sys.argv[argv_count])
-		argv_count += 1
-	else:
-		decision = raw_input('Define x limits? <1> yes or <Enter> no: ')
-
-	if decision == '1':
+	decision = auto_man_input(argv, argv_count, 'Define x limits? <x> yes or <Enter> no: ')
+	if decision == 'x':
 		if argv:
 			limits[0] = sys.argv[argv_count]
 			limits[1] = sys.argv[argv_count]
@@ -158,12 +156,8 @@ def analysis_parameters(location, argv, argv_count):
 			limits[1] = float(raw_input('\tEnter x upper limit: '))
 		limit_dir += '-x-{}-{}'.format(limits[0],limits[1])
 
-	if argv:
-		decision = str(sys.argv[7])
-	else:
-		decision = raw_input('Define y limits? <1> yes or <Enter> no: ')
-
-	if decision == '1':
+	decision = auto_man_input(argv, argv_count, 'Define y limits? <y> yes or <Enter> no: ')
+	if decision == 'y':
 		if argv:
 			limits[2] = sys.argv[argv_count]
 			limits[3] = sys.argv[argv_count]
@@ -178,23 +172,13 @@ def analysis_parameters(location, argv, argv_count):
 		print('Analysis folder not found, made new folder.')
 	else:
 		print('Analysis folder found, will overwrite previous graphs.')
-
 	output = '{}/{}{}'.format(location,data_set,limit_dir)
 	generate_graphs(data_set, location, output, limits)
 
 
-if argv:
-	decision = str(sys.argv[argv_count])
-	argv_count += 1
-else:
-	decision = raw_input('<1> to generate growth rate csv with u\n\t<2> to generate growth rate csv with od' +
-						 '\n\tor <Enter> to start data set analysis: ')
-
-if argv:
-	experiment = str(sys.argv[argv_count])
-	argv_count += 1
-else:
-	experiment = raw_input('Enter experiment date to analyze \n\tor <Enter> to analyze latest one: ')
+decision = auto_man_input(argv, argv_count, '<1> to generate growth rate csv with u\n\t' +
+				'<2> to generate growth rate csv with od\n\tor <Enter> to start data set analysis: ')
+experiment = auto_man_input(argv, argv_count, 'Enter experiment date to analyze \n\tor <Enter> to analyze latest one: ')
 
 if experiment == '' or experiment == 'recent':
 	experiment = get_recent_exp('00-00-00')
