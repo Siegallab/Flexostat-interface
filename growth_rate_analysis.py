@@ -6,9 +6,9 @@ import matplotlib
 import os
 import argparse
 
-parser = argparse.ArgumentParser(description='Growth Rate Analysis.')
-#parser.add_argument("-d", "--experiment_date", default="",
-#					help="Experiment date to analyze or empty ")
+#parser = argparse.ArgumentParser(description='Growth Rate Analysis.')
+#parser.add_argument("-d", "--experiment", default="",
+#				help="Experiment date to analyze or empty ")
 
 argv = False
 argv_count = 1
@@ -82,18 +82,15 @@ def growth_rate_csv(location, data_set):
 				if data_set == 'od':
 					prev_od = previous_od[ch_count]
 					current_od = element
-					#print('\tcurr: {}, prev: {}'.format(element, previous_od[ch_count]))
 					if prev_od <= 0:
 						prev_od = 0.0001
 					if current_od <= 0:
 						current_od = 0.0001
-					#print('\t\tcurr: {}, prev: {}, time diff: {}'.format(current_od, prev_od, time_difference))
 					new_row.append(round((numpy.log(current_od / prev_od) / time_difference), 6))
 				else:
 					new_row.append(round((numpy.log(1 + (element / 15000)) / time_difference), 6))
 			previous_od[ch_count] = element
 			ch_count += 1
-		#print(new_row)
 		new_data_r.append(new_row)
 	numpy.savetxt('{}/{}r{}.csv'.format(location, file_prefix, data_set), new_data_r, delimiter = ",")
 	print('Growth rate csv generated and exported.')
@@ -133,6 +130,24 @@ def generate_graphs(data_set, location, output, limits):
 		plt.close()
 	print('Graphs have completed.')
 
+def generate_dual_graphs(data_set_1, data_set_2, location, output, limits):
+	print('Beginning analysis...')
+	df1 = pandas.read_csv('{}/{}{}.csv'.format(location, file_prefix, data_set_1), header=None,
+	                     names=['Time', '1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8'])
+	df2 = pandas.read_csv('{}/{}{}.csv'.format(location, file_prefix, data_set_2), header=None,
+	                     usecols=[1,2,3,4,5,6,7,8], names=['2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8'])
+	df = pandas.concat([df1, df2], axis=1)
+	for chamber in range(1, 9):
+		df.plot.scatter(x='Time', y='1.{}'.format(chamber))
+		df.plot(secondary_y=['2.{}'.format(chamber)])
+		if limits[0] != limits[1]:
+			plt.xlim(limits[0], limits[1])
+		if limits[2] != limits[3]:
+			plt.ylim(limits[2], limits[3])
+		plt.savefig('{}/ch{}.png'.format(output, chamber))
+		plt.close()
+	print('Graphs have completed.')
+
 def analysis_parameters(location, argv, argv_count):
 	data_set = auto_man_input(argv, argv_count, '<od> for OD, <u> for dilutions, <z> for something,' +
 							 '\n\t<ru> for growth rate based on u, <rod> for growth rate based on od' +
@@ -154,7 +169,7 @@ def analysis_parameters(location, argv, argv_count):
 		else:
 			limits[0] = float(raw_input('\tEnter x lower limit: '))
 			limits[1] = float(raw_input('\tEnter x upper limit: '))
-		limit_dir += '-x-{}-{}'.format(limits[0],limits[1])
+		limit_dir += ' x:{}-{}'.format(limits[0],limits[1])
 
 	decision = auto_man_input(argv, argv_count, 'Define y limits? <y> yes or <Enter> no: ')
 	if decision == 'y':
@@ -165,7 +180,7 @@ def analysis_parameters(location, argv, argv_count):
 		else:
 			limits[2] = float(raw_input('\tEnter y lower limit: '))
 			limits[3] = float(raw_input('\tEnter y upper limit: '))
-		limit_dir += '-y-{}-{}'.format(limits[2], limits[3])
+		limit_dir += ' y:{}-{}'.format(limits[2], limits[3])
 
 	if os.path.exists('{}/{}{}'.format(location,data_set,limit_dir)) == False:
 		os.system('mkdir {}/{}{}'.format(location,data_set,limit_dir))
