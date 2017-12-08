@@ -10,7 +10,7 @@ import warnings
 # Allows warnings from divide by zero or log/ln negative number to be caught in try except
 warnings.filterwarnings('error')
 
-# TODO Add command line agrument parser if easier than current method
+# TODO Add command line argument parser if easier than current method
 # parser = argparse.ArgumentParser(description='Growth Rate Analysis.')
 # parser.add_argument("-d", "--experiment", default="",
 # 				help="Experiment date to analyze or empty ")
@@ -53,13 +53,7 @@ def main():
 	else:
 		data_set = get_data_set(location, argv, argv_count, file_prefix)
 		limits, limit_dir = get_axis_parameters(argv, argv_count)
-
-		if not os.path.exists('{}/{}{}'.format(location, data_set, limit_dir)):
-			os.system('mkdir {}/{}{}'.format(location, data_set, limit_dir))
-			print('Analysis folder not found, made new folder.')
-		else:
-			print('Analysis folder found, will overwrite previous graphs.')
-		output = '{}/{}{}'.format(location, data_set, limit_dir)
+		output = get_output_directory(location, data_set, limit_dir)
 		generate_graphs(data_set, location, output, limits, file_prefix)
 	print('Program end.')
 
@@ -96,24 +90,37 @@ def get_recent_exp():
 			last = split[2][0:2]
 			# Compares the split up experiment dates from the Data directory
 			# First compares the day, month, then year, and replaces the most recent accordingly
-			print ('exp: {}, rec: {}'.format(exp, recent_split))
 			if int(split[0]) > int(recent_split[0]):
-				print 'if'
 				recent = exp
 				recent_split = [split[0], split[1], last]
 			elif split[0] == recent_split[0] and int(split[1]) > int(recent_split[1]):
-				print 'second'
 				recent = exp
 				recent_split = [split[0], split[1], last]
 			elif split[0] == recent_split[0] and split[1] == recent_split[1] and int(last) > int(recent_split[2]):
-				print 'third'
 				recent = exp
 				recent_split = [split[0], split[1], last]
 			else:
-				print 'else'
 				continue
 	print('Using data from experiment {}.'.format(recent))
 	return recent
+
+
+def get_output_directory(location, data_set, limit_dir):
+	"""
+	Finds or creates directory for outputting graphs.
+
+	:param location: path to experiment
+	:param data_set: output data set
+	:param limit_dir: x and y limits in string
+	:return: directory for outputting graphs
+	"""
+	if not os.path.exists('{}/{}{}'.format(location, data_set, limit_dir)):
+		os.system('mkdir {}/{}{}'.format(location, data_set, limit_dir))
+		print('Analysis folder not found, made new folder.')
+	else:
+		print('Analysis folder found, will overwrite previous graphs.')
+	output = '{}/{}{}'.format(location, data_set, limit_dir)
+	return output
 
 
 def machine_to_human(location, data_set, file_prefix):
@@ -235,12 +242,15 @@ def r_od_csv(location, data_set, file_prefix):
 			elif new_row[0] == 0:
 				new_row.append(float(0))
 			else:
-				try:
-					new_row.append(round((numpy.log(element / previous_od[ch_count]) / time_difference), 6))
-				# If the growth rate calculation fails (it will for values <= 0) then append a blank space
-				except (Warning, Exception) as err:
-					print('Warning/Exception: {}'.format(err))
+				# Negative OD's are ignored with growth rate being a blank space
+				if element <= 0 or previous_od[ch_count] <= 0:
 					new_row.append(None)
+				else:
+					try:
+						new_row.append(round((numpy.log(element / previous_od[ch_count]) / time_difference), 6))
+					# If the growth rate calculation fails (it will for values <= 0) then append a blank space
+					except (Warning, Exception):
+						new_row.append(None)
 				# Each element is saved for comparison with the next element of that chamber
 				previous_od[ch_count] = element
 			ch_count += 1
@@ -317,10 +327,25 @@ def growth_rate_statistics(location, data_set, file_prefix):
 	:param data_set: growth rate csv data to analyze from
 	:param file_prefix: any prefix before the data set in the file name
 	"""
-	print('Starting growth rate analysis...')
-
+	print('Starting growth rate statistics...')
+	output = get_output_directory(location, data_set, '')
 	df = pandas.read_csv('{}/{}{}.csv'.format(location, file_prefix, data_set), header=None,
 	                     names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	for chamber in range(1, 9):
+		stats = pandas.DataFrame(columns=['Time','Average','SD','SE'])
+		hour = [0,1]
+		while (hour[1] < df.iloc[-1,0]):
+			ave = df['{}'.format(chamber)].loc[hour[0]:hour[1]].mean()
+			sd = df['{}'.format(chamber)].loc[hour[0]:hour[1]].std()
+			se = df['{}'.format(chamber)].loc[hour[0]:hour[1]].sem()
+			temp = pandas.DataFrame([[hour[1],ave,sd,se]], columns=['Time','Average','SD','SE'])
+			print(temp)
+			stats = stats.append(temp)
+			hour[0] = hour[1]
+			hour[1] = hour[1]+1
+		stats.to_csv(path_or_buf='{}/{}{}_stats_{}.csv'.format(output, file_prefix, data_set, chamber), index=False)
+	generate_graphs('{}_stats'.format(data_set), output, output, '00-00-00', file_prefix)
+
 	# TODO Iterate through growth rate chamber rows, calculate average, SD, and SE across each hour
 	# TODO Add ability to define region where statistics will be calculated
 	# TODO Write statistics to a file
