@@ -241,16 +241,18 @@ def r_od_csv(location, data_set, file_prefix):
 			# If first row of data frame (determined by time point) it is arbitrarily set to zero
 			elif new_row[0] == 0:
 				new_row.append(float(0))
+			# Negative OD's are ignored with growth rate being a blank space
+			elif element < 0 or previous_od[ch_count] < 0:
+				new_row.append(None)
+				previous_od[ch_count] = element
 			else:
-				# Negative OD's are ignored with growth rate being a blank space
-				if element <= 0 or previous_od[ch_count] <= 0:
+				try:
+					new_row.append(round((numpy.log(element / previous_od[ch_count]) / time_difference), 6))
+				# If the growth rate calculation fails (it will for values <= 0) then append a blank space
+				except (Warning, Exception) as err:
+					# For showing the warning or exception, uncomment the below line
+					# print('{}'.format(err))
 					new_row.append(None)
-				else:
-					try:
-						new_row.append(round((numpy.log(element / previous_od[ch_count]) / time_difference), 6))
-					# If the growth rate calculation fails (it will for values <= 0) then append a blank space
-					except (Warning, Exception):
-						new_row.append(None)
 				# Each element is saved for comparison with the next element of that chamber
 				previous_od[ch_count] = element
 			ch_count += 1
@@ -321,7 +323,7 @@ def get_axis_parameters(argv, argv_count):
 
 def growth_rate_statistics(location, data_set, file_prefix):
 	"""
-	Analyzes growth rate csv for statistics (averages, standard deviation, and standard error).
+	Analyzes growth rate csv for general statistics (averages, standard deviation, and standard error).
 
 	:param location: path to experiment
 	:param data_set: growth rate csv data to analyze from
@@ -331,22 +333,23 @@ def growth_rate_statistics(location, data_set, file_prefix):
 	output = get_output_directory(location, data_set, '')
 	df = pandas.read_csv('{}/{}{}.csv'.format(location, file_prefix, data_set), header=None,
 	                     names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
-	for chamber in range(1, 9):
-		stats = pandas.DataFrame(columns=['Time','Average','SD','SE'])
-		hour = [0,1]
-		while (hour[1] < df.iloc[-1,0]):
-			ave = df['{}'.format(chamber)].loc[hour[0]:hour[1]].mean()
-			sd = df['{}'.format(chamber)].loc[hour[0]:hour[1]].std()
-			se = df['{}'.format(chamber)].loc[hour[0]:hour[1]].sem()
-			temp = pandas.DataFrame([[hour[1],ave,sd,se]], columns=['Time','Average','SD','SE'])
-			print(temp)
-			stats = stats.append(temp)
-			hour[0] = hour[1]
-			hour[1] = hour[1]+1
-		stats.to_csv(path_or_buf='{}/{}{}_stats_{}.csv'.format(output, file_prefix, data_set, chamber), index=False)
-	generate_graphs('{}_stats'.format(data_set), output, output, '00-00-00', file_prefix)
 
-	# TODO Iterate through growth rate chamber rows, calculate average, SD, and SE across each hour
+	for chamber in range(2, 10):
+		new_block_r = []
+		hour = 1
+		block_r = []
+		for row in df.itertuples():
+			if row[1] >= hour:
+				sem = numpy.std(new_block_r) / numpy.sqrt(len(new_block_r))
+				block_r.append([hour, numpy.mean(new_block_r), numpy.std(new_block_r), sem])
+				hour += 1
+				new_block_r = []
+			else:
+				new_block_r.append(row[chamber])
+		stats = pandas.DataFrame(block_r)
+		stats.to_csv(path_or_buf='{}/{}{}_stats_{}.csv'.format(output, file_prefix, data_set, chamber), index=False)
+	# generate_graphs('{}_stats'.format(data_set), output, output, '00-00-00', file_prefix)
+
 	# TODO Add ability to define region where statistics will be calculated
 	# TODO Write statistics to a file
 
