@@ -6,7 +6,7 @@ import matplotlib
 import os
 import argparse
 import warnings
-import ConfigParser
+from configparser import ConfigParser
 
 # Allows warnings from divide by zero or log/ln negative number to be caught in try except
 warnings.filterwarnings('error')
@@ -16,32 +16,36 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpForm
 				description="""\ 
 		Growth Rate Analysis.
 		---------------------
-			- Functions use --data_directory, experiment, and config variable for input and output
-				unless inactivated by -i or -o respectively
-			- X and Y limits only available for --graph
 					""")
+
 # parser.add_argument('-p', '--parse',
 # 					help='parser u, od, and z values')
 
 parser.add_argument('--r_u', help='growth rate calculations based on U dilution values')
 parser.add_argument('--r_od', help='growth rate calculations based on OD optical density measurements')
-parser.add_argument('--stats_u', help='calculate mean, SD, and SE for growth rates based on U')
-parser.add_argument('--stats_od', help='calculate mean, SD, and SE for growth rates based on OD')
+parser.add_argument('-s', '--stats', help='calculate mean, SD, and SE for input, to output (-i -o required)')
+parser.add_argument('--stats_u', help='calculate mean, SD, and SE for U growth rates')
+parser.add_argument('--stats_od', help='calculate mean, SD, and SE for OD growth rates')
 
-parser.add_argument('--graph', help='generate graphs')
+parser.add_argument('-g', '--graph', help='generate graphs for input, to output (-i -o required)')
+parser.add_argument('--graph_u', help='generate graphs for U')
+parser.add_argument('--graph_od', help='generate graphs for OD')
+parser.add_argument('--graph_r_u', help='generate graphs for U growth rates')
+parser.add_argument('--graph_r_od', help='generate graphs for OD growth rates')
+
+# parser.add_argument('--graph_s', help='generate graphs for input statistics, to output (-i -o required)')
+# parser.add_argument('--graph_s_u', help='generate graphs for U growth rate statistics')
+# parser.add_argument('--graph_s_od', help='generate graphs for OD growth rate statistics')
+
 parser.add_argument('-x', '--xlim', default='0-0', help='optional upper and lower bound x limits for graphs')
 parser.add_argument('-y', '--ylim', default='0-0', help='optional upper and lower bound y limits for graphs')
 
 parser.add_argument('-i', '--input',
-					help='optional input path and filename (defaults to config file)')
+					help='optional (except for graphs) input path and filename (defaults to config file)')
 parser.add_argument('-o', '--output',
-					help='optional output path and filename or directory for graphs (end dir with /, default to config file)')
-
-parser.add_argument('--data_directory', help='optional set data directory (defaults to config file)')
-parser.add_argument('--experiment', help='optional set experiment (defaults to config file)')
-parser.add_argument('--recent', help='optional automatically set experiment to most recent in data_directory')
-parser.add_argument('--config', default='growth_rate.ini',
-					help='optional configuration path and filename (defaults to growth_rate.ini)')
+					help='optional output path and filename or directory for graphs (end paths with /, default to config file)')
+parser.add_argument('--config', default='growth_rate_analysis_config.ini',
+					help='optional configuration path and filename (defaults to growth_rate_analysis_config.ini)')
 
 # parser.add_argument('-c', '--compare',
 #				help='compare expected vs experimental')
@@ -52,110 +56,64 @@ args = parser.parse_args()
 
 def main():
 	"""
-	Read in config file and replace based on command line inputs if necessary.
-	Then determines what functions in program to run based on command line inputs and config file variables.
+	Read in config file and determine what functions in program to run.
+	Replace variables with command line inputs as need while progressing through.
 	"""
-	config = ConfigParser.SafeConfigParser()
+	config = ConfigParser()
 	config.read(args.config)
 	config.items('paths')
 
-	if args.data_directory:
-		config['paths']['data_dir'] = args.data_directory
-	if args.experiment:
-		config['paths']['experiment'] = args.experiment
-	if args.recent:
-		data_temp = config.get('paths', 'data_directory')
-		if os.path.exists(data_temp):
-			config['paths']['experiment'] = get_recent_exp(data_temp)
-
-	data_directory = config.get('paths', 'data_directory')
-	experiment = config.get('paths', 'experiment')
+	# Copy all config file variables to local variable
 	log = config.get('paths', 'log')
 	u = config.get('paths', 'u')
 	od = config.get('paths', 'od')
 	r_u = config.get('paths', 'r_u')
 	r_od = config.get('paths', 'r_od')
+	stats_u = config.get('paths', 'stats_u')
+	stats_od = config.get('paths', 'stats_od')
 
-	if not os.path.exists(data_directory):
-		print('Data folder not found, made new folder.')
-
+	# Determine and perform function based on command line arguments
 	if args.r_u:
-		if args.input:
-			config['paths']['u'] = args.input
-			input_ = '{}/{}/{}'
-		r_u_csv(experiment, output)
+		u, r_u, limits = update_io_and_path(args, u, r_u, '')
+		r_u_csv(u, r_u)
 	elif args.r_od:
-		r_od_csv(experiment, output)
+		od, r_od, limits = update_io_and_path(args, od, r_od, '')
+		r_od_csv(od, r_od)
+	elif args.stats and args.input and args.output:
+		update_io_and_path(args, args.input, args.output, 'stats')
+		growth_rate_statistics(args.input, args.output)
 	elif args.stats_u:
-		growth_rate_statistics(experiment, output)
+		r_u, stats_u, limits = update_io_and_path(args, r_u, stats_u, 'stats')
+		growth_rate_statistics(r_u, stats_u)
 	elif args.stats_od:
-		growth_rate_statistics()
-	elif args.graph:
-
-		limits = [0.0, 0.0, 0.0, 0.0]
-		lim_str = ''
-		if args.xlim:
-			limits[0] = float(args.xlim.split("-")[0])
-			limits[1] = float(args.xlim.split("-")[1])
-			lim_str = ' x ' + args.xlim
-		if args.ylim:
-			limits[2] = float(args.xlim.split("-")[0])
-			limits[3] = float(args.xlim.split("-")[1])
-			lim_str = lim_str + ' y ' + args.ylim
-
-		if not os.path.exists(args.data_directory):
-			os.system('mkdir {}'.format(output))
-			print('Graph folder not found, made new folder.')
-		generate_graphs(experiment, output, limits, lim_str)
-	print('Program end.')
-
-
-def get_recent_exp(data_directory):
-	"""
-	Finds the most recent experiment directory.
-
-	:return: Most recent experiment directory
-	"""
-	exp_list = os.listdir(data_directory)
-	recent = '00-00-00'
-	recent_split = recent.split('-')
-	for exp in exp_list:
-		if exp[0].isdigit():
-			split = exp.split('-')
-			last = split[2][0:2]
-			# Compares the split up experiment dates from the Data directory
-			# First compares the day, month, then year, and replaces the most recent accordingly
-			if int(split[0]) > int(recent_split[0]):
-				recent = exp
-				recent_split = [split[0], split[1], last]
-			elif split[0] == recent_split[0] and int(split[1]) > int(recent_split[1]):
-				recent = exp
-				recent_split = [split[0], split[1], last]
-			elif split[0] == recent_split[0] and split[1] == recent_split[1] and int(last) > int(recent_split[2]):
-				recent = exp
-				recent_split = [split[0], split[1], last]
-			else:
-				continue
-	print('Using data from experiment {}.'.format(recent))
-	return recent
-
-
-def get_output_directory(data_directory):
-	"""
-	Finds or creates directory for outputting graphs.
-
-	:param location: path to experiment
-	:param data_set: output data set
-	:param limit_dir: x and y limits in string
-	:return: directory for outputting graphs
-	"""
-	if not os.path.exists('{}'.format(data_directory)):
-		os.system('mkdir Data/')
-		print('Data folder not found, made new folder.')
+		r_od, stats_od, limits = update_io_and_path(args, r_od, stats_od, 'stats')
+		growth_rate_statistics(r_od, stats_od)
+	elif args.graph and args.input and args.output:
+		args.input, args.output, limits = update_io_and_path(args. args.input, args.output, 'graphs')
+		generate_graphs(args.input, args.output, limits)
+	elif args.graph_u:
+		u, output, limits = update_io_and_path(args, u, u, 'graphs')
+		generate_graphs(u, output, limits)
+	elif args.graph_od:
+		od, output, limits = update_io_and_path(args, od, od, 'graphs')
+		generate_graphs(od, output, limits)
+	elif args.graph_r_u:
+		r_u, output, limits = update_io_and_path(args, r_u, r_u, 'graphs')
+		generate_graphs(r_u, output, limits)
+	elif args.graph_r_od:
+		r_od, output, limits = update_io_and_path(args, r_od, r_od, 'graphs')
+		generate_graphs(r_od, output, limits)
 	else:
-		print('Analysis folder found, will overwrite previous graphs.')
-	output = '{}/{}{}'.format(location, data_set, limit_dir)
-	return output
+		print('ERROR: missing instructions.')
+
+	# Save any changes made to variables to config file
+	config['path'] = {'log': log, 'u': u, 'od': od, 'r_u': r_u, 'r_od': r_od,
+					  'stats_u': stats_u, 'stats_od': stats_od}
+	with open(args.config, 'w') as configfile:
+		config.write(configfile)
+	print('Config file saved.')
+
+	print('Program end.')
 
 
 def machine_to_human(experiment):
@@ -194,6 +152,55 @@ def machine_to_human(experiment):
 		print('Data set with human time created.')
 	else:
 		print('Data set is using human time.')
+
+
+def update_io_and_path(args, input, output, function):
+	"""
+	Replaces input and output variables from the config if there are command line arguments to replace them.
+	Creates the folder for output stats or graphs if it there is none.
+
+	:param args: all command line arguments
+	:param input: config file input variable
+	:param output: config file output variable
+	:param function: the type of function
+	:return: newly updated input and output variables
+	"""
+	# Replace input and output command line arguments as needed
+	if args.input:
+		input = args.input
+	if args.output:
+		output = args.output
+	# if not output directory is stated for stats and graphs then format path based on input
+	elif not args.output and (function == 'stats' or function == 'graphs'):
+		directories = args.input.split('/')
+		output = ''
+		for dir in range(0, len(directories)-1):
+			output += directories[dir] + '/'
+		output += directories[-1].split('.csv')[0]
+
+	lim_str = ''
+	limits = [0.0, 0.0, 0.0, 0.0]
+	# graphs will have x and y limits parsed and used for the output directory
+	if function == 'graphs':
+		if args.xlim:
+			limits[0] = float(args.xlim.split("-")[0])
+			limits[1] = float(args.xlim.split("-")[1])
+			lim_str = ' x ' + args.xlim
+		if args.ylim:
+			limits[2] = float(args.xlim.split("-")[0])
+			limits[3] = float(args.xlim.split("-")[1])
+			lim_str = lim_str + ' y ' + args.ylim
+
+	# stats and graphs will create an output directory if none exists
+	if function == 'stats' or function == 'graphs':
+		if not os.path.exists('{}{}'.format(output, lim_str)):
+			os.system('mkdir {}{}'.format(output, lim_str))
+			print('Output folder not found, made new folder.')
+		else:
+			print('Output folder found, will overwrite previous graphs.')
+		output = '{}{}'.format(output, lim_str)
+
+	return input, output, limits
 
 
 def r_u_csv(experiment, output):
@@ -307,7 +314,6 @@ def growth_rate_statistics(experiment, output):
 	:param file_prefix: any prefix before the data set in the file name
 	"""
 	print('Starting growth rate statistics...')
-	output = get_output_directory(output)
 	df = pandas.read_csv('{}.csv'.format(experiment), header=None,
 	                     names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 
@@ -324,11 +330,10 @@ def growth_rate_statistics(experiment, output):
 			else:
 				new_block_r.append(row[chamber])
 		stats = pandas.DataFrame(block_r)
-		stats.to_csv(path_or_buf='{}{}.csv'.format(output, chamber), index=False)
+		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber), index=False)
 	# generate_graphs('{}_stats'.format(data_set), output, output, '00-00-00', file_prefix)
 
-	# TODO Add ability to define region where statistics will be calculated
-	# TODO Write statistics to a file
+	# TODO generate graphs for statistics
 
 
 def generate_graphs(experiment, output, limits):
@@ -351,7 +356,7 @@ def generate_graphs(experiment, output, limits):
 			plt.xlim(limits[0], limits[1])
 		if limits[2] != limits[3]:
 			plt.ylim(limits[2], limits[3])
-		plt.savefig('{}{}.png'.format(output, chamber))
+		plt.savefig('{}/ch{}.png'.format(output, chamber))
 		plt.close()
 	print('Graphs have completed.')
 
