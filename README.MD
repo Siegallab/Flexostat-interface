@@ -157,6 +157,7 @@ If you make a change on the PI or your computer that is linked to git:
 * To view and change origin url:
   * $ git remote -v
   * $ git remote set-url *siteurl*
+
 ---
 ## Files In-depth
 ### Primer_auto guide
@@ -251,8 +252,8 @@ For the OD boards us the 6 pin ISP cable. Plug it to the ICE in the AVR port. Pl
 For the Main Board use the same cord plugged into the AVR on the ICE but with the adapted plugged into the midpoint. On the adapter there is a ten pin port labeled AVR JTAG. Plug this into the ten pin group on the main board labelled JTAG.
 
 Follow the installation instructions here: https://depts.washington.edu/soslab/turbidostat/pmwiki/pmwiki.php?n=ConstructionManual.Programming
-
 For issues with the ICE use this guide: http://www.atmel.com/Images/Atmel-42330-Atmel-ICE_UserGuide.pdf
+
 ---
 ## Contributors
 * Siegal Lab
