@@ -22,6 +22,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
 5. [Hardware Setup](#hardware-setup)
     * [RPi Setup Guide](#raspberry-pi-settup-guide)
     * [Board Framework Installation](#board-framework-installation)
+6. [Contributors](#contributors)
 
 ---
 ## Technical
@@ -242,7 +243,6 @@ Modules
   * run this for any an all modules not found when running the code until the code runs or a module unrelated error shows
 
 Board Framework Installation
--------------------
 
 To install the firmware on the boards you must use a PC with the Atmel Studio software installed on it that is connected to the atmel Ice device.
 
@@ -253,3 +253,8 @@ For the Main Board use the same cord plugged into the AVR on the ICE but with th
 Follow the installation instructions here: https://depts.washington.edu/soslab/turbidostat/pmwiki/pmwiki.php?n=ConstructionManual.Programming
 
 For issues with the ICE use this guide: http://www.atmel.com/Images/Atmel-42330-Atmel-ICE_UserGuide.pdf
+---
+## Contributors
+* Siegal Lab
+    * [Maxwell Raderstorf](https://github.com/maxstorf)
+    * [David Klein](https://github.com/KEYS248)
