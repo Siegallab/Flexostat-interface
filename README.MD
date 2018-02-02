@@ -1,7 +1,21 @@
 Servostat-interface
 ============
 
-This is the python software for the klavins lab turbidostot (see http://klavinslab.org/hardware for details)
+This is the python software for the klavins lab turbidostot (see http://klavinslab.org/hardware for details) with programming contributions from the siegal lab.
+
+Table of Contents
+------------
+1. [Requirements](#requirements)
+2. [Configuration](#configuration)
+3. [Known Issues](#known-issues)
+4. [Related Files](#related-files)
+5. [RPi SSH Access](#raspberrypi-ssh-access)
+6. [Running the Code](#running-the-code)
+7. [Git](#git)
+8. [Primer_auto Guide](#primer_auto-guide)
+9. [Flexoparser_csv guide](#flexoparser_csv-guide)
+10. [RPi Setup Guide](#raspberry-pi-settup-guide)
+11. [Board Framework Installation](#board-framework-installation)
 
 Requirements
 ------------
@@ -24,7 +38,7 @@ For now see the official turbidostat page.
 Known issues
 -------------
 All platforms:
-* Not exiting via ctrl-C can leave orphaned threads that may interfere with 
+* Not exiting via ctrl-C can leave orphaned threads that may interfere with
 later instances of the application, espeically on MacOS and *nix.
 
 MacOS (and probably linux):
@@ -42,10 +56,10 @@ Related Files
             * Use either chemostat of turbidostatController/SQ/_SIN (More details later on which does what)
     * The CTBasicServer object defined in network.py is used in servostat.py to create a basic network
     * stacktracer.py is used in servostat.py to create a stack trace as the program runs
-    
+
     * Outputs data in the log files specified in the Log section of the config file
     * Testing Git Functionality
-    
+
 Raspberry Pi SSH Access
 -------------------
 To Access the Pi via SSH type the following command into the command line in terminal:
@@ -62,7 +76,7 @@ Make sure you are in the right folder:
 * $ cd ~/Flexostat-interface
 Check for existing Log files:
 * $ ls
-  * There is data from a previous run if you see: 
+  * There is data from a previous run if you see:
     * Log.dat (The calculated od measurments based on the blank, times and dilution values)
     * odlog.dat (The rough uninterpreted values for the OD sensors)
     * errors.log (A log of any errors that occured)
@@ -72,7 +86,7 @@ Setup for the Run
 * If there was previous data:
   * create a new directory in the Data folder to store the data:
     * $ cd Data
-    * $ mkdir *targetdir* 
+    * $ mkdir *targetdir*
   * Change back to the Flexostat-interface directory:
     * $ cd ../
   * If you want to add to that data back it up and run the code:
@@ -86,8 +100,8 @@ Setup for the Run
     * $ python servostat.py
   * to halt the code:
     * ctrl c
-    
-    
+
+
 With screen:
 * before you run the code type:
   * $ screen
@@ -103,7 +117,7 @@ With screen:
 * to halt the code and exit
   * ctrl c
   * $ exit
- 
+
 Git
 -------------------
 
@@ -122,14 +136,14 @@ If you make a change on the PI or your computer that is linked to git:
   * $ git commit -m "*Comment*"
   * $ git push
     * $ Type in username an password when prompted
-    
+
 * $ If you have new data you want to push to git:
   * $ cd Data/*data directory*
   * $ git add -f --all
   * $ git commit -m "*Comment*"
   * $ git push
     * $ Type in username an password when prompted
- 
+
 * If changes have been made on github:
   * $ git pull
 
@@ -140,7 +154,7 @@ If you make a change on the PI or your computer that is linked to git:
 * To view and change origin url:
   * $ git remote -v
   * $ git remote set-url *siteurl*
-  
+
 
 
 Primer_auto guide
@@ -162,7 +176,7 @@ The primer auto has 4 inputs to be put into the command line.
   * an integer between 0000 and 2000 always consisting of 4 digits
   * (Printing a value >= 2000 will simply cause the pump to fill fully)
   * ex. to dispense 500ul print 0500
-                                                                
+
 The entire line whould look like:
 
  $ python Primer_auto.py -s # -v ####
@@ -229,7 +243,7 @@ Modules
 * if when code is run the error message shows **modulename** not found run:
   * $ sudo pip install **modulename**
   * run this for any an all modules not found when running the code until the code runs or a module unrelated error shows
-  
+
 Board Framework Installation
 -------------------
 
