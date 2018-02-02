@@ -1,24 +1,31 @@
-Servostat-interface
-============
+# Servostat-interface
+---
 
 This is the python software for the klavins lab turbidostot (see http://klavinslab.org/hardware for details) with programming contributions from the siegal lab.
 
-Table of Contents
-------------
-1. [Requirements](#requirements)
-2. [Configuration](#configuration)
-3. [Known Issues](#known-issues)
-4. [Related Files](#related-files)
-5. [RPi SSH Access](#raspberrypi-ssh-access)
-6. [Running the Code](#running-the-code)
-7. [Git](#git)
-8. [Primer_auto Guide](#primer_auto-guide)
-9. [Flexoparser_csv guide](#flexoparser_csv-guide)
-10. [RPi Setup Guide](#raspberry-pi-settup-guide)
-11. [Board Framework Installation](#board-framework-installation)
+## Table of Contents
+---
+1. [Technical](#technical)
+    * [Requirements](#requirements)
+    * [Configuration](#configuration)
+    * [Known Issues](#known-issues)
+    * [TODO](#todo)
+        * [Growth Rate Pipeline](#growth-rate-pipeline)
+2. [File Overview](#file-overview)
+3. [Up and Running](#up-and-running)
+    * [RPi SSH Access](#raspberrypi-ssh-access)
+    * [Running the Code](#running-the-code)
+    * [Git](#git)
+4. [Files In-depth](#files-in-depth)
+    * [Primer_auto Guide](#primer_auto-guide)
+    * [Flexoparser_csv guide](#flexoparser_csv-guide)
+5. [Hardware Setup](#hardware-setup)
+    * [RPi Setup Guide](#raspberry-pi-settup-guide)
+    * [Board Framework Installation](#board-framework-installation)
 
-Requirements
-------------
+---
+## Technical
+### Requirements
 * Python 2.7.x
    * Pyserial 2.7: https://pypi.python.org/pypi/pyserial
    * numpy: http://www.numpy.org/
@@ -28,24 +35,23 @@ Requirements
 To install requirements, run:
 $ sudo pip install numpy pygments pySerial flask
 
-
-Configuration
-------------------
-
+### Configuration
 For now see the official turbidostat page.
 
-
-Known issues
--------------
+### Known issues
 All platforms:
 * Not exiting via ctrl-C can leave orphaned threads that may interfere with
-later instances of the application, espeically on MacOS and *nix.
+later instances of the application, especially on MacOS and nix.
 
 MacOS (and probably linux):
 * Pumping volumes that take longer than 'period' seconds to process will result in a negative timer value being set, which in turn causes a timer overflow and the program to sleep for nearly 2^32 seconds (many years).
 
-Related Files
--------------------
+### TODO
+#### Growth Rate Pipeline
+
+---
+## File Overview
+### Related Files
 * servostat.py is the main function to be run in the command line with a config file
     * controller.py contains the code behind the Controller object used in servostat.py
         * mytimer.py is used in controller.py to run time related functions
@@ -60,18 +66,16 @@ Related Files
     * Outputs data in the log files specified in the Log section of the config file
     * Testing Git Functionality
 
-Raspberry Pi SSH Access
--------------------
+---
+## Up and Running
+### Raspberry Pi SSH Access
 To Access the Pi via SSH type the following command into the command line in terminal:
 
 * $ ssh pi@framboise0.bio.nyu.edu
 
 * when prompted type in the password printed on the Pi.
 
-Running the Code
--------------------
-
-
+### Running the Code
 Make sure you are in the right folder:
 * $ cd ~/Flexostat-interface
 Check for existing Log files:
@@ -118,9 +122,7 @@ With screen:
   * ctrl c
   * $ exit
 
-Git
--------------------
-
+### Git
 Whenever changes are made either on the pi, on your computer or on git directly, make sure to update all pertinent repositories.
 
 Change to the right folder:
@@ -154,12 +156,9 @@ If you make a change on the PI or your computer that is linked to git:
 * To view and change origin url:
   * $ git remote -v
   * $ git remote set-url *siteurl*
-
-
-
-Primer_auto guide
--------------------
-
+---
+## Files In-depth
+### Primer_auto guide
 Make sure your present working directory is ~/Flexostat-interface. (type pwd in command line)
 
 If it is not type cd ~/Flexostat-interface.
@@ -194,9 +193,7 @@ the commands are:
 
 For further questions and troubleshooting see comments in the code.
 
-Flexoparser_csv guide
--------------------
-
+### Flexoparser_csv guide
 Flexoparser_csv has 2 mandatory arguments and 3 optional arguments:
 
 * -i The input file. Must be log.dat output file. The file must be in the same directory as the code or the line must explicity direct to the location of the file.
@@ -213,9 +210,9 @@ A standard command line prompt with the optional inputs that will output just od
 
 $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data -o od -b 1493413783 -e 14934549836
 
-Raspberry pi settup guide
--------------------
-
+---
+## Hardware Setup
+### Raspberry pi settup guide
 Initial Configuration
 * First, follow the practical steps in the guide provided with the Pi.
 * Make sure the sd card is inserted and connect ethernet.
