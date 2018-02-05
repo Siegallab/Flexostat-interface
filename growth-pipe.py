@@ -181,9 +181,11 @@ def functions(args):
 			growth_rate_statistics(exp + paths[10], exp + paths[11])
 			process_log += '\ntats csv calculated and exported.'
 
+	# print and save process log
 	if args.print:
 		print(process_log)
 	if args.log:
+		# if previous process log file found, save contents before overwriting
 		if os.path.exists(exp + paths[12] + '.txt'):
 			process_log += '\nPrevious process log found, will add to content.'
 			with open(exp + paths[12] + '.txt', 'r') as log_file:
