@@ -23,43 +23,51 @@ import warnings
 import csv
 from datetime import datetime
 
-# Allows warnings from divide by zero or log/ln negative number to be caught in try except
-warnings.filterwarnings('error')
-
-# TODO Add command line argument parser if easier than current method
-parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-				description="""
-		Growth Rate Analysis.
-		---------------------
-		Select at least one data set: -u, -o
-		Select at least one function: -p, -r, -s
-		
-		Optional path changes: -c, -l, --print
-					""")
-
-parser.add_argument('-u', '--u', action='store_true', help='specify dilutions data set')
-parser.add_argument('-o', '--od', action='store_true', help='specify optical density data set')
-
-parser.add_argument('-p', '--parse', action='store_true', help='parse log file into clean data set')
-parser.add_argument('-r', '--rate', action='store_true', help='calculate growth rate from data set')
-parser.add_argument('-s', '--stats', action='store_true', help='calculate mean, SD, and SE from data set')
-
-# parser.add_argument('-t', '--time', default='1',
-# 					help='convert machine time into specified hour interval (default: 1)')
-# parser.add_argument('-x', '--xlim', default='0-0', help='limit data to upper and lower bound x')
-parser.add_argument('-c', '--config', default='config-growth.csv',
-					help='change config file (default: config-growth.csv)')
-parser.add_argument('-l', '--log', action='store_true', help='optional save program processes log')
-parser.add_argument('--print', action='store_true', help='optional program processes printing')
-
-args = parser.parse_args()
-
 def main():
+	# Allows warnings from divide by zero or log/ln negative number to be caught in try except
+	warnings.filterwarnings('error')
+
+	parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+					description="""
+			Growth Rate Analysis.
+			---------------------
+			Select at least one data set: -u, -o
+			Select at least one function: -p, -r, -s
+			
+			Optional path changes: -c, -l, --print
+						""")
+
+	parser.add_argument('-u', '--u', action='store_true', help='specify dilutions data set')
+	parser.add_argument('-o', '--od', action='store_true', help='specify optical density data set')
+
+	parser.add_argument('-p', '--parse', action='store_true', help='parse log file into clean data set')
+	parser.add_argument('-r', '--rate', action='store_true', help='calculate growth rate from data set')
+	parser.add_argument('-s', '--stats', action='store_true', help='calculate mean, SD, and SE from data set')
+
+	# parser.add_argument('-t', '--time', default='1',
+	# 					help='convert machine time into specified hour interval (default: 1)')
+	# parser.add_argument('-x', '--xlim', default='0-0', help='limit data to upper and lower bound x')
+	parser.add_argument('-c', '--config', default='config-growth.csv',
+						help='change config file (default: config-growth.csv)')
+	parser.add_argument('-l', '--log', action='store_true', help='optional save program processes log')
+	parser.add_argument('--print', action='store_true', help='optional program processes printing')
+
+	args = parser.parse_args()
+
+	if os.path.exists(args.config):
+		functions(args)
+	else:
+		print('ERROR: Config file not found.')
+	print('Program end.\n')
+
+
+def functions(args):
 	"""
 	Read in config file to establish paths to files.
 	Determine what functions in program to run based on command line arguments.
 	"""
 
+	# read in config file and begin process log
 	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
 	paths = []
 	with open(args.config) as file:
@@ -68,8 +76,9 @@ def main():
 			if row[1][-1] == '/':
 				row[1] = row[1][:-1]
 			paths.append(row[1])
-	# combine data directory and experiment directory into string
-	# if experiment has apostrophe to stop excel auto-format, then remove
+
+	# ensure data and experiment directories exist
+	# format paths to variable appropriately
 	if paths[2][-1] == "'":
 		paths[2] = paths[2][:-1]
 	if os.path.exists(paths[1]):
@@ -186,8 +195,6 @@ def main():
 		with open(exp + paths[12] + '.txt', 'w') as log_file:
 			log_file.write(process_log)
 		log_file.close()
-
-	print('Program end.\n')
 
 
 def machine_to_human(intake, output, process_log):
