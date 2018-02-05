@@ -1,5 +1,13 @@
 
-[growth-pipe] 2018-02-05 13:23
-Checking experiment output folder...
-Output folder not found, made new folder.
+[growth-pipe] 2018-02-05 13:39
+Data directory found.
+Experiment directory found.
 ERROR: Data set not specified.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 13:38
+Data directory found.
+Experiment directory found.
+ERROR: Data set not specified.
+No process log found, will create new.

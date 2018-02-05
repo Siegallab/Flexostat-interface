@@ -72,11 +72,17 @@ def main():
 	# if experiment has apostrophe to stop excel auto-format, then remove
 	if paths[2][-1] == "'":
 		paths[2] = paths[2][:-1]
-	process_log += '\nChecking data directory...'
-	dead, dead, process_log = validate_output_path(args, paths[1], False, process_log)
-	process_log += '\nChecking experiment output directory...'
-	dead, dead, process_log = validate_output_path(args, paths[1] + paths[2], False, process_log)
+	if os.path.exists(paths[1]):
+		process_log += '\nData directory found.'
+	else:
+		os.system("mkdir '{}'".format(paths[1]))
+		process_log += '\nData directory not found. Made new one.'
 	exp = '{}/{}/'.format(paths[1], paths[2])
+	if os.path.exists(exp):
+		process_log += '\nExperiment directory found.'
+	else:
+		os.system("mkdir '{}'".format(exp))
+		process_log += '\nExperiment directory not found. Made new one.'
 
 	# make sure at least one data set is specified
 	if not args.u and not args.od:
@@ -169,11 +175,14 @@ def main():
 	if args.print:
 		print(process_log)
 	if args.log:
-		if os.path.exists(exp + paths[12]):
+		if os.path.exists(exp + paths[12] + '.txt'):
+			process_log += '\nPrevious process log found, will add to content.'
 			with open(exp + paths[12] + '.txt', 'r') as log_file:
 				old_log = log_file.read()
 				process_log = process_log + '\n\n' + old_log
 			log_file.close()
+		else:
+			process_log += '\nNo process log found, will create new.'
 		with open(exp + paths[12] + '.txt', 'w') as log_file:
 			log_file.write(process_log)
 		log_file.close()
