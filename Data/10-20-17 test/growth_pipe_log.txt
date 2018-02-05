@@ -1,4 +1,76 @@
 
+[growth-pipe] 2018-02-05 18:38
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 18:33
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 18:29
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 18:07
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 17:47
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 17:47
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 17:46
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-05 17:14
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder not found, made new folder.
+tats csv calculated and exported.
+Previous process log found, will add to content.
+
+
 [growth-pipe] 2018-02-05 14:21
 Data directory found.
 Experiment directory found.

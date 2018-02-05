@@ -14,6 +14,7 @@ INSTRUCTIONS
 	$ python3.6 growth-pipe.py -h
 """
 
+import math
 import numpy
 import matplotlib.pyplot as plt
 import pandas
@@ -179,7 +180,7 @@ def functions(args):
 			process_log += '\nStats for od calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths[11], False, process_log)
 			growth_rate_statistics(exp + paths[10], exp + paths[11])
-			process_log += '\ntats csv calculated and exported.'
+			process_log += '\nStats csv calculated and exported.'
 
 	# print and save process log
 	if args.print:
@@ -418,16 +419,23 @@ def growth_rate_statistics(intake, output):
 	                     names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 
 	for chamber in range(2, 10):
+		start_time = 0
+		end_time = 0
 		new_block_r = []
 		hour = 1
-		block_r = []
+		block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'N']]
 		for row in df.itertuples():
 			if row[1] >= hour:
-				sem = numpy.std(new_block_r) / numpy.sqrt(len(new_block_r))
-				block_r.append([hour, numpy.mean(new_block_r), numpy.std(new_block_r), sem])
+				num = len(new_block_r)
+				mean = numpy.mean(new_block_r)
+				sd = numpy.std(new_block_r)
+				sem = sd / numpy.sqrt(num)
+				block_r.append([hour, mean, sd, sem, start_time, end_time, num])
 				hour += 1
 				new_block_r = []
+				start_time = row[1]
 			new_block_r.append(row[chamber])
+			end_time = row[1]
 		stats = pandas.DataFrame(block_r)
 		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False)
 	# generate_graphs('{}_stats'.format(data_set), output, output, '00-00-00', file_prefix)
