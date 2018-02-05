@@ -1,0 +1,5 @@
+
+[growth-pipe] 2018-02-05 13:23
+Checking experiment output folder...
+Output folder not found, made new folder.
+ERROR: Data set not specified.

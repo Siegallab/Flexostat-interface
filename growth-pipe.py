@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpForm
 		Select at least one data set: -u, -o
 		Select at least one function: -p, -r, -s
 		
-		Optional path changes: -c
+		Optional path changes: -c, -l, --print
 					""")
 
 parser.add_argument('-u', '--u', action='store_true', help='specify dilutions data set')
@@ -47,9 +47,10 @@ parser.add_argument('-s', '--stats', action='store_true', help='calculate mean, 
 # parser.add_argument('-t', '--time', default='1',
 # 					help='convert machine time into specified hour interval (default: 1)')
 # parser.add_argument('-x', '--xlim', default='0-0', help='limit data to upper and lower bound x')
-# parser.add_argument('-r', '--recent', help='use most recent experiment')
 parser.add_argument('-c', '--config', default='config-growth.csv',
 					help='change config file (default: config-growth.csv)')
+parser.add_argument('-l', '--log', action='store_true', help='optional save program processes log')
+parser.add_argument('--print', action='store_true', help='optional program processes printing')
 
 args = parser.parse_args()
 
@@ -59,37 +60,41 @@ def main():
 	Determine what functions in program to run based on command line arguments.
 	"""
 
-
-	print('\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M"))
-
+	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
 	paths = []
 	with open(args.config) as file:
 		reader = csv.reader(file)
 		for row in reader:
+			if row[1][-1] == '/':
+				row[1] = row[1][:-1]
 			paths.append(row[1])
 	# combine data directory and experiment directory into string
 	# if experiment has apostrophe to stop excel auto-format, then remove
 	if paths[2][-1] == "'":
 		paths[2] = paths[2][:-1]
+	process_log += '\nChecking data directory...'
+	dead, dead, process_log = validate_output_path(args, paths[1], False, process_log)
+	process_log += '\nChecking experiment output directory...'
+	dead, dead, process_log = validate_output_path(args, paths[1] + paths[2], False, process_log)
 	exp = '{}/{}/'.format(paths[1], paths[2])
 
 	# make sure at least one data set is specified
 	if not args.u and not args.od:
-		print('ERROR: Data set not specified.')
+		process_log += '\nERROR: Data set not specified.'
 	if args.u:
 		# parse function takes log file and exports u/od csv
 		if args.parse:
 			with open(exp + paths[3] + '.dat') as f:  # open input file
 				log = f.read()
 
-			print('Parsing u from log file...')
+			process_log += '\nParsing u from log file...'
 			udata = parse_u(log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths[4] + '.csv'):
-				print('Output file exists, will overwrite.')
+				process_log += '\nOutput file exists, will overwrite.'
 			else:
-				print('Output file not found, will make new file.')
+				process_log += '\nOutput file not found, will make new file.'
 
 			ufile = open(exp + paths[4] + '.csv', 'w')
 			wru = csv.writer(ufile, quoting=csv.QUOTE_ALL)
@@ -98,30 +103,30 @@ def main():
 
 			f.close()
 			ufile.close()
-			print('Parsed csv created and exported.')
+			process_log += '\nParsed csv created and exported.'
 		# rate function takes u/od csv and exports u/od growth rate csv
 		if args.rate:
-			print('Growth rates for u calculating...')
-			machine_to_human(exp + paths[4], exp + paths[5])
+			process_log += '\nGrowth rates for u calculating...'
+			process_log = machine_to_human(exp + paths[4], exp + paths[5], process_log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths[6] + '.csv'):
-				print('Output file exists, will overwrite.')
+				process_log += '\nOutput file exists, will overwrite.'
 			else:
-				print('Output file not found, will make new file.')
+				process_log += '\nOutput file not found, will make new file.'
 
 			r_u_csv(exp + paths[4], exp + paths[6])
-			print('Growth rates calculated and exported.')
+			process_log += '\nGrowth rates calculated and exported.'
 		# stats function takes u/od growth rate csv and exports a csv for each chamber
 		if args.stats:
-			print('Stats for u calculating...')
-			validate_output_path(args, exp + paths[7], False)
+			process_log += '\nStats for u calculating...'
+			dead, dead, process_log = validate_output_path(args, exp + paths[7], False, process_log)
 			growth_rate_statistics(exp + paths[6], exp + paths[7])
-			print('Stats csv calculated and exported.')
+			process_log += '\nStats csv calculated and exported.'
 	if args.od:
 		# parse function takes log file and exports u/od csv
 		if args.parse:
-			print('Parsing od from log file...')
+			process_log += '\nParsing od from log file...'
 			with open(exp + paths[3] + '.dat') as f:  # open input file
 				log = f.read()
 
@@ -129,9 +134,9 @@ def main():
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths[8] + '.csv'):
-				print('Output file exists, will overwrite.')
+				process_log += '\nOutput file exists, will overwrite.'
 			else:
-				print('Output file not found, will make new file.')
+				process_log += '\nOutput file not found, will make new file.'
 
 			odfile = open(exp + paths[8] + '.csv', 'w')
 			wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
@@ -140,44 +145,57 @@ def main():
 
 			f.close()
 			odfile.close()
-			print('Parsed csv created and exported.')
+			process_log += '\nParsed csv created and exported.'
 		# rate function takes u/od csv and exports u/od growth rate csv
 		if args.rate:
-			print('Growth rates for od calculating...')
-			machine_to_human(exp + paths[8], exp + paths[9])
+			process_log += '\nGrowth rates for od calculating...'
+			process_log = machine_to_human(exp + paths[8], exp + paths[9], process_log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths[10] + '.csv'):
-				print('Output file exists, will overwrite.')
+				process_log += '\nOutput file exists, will overwrite.'
 			else:
-				print('Output file not found, will make new file.')
+				process_log += '\nOutput file not found, will make new file.'
 
 			r_od_csv(exp + paths[8], exp + paths[10])
-			print('Growth rates calculated and exported.')
+			process_log += '\nGrowth rates calculated and exported.'
 		# stats function takes u/od growth rate csv and exports a csv for each chamber
 		if args.stats:
-			print('Stats for od calculating...')
-			validate_output_path(args, exp + paths[11], False)
+			process_log += '\nStats for od calculating...'
+			dead, dead, process_log = validate_output_path(args, exp + paths[11], False, process_log)
 			growth_rate_statistics(exp + paths[10], exp + paths[11])
-			print('Stats csv calculated and exported.')
+			process_log += '\ntats csv calculated and exported.'
+
+	if args.print:
+		print(process_log)
+	if args.log:
+		if os.path.exists(exp + paths[12]):
+			with open(exp + paths[12] + '.txt', 'r') as log_file:
+				old_log = log_file.read()
+				process_log = process_log + '\n\n' + old_log
+			log_file.close()
+		with open(exp + paths[12] + '.txt', 'w') as log_file:
+			log_file.write(process_log)
+		log_file.close()
 
 	print('Program end.\n')
 
 
-def machine_to_human(intake, output):
+def machine_to_human(intake, output, process_log):
 	"""
 	Converts machine time (seconds with starting time long ago) to hours from experiment start.
 	Generates new csv and renames the old csv.
 
 	:param intake: path to data
 	:param output: path for export
+	:return: returns updated log of program processes
 	"""
 	df = pandas.read_csv('{}.csv'.format(intake), header=None,
 							names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 	time_start = df.iloc[0, 0]
 	# Checks if the first time point is in machine time
 	if time_start > 1:
-		print('Data set is using machine time. Converting to human time...')
+		process_log += '\nData set is using machine time. Converting to human time...'
 		# Renames the csv using machine time
 		command = "mv '{}.csv' '{}.csv'".format(intake, output)
 		os.system(command)
@@ -196,19 +214,21 @@ def machine_to_human(intake, output):
 					new_row.append(element)
 			new_data.append(new_row)
 		numpy.savetxt('{}.csv'.format(intake), new_data, delimiter=",")
-		print('Data set is using machine time. Data set with human time created.')
+		process_log += '\nData set is using machine time. Data set with human time created.'
 	else:
-		print('Data set is using human time.')
+		process_log += '\nData set is using human time.'
+	
+	return process_log
 
 
-def validate_output_path(args, output, function):
+def validate_output_path(args, output, function, process_log):
 	"""
-	Creates the folder for output stats or graphs if it there is none.
+	Creates the output folder if it there is none.
 
 	:param args: command line argument array for limit parsing
 	:param output: path for export
 	:param function: specify true if function is graphs for limit parsing
-	:return: new output based on limits and limits for graphs
+	:return: new output based on limits, limits for graphs, and updated log for program processes
 	"""
 
 	lim_str = ''
@@ -227,12 +247,12 @@ def validate_output_path(args, output, function):
 	# create an output directory if none exists
 	if not os.path.exists('{}{}'.format(output, lim_str)):
 		os.system("mkdir '{}{}'".format(output, lim_str))
-		print('Output folder not found, made new folder.')
+		process_log += '\nOutput folder not found, made new folder.'
 	else:
-		print('Output folder found, will overwrite previous files.')
+		process_log += '\nOutput folder found, will overwrite previous files.'
 	output = '{}{}'.format(output, lim_str)
 
-	return output, limits
+	return output, limits, process_log
 
 
 def parse_u(rdata):

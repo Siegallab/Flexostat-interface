@@ -10,3 +10,4 @@ OD,test_data_od,Csv file for optical density data
 OD Machine Time,test_data_od_machine,Csv file for machine time optical density data
 OD Growth Rates,test_data_rod,Csv file for growth rate data based on optical density data
 OD Growth Statistics,test_data_rod_stats,Folder for statistics for optical density growth rate data
+Log processes,growth_pipe_log,Text log of program processes
