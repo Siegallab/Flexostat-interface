@@ -4,6 +4,7 @@
 This is the python software for the klavins lab turbidostot (see http://klavinslab.org/hardware for details) with programming contributions from the siegal lab.
 
 ## Table of Contents
+
 ---
 1. [Technical](#technical)
     * [Requirements](#requirements)
