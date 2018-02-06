@@ -50,6 +50,50 @@ MacOS (and probably linux):
 
 ### TODO
 #### Growth Rate Pipeline
+1. Figure out implementation
+    - [x] a. allow for easy user and automated use
+    - [x] b. csv config file for defining file paths
+    - [x] c. integrate flexoparser csv file functions
+2. Crontab automation
+    - [x] a. test and debug
+3. Log file
+    - [x] a. save and/or print program processes
+4. Growth rate analysis
+    - [x] a. analyze OD growth rates from flexoparsed files
+    - [x] b. analyze U growth rates
+    - [x] c. deal with math error causing input
+    - [x] d. test, final debug, and stable build
+5. Mean, SD, SE
+    - [x] a. calculate stats for growth rates
+    - [x] b. test and finish stable build
+    - [ ] c. fix nan's dropping stats
+    - [ ] d. time interval control
+    - [ ] e. stats for OD and U
+    - [ ] f. think about how it will work with large dilutions
+6. Data presentation
+    - [ ] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
+    - [ ] b. x and y lim
+    - [ ] c. multiple lines on a single graph
+7. Predictive analysis
+    - [ ] a. predictive stats based on parameters
+    - [ ] b. compare stats with experimental
+    - [ ] c. output status report
+    - [ ] d. output graphs
+8. Side pipe: media monitoring
+    - [ ] a. calculate remaining percentage and amount of media
+    - [ ] b. notify experimenters
+9. Documentation and organization
+    - [ ] a. organize github files
+    - [x] b. update README
+    - [ ] c. simplify README
+10. Side pipe: large dilution control
+    - [ ] a. allow dynamic config variable changes
+    - [ ] b. ensure flexostat files can update variables
+    - [ ] c. software and hardware test, debug, and stable build
+11. Side pipe: large dilution stats
+    - [ ] a. way to document time intervals of dilution
+    - [ ] b. automated blocking of growth intervals
+    - [ ] c. stats and graphs
 
 ---
 ## File Overview
