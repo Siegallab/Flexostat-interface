@@ -1,4 +1,30 @@
 
+[growth-pipe] 2018-02-06 13:06
+Data directory found.
+Experiment directory found.
+Parsing od from log file...
+Output file exists, will overwrite.
+Parsed csv created and exported.
+Growth rates for od calculating...
+Data set is using machine time. Converting to human time...
+Data set is using machine time. Data set with human time created.
+Output file exists, will overwrite.
+Growth rates calculated and exported.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
+[growth-pipe] 2018-02-06 11:26
+Data directory found.
+Experiment directory found.
+Stats for od calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Previous process log found, will add to content.
+
+
 [growth-pipe] 2018-02-05 18:38
 Data directory found.
 Experiment directory found.

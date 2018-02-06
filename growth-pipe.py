@@ -14,7 +14,6 @@ INSTRUCTIONS
 	$ python3.6 growth-pipe.py -h
 """
 
-import math
 import numpy
 import matplotlib.pyplot as plt
 import pandas
@@ -423,7 +422,7 @@ def growth_rate_statistics(intake, output):
 		end_time = 0
 		new_block_r = []
 		hour = 1
-		block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'N']]
+		block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
 		for row in df.itertuples():
 			if row[1] >= hour:
 				num = len(new_block_r)
