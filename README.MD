@@ -274,7 +274,7 @@ The pipeline is made to deal with dilution (u) or optical density (od) data. The
 
 Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
 
-Running this code through the command line will general an explanation of all functions of the pipeline.
+Running this code through the command line will generate an explanation of all functions of the pipeline.
 ```Shell
 $ python3 growth-pipe.py -h
 ```
