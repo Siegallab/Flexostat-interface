@@ -11,7 +11,11 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
     * [Configuration](#configuration)
     * [Known Issues](#known-issues)
     * [TODO](#todo)
-        * [Growth Rate Pipeline](#growth-rate-pipeline)
+        * [Growth Rate Pipeline](#growth-rate-pipeline-todo)
+		* [Large Dilution Pipeline](#large-dilution-pipeline-todo)
+		* [Media Monitoring](#media-monitoring-todo)
+		* [Analysis](#analysis-todo)
+		* [Organization](#organization-todo)
 2. [File Overview](#file-overview)
 3. [Up and Running](#up-and-running)
     * [RPi SSH Access](#raspberrypi-ssh-access)
@@ -19,7 +23,8 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
     * [Git](#git)
 4. [Files In-depth](#files-in-depth)
     * [Primer_auto Guide](#primer_auto-guide)
-    * [Flexoparser_csv guide](#flexoparser_csv-guide)
+    * [Flexoparser_csv Guide](#flexoparser_csv-guide)
+	* [growth-pipe Guide](#growth-pipe-guide)
 5. [Hardware Setup](#hardware-setup)
     * [RPi Setup Guide](#raspberry-pi-settup-guide)
     * [Board Framework Installation](#board-framework-installation)
@@ -49,7 +54,7 @@ MacOS (and probably linux):
 * Pumping volumes that take longer than 'period' seconds to process will result in a negative timer value being set, which in turn causes a timer overflow and the program to sleep for nearly 2^32 seconds (many years).
 
 ### TODO
-#### Growth Rate Pipeline
+#### Growth Rate Pipeline TODO
 1. Figure out implementation
     - [x] a. allow for easy user and automated use
     - [x] b. csv config file for defining file paths
@@ -67,33 +72,40 @@ MacOS (and probably linux):
     - [x] a. calculate stats for growth rates
     - [x] b. test and finish stable build
     - [x] c. fix nan's dropping stats
-    - [ ] d. time interval control
-    - [ ] e. stats for OD and U
-    - [ ] f. think about how it will work with large dilutions
+    - [x] d. time interval control
+    - [x] e. stats for OD and U
 6. Data presentation
-    - [ ] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
-    - [ ] b. x and y lim
-    - [ ] c. multiple lines on a single graph
-7. Predictive analysis
-    - [ ] a. predictive stats based on parameters
+    - [x] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
+    - [x] b. x and y lim
+    - [ ] c. multiple data sets on a single graph
+#### Large Dilution Pipeline TODO
+1. Main functionality
+	- [ ] a. allow dynamic config variable changes
+    - [ ] b. ensure flexostat files can update variables
+    - [ ] c. software and hardware test, debug, and stable build
+2. Statistics
+	- [ ] a. way to document time intervals of dilution
+    - [ ] b. automated blocking of growth intervals
+    - [ ] c. stats and graphs
+#### Media Monitoring TODO
+1. Main functionality
+	- [ ] a. calculate remaining percentage and amount of media
+    - [ ] b. notify experimenters
+#### Analysis TODO
+1. Significance Calculation
+	- [ ] a. percent change
+	- [ ] b. statistical significance
+	- [ ] c. output graphs
+	- [ ] d. implement functionality in previous pipelines
+2. Predictive Analysis
+	- [ ] a. predictive stats based on parameters
     - [ ] b. compare stats with experimental
     - [ ] c. output status report
     - [ ] d. output graphs
-8. Side pipe: media monitoring
-    - [ ] a. calculate remaining percentage and amount of media
-    - [ ] b. notify experimenters
-9. Documentation and organization
-    - [ ] a. organize github files
-    - [x] b. update README
-    - [ ] c. simplify README
-10. Side pipe: large dilution control
-    - [ ] a. allow dynamic config variable changes
-    - [ ] b. ensure flexostat files can update variables
-    - [ ] c. software and hardware test, debug, and stable build
-11. Side pipe: large dilution stats
-    - [ ] a. way to document time intervals of dilution
-    - [ ] b. automated blocking of growth intervals
-    - [ ] c. stats and graphs
+#### Organization TODO
+1. GitHub
+	- [ ] a. organize github files
+    - [ ] b. update and simplify README
 
 ---
 ## File Overview
@@ -256,6 +268,20 @@ $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat
 A standard command line prompt with the optional inputs that will output just od values from time: 1493413783-14934549836 should look like:
 
 $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data -o od -b 1493413783 -e 14934549836
+
+### Growth-Pipe Guide
+The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* file made by the flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the below data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* file from which this pipeline feeds from.
+
+Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
+
+Running this code through the command line will general an explanation of all functions of the pipeline.
+```Shell
+$ python3 growth-pipe.py -h
+```
+Running this code will generate all the data and statistics for dilutions (u) and optical density (od). The flags *--u* and *--od* tell the program to analyze both sets of data. *--parse* will parse the u and od data from the *log.dat* file, *--stats* will calculate mean, standard deviation, and standard error for this data, *--rate* will analyze the growth rates for both u and od, and *--r_stats* will calculate the mean, standard deviation, and standard error for the growth rate data.
+```Shell
+$ python3 growth-pipe.py --u --od --parse --stats --rate --r_stats
+```
 
 ---
 ## Hardware Setup
