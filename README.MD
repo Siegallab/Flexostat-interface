@@ -66,7 +66,7 @@ MacOS (and probably linux):
 5. Mean, SD, SE
     - [x] a. calculate stats for growth rates
     - [x] b. test and finish stable build
-    - [ ] c. fix nan's dropping stats
+    - [x] c. fix nan's dropping stats
     - [ ] d. time interval control
     - [ ] e. stats for OD and U
     - [ ] f. think about how it will work with large dilutions

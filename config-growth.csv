@@ -1,13 +1,15 @@
-variable,path,description (omit all file extensions)
-log file,log_171020,dat file exported by the servostat experiment program
-data directory,Data,path to the folder where you are storing all your experiment folders
-experiment,10-20-17 test',"particular experiment folder to retrieve from and export to. If using date in mm-dd-yy format, add apostraphe at end to stop excel auto-format and the python program will ignore it"
-u,test_data_u,csv file for dilution data
-u machine time,test_data_u_machine,csv file for machine time dilution data
-u growth rates,test_data_ru,csv file for growth rate data based on dilution data
-u growth statistics,test_data_ru_stats,folder for statistics for dilution growth rate data
-od,test_data_od,csv file for optical density data
-od machine time,test_data_od_machine,csv file for machine time optical density data
-od growth rates,test_data_rod,csv file for growth rate data based on optical density data
-od growth statistics,test_data_rod_stats,folder for statistics for optical density growth rate data
-log processes,growth_pipe_log,text log of program processes
+variable,path,description (omit all file extensions),graph path,description (folder name for exporting graphs)
+log file,log_171020,dat file exported by the servostat experiment program,,
+data directory,Data,path to the folder where you are storing all your experiment folders,,
+experiment,10-20-17 test',"particular experiment folder to retrieve from and export to. If using date in mm-dd-yy format, add apostraphe at end to stop excel auto-format and the python program will ignore it",,
+u,test_data_u,csv file for dilution data,test_data_u_graphs,
+u statistics,test_data_u_stats,folder for statistics for dilutions,test_data_u_stats_graphs,
+u machine time,test_data_u_machine,csv file for machine time dilution data,,
+u growth rates,test_data_ru,csv file for growth rate data based on dilution data,test_data_ru_graphs,
+u growth statistics,test_data_ru_stats,folder for statistics for dilution growth rate data,test_data_ru_stats_graphs,
+od,test_data_od,csv file for optical density data,test_data_od_graphs,
+od statistics,test_data_od_stats,folder for statistics for optical densities,test_data_od_stats_graphs,
+od machine time,test_data_od_machine,csv file for machine time optical density data,,
+od growth rates,test_data_rod,csv file for growth rate data based on optical density data,test_data_rod_graphs,
+od growth statistics,test_data_rod_stats,folder for statistics for optical density growth rate data,test_data_rod_stats_graphs,
+log processes,growth_pipe_log,text log of program processes,,

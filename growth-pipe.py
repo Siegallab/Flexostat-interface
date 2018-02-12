@@ -30,12 +30,13 @@ def main():
 
 	parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
 					description="""
-			Growth Rate Analysis.
-			---------------------
-			Select at least one data set: -u, -o
-			Select at least one function: -p, -r, -s
+			Growth Rate Analysis Pipeline
+			-----------------------------
+			Select at least one data set: --u, --od
+			Select at least one function: --parse (-p), 
+					--rate (-r), --stats, --r_stats
 			
-			Optional changes: -c, -l, --print
+			Optional changes: --config (-c), --log (-l), --print
 						""")
 
 	parser.add_argument('--u', action='store_true', help='specify dilutions data set')
@@ -43,7 +44,8 @@ def main():
 
 	parser.add_argument('-p', '--parse', action='store_true', help='parse log file into clean data set')
 	parser.add_argument('-r', '--rate', action='store_true', help='calculate growth rate from data set')
-	parser.add_argument('-s', '--stats', action='store_true', help='calculate mean, SD, and SE from data set')
+	parser.add_argument('--stats', action='store_true', help='calculate mean, SD, and SE from data set')
+	parser.add_argument('--r_stats', action='store_true', help='calculate mean, SD, and SE from growth rates of data set')
 
 	# parser.add_argument('-t', '--time', default='1',
 	# 					help='convert machine time into specified hour interval (default: 1)')
@@ -69,14 +71,14 @@ def functions(args):
 	"""
 
 	# begin log to keep track of program processes
-	# read in config file and save all config variables to local variables
+	# read in config file and save all config variables to local variables in a dictionary
 	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
 	paths = {
 		'log file' : '', 'data directory' : '', 'experiment' : '',
-		'u' : '', 'u machine time' : '', 'u growth rates' : '',
-		'u growth statistics' : '',
-		'od' : '', 'od machine time' : '', 'od growth rates' : '',
-		'od growth statistics' : '',
+		'u' : '', 'u statistics' : '', 'u machine time' : '',
+		'u growth rates' : '', 'u growth statistics' : '',
+		'od' : '', 'u statistics' : '', 'od machine time' : '', 
+		'od growth rates' : '', 'od growth statistics' : '',
 		'log processes' : ''
 	}
 	with open(args.config) as file:
@@ -107,7 +109,7 @@ def functions(args):
 	if not args.u and not args.od:
 		process_log += '\nERROR: Data set not specified.'
 	if args.u:
-		# parse function takes log file and exports u/od csv
+		# parse function takes log file and exports u csv
 		if args.parse:
 			with open(exp + paths['log file'] + '.dat') as f:  # open input file
 				log = f.read()
@@ -129,7 +131,7 @@ def functions(args):
 			f.close()
 			ufile.close()
 			process_log += '\nParsed csv created and exported.'
-		# rate function takes u/od csv and exports u/od growth rate csv
+		# rate function takes u csv and exports u growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for u calculating...'
 			process_log = machine_to_human(exp + paths['u'], exp + paths['u machine time'], process_log)
@@ -142,14 +144,20 @@ def functions(args):
 
 			r_u_csv(exp + paths['u'], exp + paths['u growth rates'])
 			process_log += '\nGrowth rates calculated and exported.'
-		# stats function takes u/od growth rate csv and exports a csv for each chamber
+		# stats function takes u csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for u calculating...'
+			dead, dead, process_log = validate_output_path(args, exp + paths['u statistics'], False, process_log)
+			growth_rate_statistics(exp + paths['u'], exp + paths['u statistics'])
+			process_log += '\nStats csv calculated and exported.'
+		# stats function takes u growth rate csv and exports a csv for each chamber
+		if args.r_stats:
+			process_log += '\nStats for u growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u growth statistics'], False, process_log)
 			growth_rate_statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'])
 			process_log += '\nStats csv calculated and exported.'
 	if args.od:
-		# parse function takes log file and exports u/od csv
+		# parse function takes log file and exports od csv
 		if args.parse:
 			process_log += '\nParsing od from log file...'
 			with open(exp + paths['log file'] + '.dat') as f:  # open input file
@@ -171,7 +179,7 @@ def functions(args):
 			f.close()
 			odfile.close()
 			process_log += '\nParsed csv created and exported.'
-		# rate function takes u/od csv and exports u/od growth rate csv
+		# rate function takes od csv and exports od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
 			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
@@ -184,9 +192,15 @@ def functions(args):
 
 			r_od_csv(exp + paths['od'], exp + paths['od growth rates'])
 			process_log += '\nGrowth rates calculated and exported.'
-		# stats function takes u/od growth rate csv and exports a csv for each chamber
+		# stats function takes od csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for od calculating...'
+			dead, dead, process_log = validate_output_path(args, exp + paths['od statistics'], False, process_log)
+			growth_rate_statistics(exp + paths['od'], exp + paths['od statistics'])
+			process_log += '\nStats csv calculated and exported.'
+		# stats function takes od growth rate csv and exports a csv for each chamber
+		if args.r_stats:
+			process_log += '\nStats for od growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od growth statistics'], False, process_log)
 			growth_rate_statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'])
 			process_log += '\nStats csv calculated and exported.'
@@ -216,6 +230,7 @@ def machine_to_human(intake, output, process_log):
 
 	:param intake: path to data
 	:param output: path for export
+	:param process_log: log for keeping track of processes
 	:return: returns updated log of program processes
 	"""
 	df = pandas.read_csv('{}.csv'.format(intake), header=None,
@@ -256,6 +271,7 @@ def validate_output_path(args, output, function, process_log):
 	:param args: command line argument array for limit parsing
 	:param output: path for export
 	:param function: specify true if function is graphs for limit parsing
+	:param process_log: log for keeping track of processes
 	:return: new output based on limits, limits for graphs, and updated log for program processes
 	"""
 
