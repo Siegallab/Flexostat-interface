@@ -24,7 +24,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
 4. [Files In-depth](#files-in-depth)
     * [Primer_auto Guide](#primer_auto-guide)
     * [Flexoparser_csv Guide](#flexoparser_csv-guide)
-	* [growth-pipe Guide](#growth-pipe-guide)
+	* [Growth-Pipe Guide](#growth-pipe-guide)
 5. [Hardware Setup](#hardware-setup)
     * [RPi Setup Guide](#raspberry-pi-settup-guide)
     * [Board Framework Installation](#board-framework-installation)
