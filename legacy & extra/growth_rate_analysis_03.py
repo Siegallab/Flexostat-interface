@@ -21,7 +21,6 @@ import os
 import argparse
 import warnings
 import csv
-import math
 from datetime import datetime
 
 def main():
@@ -35,11 +34,11 @@ def main():
 			Select at least one data set: -u, -o
 			Select at least one function: -p, -r, -s
 			
-			Optional changes: -c, -l, --print
+			Optional path changes: -c, -l, --print
 						""")
 
-	parser.add_argument('--u', action='store_true', help='specify dilutions data set')
-	parser.add_argument('--od', action='store_true', help='specify optical density data set')
+	parser.add_argument('-u', '--u', action='store_true', help='specify dilutions data set')
+	parser.add_argument('-o', '--od', action='store_true', help='specify optical density data set')
 
 	parser.add_argument('-p', '--parse', action='store_true', help='parse log file into clean data set')
 	parser.add_argument('-r', '--rate', action='store_true', help='calculate growth rate from data set')
@@ -71,32 +70,38 @@ def functions(args):
 	# begin log to keep track of program processes
 	# read in config file and save all config variables to local variables
 	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
-	paths = {
-		'log file' : '', 'data directory' : '', 'experiment' : '',
-		'u' : '', 'u machine time' : '', 'u growth rates' : '',
-		'u growth statistics' : '',
-		'od' : '', 'od machine time' : '', 'od growth rates' : '',
-		'od growth statistics' : '',
-		'log processes' : ''
-	}
+	paths = []
 	with open(args.config) as file:
 		reader = csv.reader(file)
 		for row in reader:
 			if row[1][-1] == '/':
 				row[1] = row[1][:-1]
-			paths[row[0]] = row[1]
+			paths.append(row[1])
 	file.close()
+	log_file_path = paths[1]
+	data_directory_path = paths[2]
+	experiment_path = paths[3]
+	u_path = paths[4]
+	u_machine_path = paths[5]
+	u_growth_path = paths[6]
+	u_growth_stats_path = paths[7]
+	od_path = paths[8]
+	od_machine_path = paths[9]
+	od_growth_path = paths[10]
+	od_growth_stats_path = [11]
+	log_processes_path = paths[12]
+
 
 	# ensure data and experiment directories exist
 	# format paths to variable appropriately
-	if paths['experiment'][-1] == "'":
-		paths['experiment'] = paths['experiment'][:-1]
-	if os.path.exists(paths['data directory']):
+	if experiment_path[-1] == "'":
+		experiment_path = experiment_path[:-1]
+	if os.path.exists(data_directory_path):
 		process_log += '\nData directory found.'
 	else:
-		os.system("mkdir '{}'".format(paths['data directory']))
+		os.system("mkdir '{}'".format(data_directory_path))
 		process_log += '\nData directory not found. Made new one.'
-	exp = '{}/{}/'.format(paths['data directory'], paths['experiment'])
+	exp = '{}/{}/'.format(data_directory_path, experiment_path)
 	if os.path.exists(exp):
 		process_log += '\nExperiment directory found.'
 	else:
@@ -109,19 +114,19 @@ def functions(args):
 	if args.u:
 		# parse function takes log file and exports u/od csv
 		if args.parse:
-			with open(exp + paths['log file'] + '.dat') as f:  # open input file
+			with open(exp + log_file_path + '.dat') as f:  # open input file
 				log = f.read()
 
 			process_log += '\nParsing u from log file...'
 			udata = parse_u(log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['u'] + '.csv'):
+			if os.path.exists(exp + u_path + '.csv'):
 				process_log += '\nOutput file exists, will overwrite.'
 			else:
 				process_log += '\nOutput file not found, will make new file.'
 
-			ufile = open(exp + paths['u'] + '.csv', 'w')
+			ufile = open(exp + u_path + '.csv', 'w')
 			wru = csv.writer(ufile, quoting=csv.QUOTE_ALL)
 			for u in udata:
 				wru.writerow(u)
@@ -132,38 +137,38 @@ def functions(args):
 		# rate function takes u/od csv and exports u/od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for u calculating...'
-			process_log = machine_to_human(exp + paths['u'], exp + paths['u machine time'], process_log)
+			process_log = machine_to_human(exp + u_path, exp + u_machine_path, process_log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['u growth rates'] + '.csv'):
+			if os.path.exists(exp + u_growth_path + '.csv'):
 				process_log += '\nOutput file exists, will overwrite.'
 			else:
 				process_log += '\nOutput file not found, will make new file.'
 
-			r_u_csv(exp + paths['u'], exp + paths['u growth rates'])
+			r_u_csv(exp + u_path, exp + u_growth_path)
 			process_log += '\nGrowth rates calculated and exported.'
 		# stats function takes u/od growth rate csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for u calculating...'
-			dead, dead, process_log = validate_output_path(args, exp + paths['u growth statistics'], False, process_log)
-			growth_rate_statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'])
+			dead, dead, process_log = validate_output_path(args, exp + u_growth_stats_path, False, process_log)
+			growth_rate_statistics(exp + u_growth_path, exp + u_growth_stats_path)
 			process_log += '\nStats csv calculated and exported.'
 	if args.od:
 		# parse function takes log file and exports u/od csv
 		if args.parse:
 			process_log += '\nParsing od from log file...'
-			with open(exp + paths['log file'] + '.dat') as f:  # open input file
+			with open(exp + log_file_path + '.dat') as f:  # open input file
 				log = f.read()
 
 			oddata = parse_od(log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['od'] + '.csv'):
+			if os.path.exists(exp + od_path + '.csv'):
 				process_log += '\nOutput file exists, will overwrite.'
 			else:
 				process_log += '\nOutput file not found, will make new file.'
 
-			odfile = open(exp + paths['od'] + '.csv', 'w')
+			odfile = open(exp + od_path + '.csv', 'w')
 			wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
 			for od in oddata:
 				wrod.writerow(od)
@@ -174,21 +179,21 @@ def functions(args):
 		# rate function takes u/od csv and exports u/od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
-			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
+			process_log = machine_to_human(exp + od_path, exp + od_machine_path, process_log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['od growth rates'] + '.csv'):
+			if os.path.exists(exp + od_growth_path + '.csv'):
 				process_log += '\nOutput file exists, will overwrite.'
 			else:
 				process_log += '\nOutput file not found, will make new file.'
 
-			r_od_csv(exp + paths['od'], exp + paths['od growth rates'])
+			r_od_csv(exp + od_path, exp + od_growth_path)
 			process_log += '\nGrowth rates calculated and exported.'
 		# stats function takes u/od growth rate csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for od calculating...'
-			dead, dead, process_log = validate_output_path(args, exp + paths['od growth statistics'], False, process_log)
-			growth_rate_statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'])
+			dead, dead, process_log = validate_output_path(args, exp + od_growth_stats_path, False, process_log)
+			growth_rate_statistics(exp + od_growth_path, exp + od_growth_stats_path)
 			process_log += '\nStats csv calculated and exported.'
 
 	# print and save process log
@@ -196,15 +201,15 @@ def functions(args):
 		print(process_log)
 	if args.log:
 		# if previous process log file found, save contents before overwriting
-		if os.path.exists(exp + paths['log processes'] + '.txt'):
+		if os.path.exists(exp + log_file_path + '.txt'):
 			process_log += '\nPrevious process log found, will add to content.'
-			with open(exp + paths['log processes'] + '.txt', 'r') as log_file:
+			with open(exp + log_file_path + '.txt', 'r') as log_file:
 				old_log = log_file.read()
 				process_log = process_log + '\n\n' + old_log
 			log_file.close()
 		else:
 			process_log += '\nNo process log found, will create new.'
-		with open(exp + paths['log processes'] + '.txt', 'w') as log_file:
+		with open(exp + log_file_path + '.txt', 'w') as log_file:
 			log_file.write(process_log)
 		log_file.close()
 
@@ -434,7 +439,7 @@ def growth_rate_statistics(intake, output):
 		hour = 1
 		block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
 		for row in df.itertuples():
-			if row[1] >= hour and len(new_block_r) >= 1:
+			if row[1] >= hour:
 				num = len(new_block_r)
 				mean = numpy.mean(new_block_r)
 				sd = numpy.std(new_block_r)
@@ -443,11 +448,10 @@ def growth_rate_statistics(intake, output):
 				hour += 1
 				new_block_r = []
 				start_time = row[1]
-			if not math.isnan(row[chamber]):
-				new_block_r.append(row[chamber])
-				end_time = row[1]
+			new_block_r.append(row[chamber])
+			end_time = row[1]
 		stats = pandas.DataFrame(block_r)
-		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False, header=False)
+		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False)
 	# generate_graphs('{}_stats'.format(data_set), output, output, '00-00-00', file_prefix)
 
 	# TODO generate graphs for statistics
