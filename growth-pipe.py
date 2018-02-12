@@ -34,9 +34,10 @@ def main():
 			-----------------------------
 			Select at least one data set: --u, --od
 			Select at least one function: --parse (-p), 
-					--rate (-r), --stats, --r_stats
+					--rate (-r), --stats, --r_stats, --graph
 			
-			Optional changes: --config (-c), --log (-l), --print
+			Optional changes: --config (-c), --log (-l), --print,
+					--interval (-i), --xlim (-x), --ylim (-y)
 						""")
 
 	parser.add_argument('--u', action='store_true', help='specify dilutions data set')
@@ -46,13 +47,16 @@ def main():
 	parser.add_argument('-r', '--rate', action='store_true', help='calculate growth rate from data set')
 	parser.add_argument('--stats', action='store_true', help='calculate mean, SD, and SE from data set')
 	parser.add_argument('--r_stats', action='store_true', help='calculate mean, SD, and SE from growth rates of data set')
+	parser.add_argument('--graph', default='0', help="graph specified data: 1 for main u/od, 2 for main stats, 3 for growth rates," + 
+				" 4 for growth stats (e.g. '--graph 1234' for all)")
 
-	# parser.add_argument('-t', '--time', default='1',
-	# 					help='convert machine time into specified hour interval (default: 1)')
-	# parser.add_argument('-x', '--xlim', default='0-0', help='limit data to upper and lower bound x')
+	parser.add_argument('-i', '--interval', default='1',
+						help="modify default hour time interval for stats and graphs by multiplication (e.g. '-i 0.5' = 30 min, '-i 2' = 2 hrs)")
+	parser.add_argument('-x', '--xlim', default='0-0', help="limit data to upper and lower bound x (e.g. '-x 5-10')")
+	parser.add_argument('-y', '--ylim', default='0-0', help="limit data to upper and lower bound y (e.g. '-y 5-10')")
 	parser.add_argument('-c', '--config', default='config-growth.csv',
-						help='change config file (default: config-growth.csv)')
-	parser.add_argument('-l', '--log', action='store_true', help='optional save program processes log')
+						help="change config file from default 'config-growth.csv'")
+	parser.add_argument('-l', '--log', action='store_true', help='optional save program processes to log text file')
 	parser.add_argument('--print', action='store_true', help='optional program processes printing')
 
 	args = parser.parse_args()
@@ -74,12 +78,18 @@ def functions(args):
 	# read in config file and save all config variables to local variables in a dictionary
 	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
 	paths = {
-		'log file' : '', 'data directory' : '', 'experiment' : '',
+		# general local variables
+		'' : '', 'log file' : '', 'data directory' : '', 'experiment' : '', 'log processes' : '',
+		# dilution local variables
 		'u' : '', 'u statistics' : '', 'u machine time' : '',
 		'u growth rates' : '', 'u growth statistics' : '',
+		# optical density local variables
 		'od' : '', 'u statistics' : '', 'od machine time' : '', 
 		'od growth rates' : '', 'od growth statistics' : '',
-		'log processes' : ''
+		# dilution graph local variables
+		'u graphs' : '', 'u statistics graphs' : '', 'u growth rates graphs' : '', 'u growth statistics graphs' : '',
+		# optical density graph local variables
+		'od graphs' : '', 'od statistics graphs' : '', 'od growth rates graphs' : '', 'od growth statistics graphs' : ''
 	}
 	with open(args.config) as file:
 		reader = csv.reader(file)
@@ -87,6 +97,10 @@ def functions(args):
 			if row[1][-1] == '/':
 				row[1] = row[1][:-1]
 			paths[row[0]] = row[1]
+			if len(row[4]) >= 1:
+				if row[4][-1] == '/':
+					row[4] = row[1][:-1]
+			paths[row[3]] = row[4]
 	file.close()
 
 	# ensure data and experiment directories exist
@@ -148,14 +162,36 @@ def functions(args):
 		if args.stats:
 			process_log += '\nStats for u calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u statistics'], False, process_log)
-			growth_rate_statistics(exp + paths['u'], exp + paths['u statistics'])
+			growth_rate_statistics(exp + paths['u'], exp + paths['u statistics'], args.interval)
 			process_log += '\nStats csv calculated and exported.'
 		# stats function takes u growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for u growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u growth statistics'], False, process_log)
-			growth_rate_statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'])
+			growth_rate_statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval)
 			process_log += '\nStats csv calculated and exported.'
+		# graph functions take specific od csv and exports graphs based on command line arguments
+		if args.graph:
+			if '1' in args.graph:
+				process_log += '\nGraphing for u...'
+				output, limits, process_log = validate_output_path(args, exp + paths['u graphs'], True, process_log)
+				generate_graphs(exp + paths['u'], output, limits, False)
+				process_log += '\nGraphs exported.'
+			if '2' in args.graph:
+				process_log += '\nGraphing for u stats...'
+				output, limits, process_log = validate_output_path(args, exp + paths['u statistics graphs'], True, process_log)
+				generate_graphs(exp + paths['u statistics'], output, limits, True)
+				process_log += '\nGraphs exported.'
+			if '3' in args.graph:
+				process_log += '\nGraphing for u growth rates...'
+				output, limits, process_log = validate_output_path(args, exp + paths['u growth rates graphs'], True, process_log)
+				generate_graphs(exp + paths['u growth rates'], output, limits, False)
+				process_log += '\nGraphs exported.'
+			if '4' in args.graph:
+				process_log += '\nGraphing for u growth stats...'
+				output, limits, process_log = validate_output_path(args, exp + paths['u growth statistics graphs'], True, process_log)
+				generate_graphs(exp + paths['u growth statistics'], output, limits, True)
+				process_log += '\nGraphs exported.'
 	if args.od:
 		# parse function takes log file and exports od csv
 		if args.parse:
@@ -196,14 +232,36 @@ def functions(args):
 		if args.stats:
 			process_log += '\nStats for od calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od statistics'], False, process_log)
-			growth_rate_statistics(exp + paths['od'], exp + paths['od statistics'])
+			growth_rate_statistics(exp + paths['od'], exp + paths['od statistics'], args.interval)
 			process_log += '\nStats csv calculated and exported.'
 		# stats function takes od growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for od growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od growth statistics'], False, process_log)
-			growth_rate_statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'])
+			growth_rate_statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval)
 			process_log += '\nStats csv calculated and exported.'
+		# graph functions take specific od csv and exports graphs based on command line arguments
+		if args.graph:
+			if '1' in args.graph:
+				process_log += '\nGraphing for od...'
+				output, limits, process_log = validate_output_path(args, exp + paths['od graphs'], True, process_log)
+				generate_graphs(exp + paths['od'], output, limits, False)
+				process_log += '\nGraphs exported.'
+			if '2' in args.graph:
+				process_log += '\nGraphing for od stats...'
+				output, limits, process_log = validate_output_path(args, exp + paths['od statistics graphs'], True, process_log)
+				generate_graphs(exp + paths['od statistics'], output, limits, True)
+				process_log += '\nGraphs exported.'
+			if '3' in args.graph:
+				process_log += '\nGraphing for od growth rates...'
+				output, limits, process_log = validate_output_path(args, exp + paths['od growth rates graphs'], True, process_log)
+				generate_graphs(exp + paths['od growth rates'], output, limits, False)
+				process_log += '\nGraphs exported.'
+			if '4' in args.graph:
+				process_log += '\nGraphing for od growth stats...'
+				output, limits, process_log = validate_output_path(args, exp + paths['od growth statistics graphs'], True, process_log)
+				generate_graphs(exp + paths['od growth statistics'], output, limits, True)
+				process_log += '\nGraphs exported.'
 
 	# print and save process log
 	if args.print:
@@ -274,18 +332,19 @@ def validate_output_path(args, output, function, process_log):
 	:param process_log: log for keeping track of processes
 	:return: new output based on limits, limits for graphs, and updated log for program processes
 	"""
-
 	lim_str = ''
 	limits = [0.0, 0.0, 0.0, 0.0]
 	# graphs will have x and y limits parsed and used for the output directory
 	if function:
 		if args.xlim:
-			limits[0] = float(args.xlim.split("-")[0])
-			limits[1] = float(args.xlim.split("-")[1])
+			temp = args.xlim
+			limits[0] = float(temp.split("-")[0])
+			limits[1] = float(temp.split("-")[1])
 			lim_str = ' x ' + args.xlim
 		if args.ylim:
-			limits[2] = float(args.xlim.split("-")[0])
-			limits[3] = float(args.xlim.split("-")[1])
+			temp = args.ylim
+			limits[2] = float(temp.split("-")[0])
+			limits[3] = float(temp.split("-")[1])
 			lim_str = lim_str + ' y ' + args.ylim
 
 	# create an output directory if none exists
@@ -346,8 +405,7 @@ def r_u_csv(intake, output):
 	:param intake: path to data
 	:param output: path for export
 	"""
-	df = pandas.read_csv('{}.csv'.format(intake), header=None,
-							names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 	new_data_r = []
 	time_start = df.iloc[0, 0]
 	previous_time = df.iloc[0, 0]
@@ -385,8 +443,7 @@ def r_od_csv(experiment, output):
 	:param intake: path to data
 	:param output: path for export
 	"""
-	df = pandas.read_csv('{}.csv'.format(experiment), header=None,
-							names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv('{}.csv'.format(experiment), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 	new_data_r = []
 	time_start = df.iloc[0, 0]
 	previous_time = df.iloc[0, 0]
@@ -433,21 +490,21 @@ def r_od_csv(experiment, output):
 	df.to_csv(path_or_buf='{}.csv'.format(output), index=False)
 
 
-def growth_rate_statistics(intake, output):
+def growth_rate_statistics(intake, output, interval):
 	"""
 	Analyzes growth rate csv for general statistics (averages, standard deviation, and standard error).
 
 	:param intake: path to data
 	:param output: path for export
+	:param interval: modify default hour time interval by multiplication
 	"""
-	df = pandas.read_csv('{}.csv'.format(intake), header=None,
-	                     names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 
 	for chamber in range(2, 10):
 		start_time = 0
 		end_time = 0
 		new_block_r = []
-		hour = 1
+		hour = 1 * interval
 		block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
 		for row in df.itertuples():
 			if row[1] >= hour and len(new_block_r) >= 1:
@@ -456,7 +513,7 @@ def growth_rate_statistics(intake, output):
 				sd = numpy.std(new_block_r)
 				sem = sd / numpy.sqrt(num)
 				block_r.append([hour, mean, sd, sem, start_time, end_time, num])
-				hour += 1
+				hour += 1 * interval
 				new_block_r = []
 				start_time = row[1]
 			if not math.isnan(row[chamber]):
@@ -469,25 +526,37 @@ def growth_rate_statistics(intake, output):
 	# TODO generate graphs for statistics
 
 
-def generate_graphs(intake, output, limits):
+def generate_graphs(intake, output, limits, head):
 	"""
 	Creates a scatter plot for each chamber based on defined x and y limits and a data set csv.
 
 	:param intake: path to data
 	:param output: path for export
 	:param limits: x and y limits to use for graphs
+	:param head: boolean signal for header in csv data for stats
 	"""
-	df = pandas.read_csv('{}.csv'.format(intake), header=None,
-							names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
-	for chamber in range(1, 9):
-		df.plot.scatter(x='Time', y='{}'.format(chamber))
-		# If x or y limits are not zero, then resize graph to the inputted limits
-		if limits[0] != limits[1]:
-			plt.xlim(limits[0], limits[1])
-		if limits[2] != limits[3]:
-			plt.ylim(limits[2], limits[3])
-		plt.savefig('{}/ch{}.png'.format(output, chamber))
-		plt.close()
-
+	if head:
+		for chamber in range(1, 9):
+			df = pandas.read_csv('{}/ch{}.csv'.format(intake, chamber), header=1, names=['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n'])
+			df.plot.scatter(x='Hour', y='Mean')
+			# If x or y limits are not zero, then resize graph to the inputted limits
+			if limits[0] != limits[1]:
+				plt.xlim(limits[0], limits[1])
+			if limits[2] != limits[3]:
+				plt.ylim(limits[2], limits[3])
+			plt.savefig('{}/ch{}.png'.format(output, chamber))
+			plt.close()
+	else:
+		df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+		for chamber in range(1, 9):
+			df.plot.scatter(x='Time', y='{}'.format(chamber))
+			# If x or y limits are not zero, then resize graph to the inputted limits
+			if limits[0] != limits[1]:
+				plt.xlim(limits[0], limits[1])
+			if limits[2] != limits[3]:
+				plt.ylim(limits[2], limits[3])
+			plt.savefig('{}/ch{}.png'.format(output, chamber))
+			plt.close()
+			
 
 main()
