@@ -270,7 +270,7 @@ A standard command line prompt with the optional inputs that will output just od
 $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data -o od -b 1493413783 -e 14934549836
 
 ### Growth-Pipe Guide
-The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* file made by the flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the below data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* file from which this pipeline feeds from.
+The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* file from which this pipeline feeds from.
 
 Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
 
