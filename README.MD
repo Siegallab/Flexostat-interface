@@ -128,16 +128,20 @@ MacOS (and probably linux):
 ## Up and Running
 ### Raspberry Pi SSH Access
 To Access the Pi via SSH type the following command into the command line in terminal:
-
+```Shell
 * $ ssh pi@framboise0.bio.nyu.edu
-
+```
 * when prompted type in the password printed on the Pi.
 
 ### Running the Code
 Make sure you are in the right folder:
+```Shell
 * $ cd ~/Flexostat-interface
+```
 Check for existing Log files:
+```Shell
 * $ ls
+```
   * There is data from a previous run if you see:
     * Log.dat (The calculated od measurments based on the blank, times and dilution values)
     * odlog.dat (The rough uninterpreted values for the OD sensors)
@@ -147,73 +151,111 @@ Check for existing Log files:
 Setup for the Run
 * If there was previous data:
   * create a new directory in the Data folder to store the data:
-    * $ cd Data
-    * $ mkdir *targetdir*
+```Shell
+$ cd Data
+$ mkdir *targetdir*
+```
   * Change back to the Flexostat-interface directory:
-    * $ cd ../
+```Shell
+$ cd ../
+```
   * If you want to add to that data back it up and run the code:
-    * $ cp log.dat odlog.dat error.log Data/*targetdir*
-    * $ python servostat.py
+```Shell
+$ cp log.dat odlog.dat error.log Data/*targetdir*
+$ python servostat.py
+```
   * if you want to create new data but with the same zeroed baseline:
-    * $ mv log.dat odlog.dat error.log Data/*targetdir*
-    * $ python servostat.py
+```Shell
+$ mv log.dat odlog.dat error.log Data/*targetdir*
+$ python servostat.py
+```
   * if tou want to create new data and a new baseline:
-    * $ mv log.dat odlog.dat error.log blank.dat Data/*targetdir*
-    * $ python servostat.py
+```Shell
+$ mv log.dat odlog.dat error.log blank.dat Data/*targetdir*
+$ python servostat.py
+```
   * to halt the code:
-    * ctrl c
+```Shell
+ctrl c
+```
 
 
 With screen:
 * before you run the code type:
-  * $ screen
-    * it wll look almost the same but screen should be running
+```Shell
+$ screen
+```
+* it wll look almost the same but screen should be running
   * run code normally
 * to return to normal terminal:
-  * ctrl a d
+```Shell
+ctrl a d
+```
 * to return to detached screen window:
-  * $ screen -ls
-    * this will show a list of the detached screens you have running
-  * $ screen -r *adress of detached screen from list*
-    * ex $ screen -r 2477.pts-0.server1
+```Shell
+$ screen -ls
+```
+* this will show a list of the detached screens you have running
+```Shell
+$ screen -r *adress of detached screen from list*
+ex $ screen -r 2477.pts-0.server1
+```
 * to halt the code and exit
-  * ctrl c
-  * $ exit
+```Shell
+ctrl c
+$ exit
+```
 
 ### Git
 Whenever changes are made either on the pi, on your computer or on git directly, make sure to update all pertinent repositories.
 
 Change to the right folder:
-* $ cd Flexostat-interface
+```Shell
+$ cd Flexostat-interface
+```
 
 always start with:
-* $ git init
-* $ git pull
+```Shell
+$ git init
+$ git pull
+```
 
 If you make a change on the PI or your computer that is linked to git:
-* $ If you add a new file or folder or alter a file:
-  * $ git add --all
-  * $ git commit -m "*Comment*"
-  * $ git push
-    * $ Type in username an password when prompted
+* If you add a new file or folder or alter a file:
+```Shell
+$ git add --all
+$ git commit -m "*Comment*"
+$ git push
+```
+* Type in username an password when prompted
 
-* $ If you have new data you want to push to git:
-  * $ cd Data/*data directory*
-  * $ git add -f --all
-  * $ git commit -m "*Comment*"
-  * $ git push
-    * $ Type in username an password when prompted
+* If you have new data you want to push to git:
+```Shell
+$ cd Data/*data directory*
+$ git add -f --all
+$ git commit -m "*Comment*"
+$ git push
+```
+* Type in username an password when prompted
 
 * If changes have been made on github:
-  * $ git pull
+```Shell
+$ git pull
+```
 
 * To view you git configuration settings:
-  * $ git config --list
+```Shell
+$ git config --list
+```
 * To view commands that can be used to alter config settings:
-  * $ git config
+```Shell
+$ git config
+```
 * To view and change origin url:
-  * $ git remote -v
-  * $ git remote set-url *siteurl*
+```Shell
+$ git remote -v
+$ git remote set-url *siteurl*
+```
 
 ---
 ## Files In-depth
@@ -236,8 +278,9 @@ The primer auto has 4 inputs to be put into the command line.
   * ex. to dispense 500ul print 0500
 
 The entire line whould look like:
-
+```Shell
  $ python Primer_auto.py -s # -v ####
+ ```
 
 A fifth input is present but does not need to be specified unless specifically needed. This input is the config file that specifies the parameters for the turbidostat to function on. The code is set to use "config.ini" as a default. This file must be in the same folder as the Primer_auto.py script for the code to run.
 
@@ -262,12 +305,14 @@ Flexoparser_csv has 2 mandatory arguments and 3 optional arguments:
 * -e A machine time at which you want to stop parsing the file. Default is the end of the file.
 
 A standard command line prompt without the optional inputs should look like:
-
+```Shell
 $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data
+```
 
 A standard command line prompt with the optional inputs that will output just od values from time: 1493413783-14934549836 should look like:
-
+```Shell
 $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat-interface/Data/test_data -o od -b 1493413783 -e 14934549836
+```
 
 ### Growth-Pipe Guide
 The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* file from which this pipeline feeds from.
@@ -276,11 +321,19 @@ Run this pipeline using **Python 3**. The order of arguments on the command line
 
 Running this code through the command line will generate an explanation of all functions of the pipeline.
 ```Shell
-$ python3 growth-pipe.py -h
+$ python3 Growth-Pipe.py -h
 ```
 Running this code will generate all the data and statistics for dilutions (u) and optical density (od). The flags *--u* and *--od* tell the program to analyze both sets of data. *--parse* will parse the u and od data from the *log.dat* file, *--stats* will calculate mean, standard deviation, and standard error for this data, *--rate* will analyze the growth rates for both u and od, and *--r_stats* will calculate the mean, standard deviation, and standard error for the growth rate data.
 ```Shell
-$ python3 growth-pipe.py --u --od --parse --stats --rate --r_stats
+$ python3 Growth-Pipe.py --u --od --parse --stats --rate --r_stats
+```
+If you already had the optical density growth rates but wanted to calculate statistics for them every 30 minutes as opposed to the default hour intervals, you would use the *--interval* flag and specify an hour multiplier as such.
+```Shell
+$ python3 Growth-Pipe.py --od --r_stats --interval 0.5
+```
+The *--graph* function for graphing data requires you to specify main u/od data, general statistics data, growth rate data, and/or growth rate statistics data using *1*,*2*,*3*, and *4* respectively. This code below will generate graphs for the first 5 hours based on optical density growth rate statistics data.
+```Shell
+$ python3 Growth-Pipe.py --od --graph 4 --xlim 0-5
 ```
 
 ---
@@ -300,12 +353,17 @@ For any other setup needs see: https://www.raspberrypi.org/documentation/setup/
 
 The Code
 * install git:
-  * $ sudo apt-get install git
+```Shell
+$ sudo apt-get install git
+```
 * initialize git:
-  * $ git init
+```Shell
+$ git init
+```
 * Clone the Flexostat Repository:
-  * $ git clone https://github.com/Siegallab/Flexostat-interface
-
+```Shell
+$ git clone https://github.com/Siegallab/Flexostat-interface
+```
 Modules
 * boot up terminal
 * Install require modules using the line:
