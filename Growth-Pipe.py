@@ -504,7 +504,7 @@ def growth_rate_statistics(intake, output, interval):
 		start_time = 0
 		end_time = 0
 		new_block_r = []
-		hour = 1 * interval
+		hour = 1 * float(interval)
 		block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
 		for row in df.itertuples():
 			if row[1] >= hour and len(new_block_r) >= 1:
@@ -513,7 +513,7 @@ def growth_rate_statistics(intake, output, interval):
 				sd = numpy.std(new_block_r)
 				sem = sd / numpy.sqrt(num)
 				block_r.append([hour, mean, sd, sem, start_time, end_time, num])
-				hour += 1 * interval
+				hour += 1 * float(interval)
 				new_block_r = []
 				start_time = row[1]
 			if not math.isnan(row[chamber]):
