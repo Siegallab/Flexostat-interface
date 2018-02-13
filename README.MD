@@ -77,7 +77,8 @@ MacOS (and probably linux):
 6. Data presentation
     - [x] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
     - [x] b. x and y lim
-    - [ ] c. multiple data sets on a single graph
+	- [ ] c. allow option to display sd, se, or ci
+    - [ ] d. multiple data sets on a single graph
 #### Large Dilution Pipeline TODO
 1. Main functionality
 	- [ ] a. allow dynamic config variable changes

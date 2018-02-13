@@ -1,4 +1,16 @@
 
+[growth-pipe] 2018-02-13 13:30
+Data directory found.
+Experiment directory found.
+Stats for od growth rates calculating...
+Output folder found, will overwrite previous files.
+Stats csv calculated and exported.
+Graphing for od growth stats...
+Output folder found, will overwrite previous files.
+Graphs exported.
+Previous process log found, will add to content.
+
+
 [growth-pipe] 2018-02-06 13:06
 Data directory found.
 Experiment directory found.
