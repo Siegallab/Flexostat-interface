@@ -332,9 +332,9 @@ If you already had the optical density growth rates but wanted to calculate stat
 ```Shell
 $ python3 Growth-Pipe.py --od --r_stats --interval 0.5
 ```
-The *--graph* function for graphing data requires you to specify main u/od data, general statistics data, growth rate data, and/or growth rate statistics data using *1*,*2*,*3*, and *4* respectively. This code below will generate graphs for the first 5 hours based on optical density growth rate statistics data.
+The *--graph* function for graphing data requires you to specify main u/od data, general statistics data, growth rate data, and/or growth rate statistics data using *1*,*2*,*3*, and *4* respectively. You can specify x and y limits as well as error bars based on either standard deviation (*--sd*) or standard error (*--se*). This code below will generate graphs for the first 5 hours based on optical density growth rate statistics data, using standard error for the error bars.
 ```Shell
-$ python3 Growth-Pipe.py --od --graph 4 --xlim 0-5
+$ python3 Growth-Pipe.py --od --graph 4 --xlim 0-5 --se
 ```
 
 ---
