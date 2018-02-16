@@ -73,8 +73,10 @@ def main():
 
 def functions(args):
 	"""
-	Read in config file to establish paths to files.
-	Determine what functions in program to run based on command line arguments.
+	Reads in config file variables and stores them locally. 
+	Runs all functions specified by the command line arguments.
+
+	:param args: list of command line arguments
 	"""
 
 	# begin log to keep track of program processes
@@ -136,9 +138,9 @@ def functions(args):
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths['u'] + '.csv'):
-				process_log += '\nOutput file exists, will overwrite.'
+				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
-				process_log += '\nOutput file not found, will make new file.'
+				process_log += '\n\tOutput file not found, will make new file.'
 
 			ufile = open(exp + paths['u'] + '.csv', 'w')
 			wru = csv.writer(ufile, quoting=csv.QUOTE_ALL)
@@ -147,7 +149,7 @@ def functions(args):
 
 			f.close()
 			ufile.close()
-			process_log += '\nParsed csv created and exported.'
+			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes u csv and exports u growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for u calculating...'
@@ -155,46 +157,46 @@ def functions(args):
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths['u growth rates'] + '.csv'):
-				process_log += '\nOutput file exists, will overwrite.'
+				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
-				process_log += '\nOutput file not found, will make new file.'
+				process_log += '\n\tOutput file not found, will make new file.'
 
 			r_u_csv(exp + paths['u'], exp + paths['u growth rates'])
-			process_log += '\nGrowth rates calculated and exported.'
+			process_log += '\n\tGrowth rates calculated and exported.'
 		# stats function takes u csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for u calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u statistics'], False, process_log)
 			growth_rate_statistics(exp + paths['u'], exp + paths['u statistics'], args.interval)
-			process_log += '\nStats csv calculated and exported.'
+			process_log += '\n\tStats csv calculated and exported.'
 		# stats function takes u growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for u growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u growth statistics'], False, process_log)
 			growth_rate_statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval)
-			process_log += '\nStats csv calculated and exported.'
+			process_log += '\n\tStats csv calculated and exported.'
 		# graph functions take specific od csv and exports graphs based on command line arguments
 		if args.graph:
 			if '1' in args.graph:
 				process_log += '\nGraphing for u...'
 				output, limits, process_log = validate_output_path(args, exp + paths['u graphs'], True, process_log)
 				generate_graphs(args, exp + paths['u'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 			if '2' in args.graph:
 				process_log += '\nGraphing for u stats...'
 				output, limits, process_log = validate_output_path(args, exp + paths['u statistics graphs'], True, process_log)
 				generate_graphs(args, exp + paths['u statistics'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 			if '3' in args.graph:
 				process_log += '\nGraphing for u growth rates...'
 				output, limits, process_log = validate_output_path(args, exp + paths['u growth rates graphs'], True, process_log)
 				generate_graphs(args, exp + paths['u growth rates'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 			if '4' in args.graph:
 				process_log += '\nGraphing for u growth stats...'
 				output, limits, process_log = validate_output_path(args, exp + paths['u growth statistics graphs'], True, process_log)
 				generate_graphs(args, exp + paths['u growth statistics'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 	if args.od:
 		# parse function takes log file and exports od csv
 		if args.parse:
@@ -206,9 +208,9 @@ def functions(args):
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths['od'] + '.csv'):
-				process_log += '\nOutput file exists, will overwrite.'
+				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
-				process_log += '\nOutput file not found, will make new file.'
+				process_log += '\n\tOutput file not found, will make new file.'
 
 			odfile = open(exp + paths['od'] + '.csv', 'w')
 			wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
@@ -217,7 +219,7 @@ def functions(args):
 
 			f.close()
 			odfile.close()
-			process_log += '\nParsed csv created and exported.'
+			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes od csv and exports od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
@@ -225,46 +227,46 @@ def functions(args):
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths['od growth rates'] + '.csv'):
-				process_log += '\nOutput file exists, will overwrite.'
+				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
-				process_log += '\nOutput file not found, will make new file.'
+				process_log += '\n\tOutput file not found, will make new file.'
 
 			r_od_csv(exp + paths['od'], exp + paths['od growth rates'])
-			process_log += '\nGrowth rates calculated and exported.'
+			process_log += '\n\tGrowth rates calculated and exported.'
 		# stats function takes od csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for od calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od statistics'], False, process_log)
 			growth_rate_statistics(exp + paths['od'], exp + paths['od statistics'], args.interval)
-			process_log += '\nStats csv calculated and exported.'
+			process_log += '\n\tStats csv calculated and exported.'
 		# stats function takes od growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for od growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od growth statistics'], False, process_log)
 			growth_rate_statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval)
-			process_log += '\nStats csv calculated and exported.'
+			process_log += '\n\tStats csv calculated and exported.'
 		# graph functions take specific od csv and exports graphs based on command line arguments
 		if args.graph:
 			if '1' in args.graph:
 				process_log += '\nGraphing for od...'
 				output, limits, process_log = validate_output_path(args, exp + paths['od graphs'], True, process_log)
 				generate_graphs(args, exp + paths['od'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 			if '2' in args.graph:
 				process_log += '\nGraphing for od stats...'
 				output, limits, process_log = validate_output_path(args, exp + paths['od statistics graphs'], True, process_log)
 				generate_graphs(args, exp + paths['od statistics'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 			if '3' in args.graph:
 				process_log += '\nGraphing for od growth rates...'
 				output, limits, process_log = validate_output_path(args, exp + paths['od growth rates graphs'], True, process_log)
 				generate_graphs(args, exp + paths['od growth rates'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 			if '4' in args.graph:
 				process_log += '\nGraphing for od growth stats...'
 				output, limits, process_log = validate_output_path(args, exp + paths['od growth statistics graphs'], True, process_log)
 				generate_graphs(args, exp + paths['od growth statistics'], output, limits)
-				process_log += '\nGraphs exported.'
+				process_log += '\n\tGraphs exported.'
 
 	# print and save process log
 	if args.print:
@@ -299,7 +301,7 @@ def machine_to_human(intake, output, process_log):
 	time_start = df.iloc[0, 0]
 	# Checks if the first time point is in machine time
 	if time_start > 1:
-		process_log += '\nData set is using machine time. Converting to human time...'
+		process_log += '\n\tData set is using machine time. Converting to human time...'
 		# Renames the csv using machine time
 		command = "mv '{}.csv' '{}.csv'".format(intake, output)
 		os.system(command)
@@ -318,9 +320,9 @@ def machine_to_human(intake, output, process_log):
 					new_row.append(element)
 			new_data.append(new_row)
 		numpy.savetxt('{}.csv'.format(intake), new_data, delimiter=",")
-		process_log += '\nData set is using machine time. Data set with human time created.'
+		process_log += '\n\tData set is using machine time. Data set with human time created.'
 	else:
-		process_log += '\nData set is using human time.'
+		process_log += '\n\tData set is using human time.'
 	
 	return process_log
 
@@ -357,9 +359,9 @@ def validate_output_path(args, output, function, process_log):
 	# create an output directory if none exists
 	if not os.path.exists('{}{}'.format(output, lim_str)):
 		os.system("mkdir '{}{}'".format(output, lim_str))
-		process_log += '\nOutput folder not found, made new folder.'
+		process_log += '\n\tOutput folder not found, made new folder.'
 	else:
-		process_log += '\nOutput folder found, will overwrite previous files.'
+		process_log += '\n\tOutput folder found, will overwrite previous files.'
 	output = '{}{}'.format(output, lim_str)
 
 	return output, limits, process_log
