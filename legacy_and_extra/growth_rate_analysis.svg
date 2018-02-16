@@ -67,7 +67,7 @@
             <path d="M1,44L6,17C6,15.896 6.896,15 8,15L47,15C48.104,15 49,15.896 49,17L44,44" style="fill:none;stroke:black;stroke-width:2px;"/>
         </g>
         <g transform="matrix(1,0,0,1,15.2419,-117.014)">
-            <text x="460.743px" y="182.737px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:12px;">Growth-Pipe.py</text>
+            <text x="468.746px" y="182.737px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:12px;">Growth-Pipe</text>
         </g>
     </g>
     <g id="Pipeline" transform="matrix(0.502689,0,0,0.502689,96.0067,125.464)">
@@ -396,9 +396,9 @@
         </g>
     </g>
     <g id="Title" transform="matrix(0.532422,0,0,0.532422,-12.1909,306.654)">
-        <g transform="matrix(1,0,0,1,-217.603,21.0285)">
-            <text x="303.334px" y="159.21px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:50px;">Growth-Pipe.py Pipeline</text>
-            <rect x="303.334" y="164.215" width="690.112" height="2.49"/>
+        <g transform="matrix(1,0,0,1,-171.7,6.05497)">
+            <text x="303.334px" y="159.21px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:50px;">Growth Rate Pipeline</text>
+            <rect x="303.334" y="164.215" width="600.098" height="2.49"/>
         </g>
         <g transform="matrix(1,0,0,1,-120.854,49.3428)">
             <text x="280.405px" y="195.606px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:33.333px;">use Python 3    -h for help</text>
