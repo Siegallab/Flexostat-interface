@@ -37,7 +37,7 @@ def main():
 			Growth Rate Analysis Pipeline
 			-----------------------------
 			Select at least one data set: --u, --od
-			Select at least one function: --parse (-p), 
+			Select at least one function: --parse (-p), --odlog,
 					--rate (-r), --stats, --r_stats, --graph
 			
 			Optional changes: --config, --log (-l), --print, --interval (-i)
@@ -48,6 +48,7 @@ def main():
 	parser.add_argument('--od', action='store_true', help='specify optical density data set')
 
 	parser.add_argument('-p', '--parse', action='store_true', help='parse log file into clean data set')
+	parser.add_argument('--odlog', action='store_true', help='parse odlog file into clean data set')
 	parser.add_argument('-r', '--rate', action='store_true', help='calculate growth rate from data set')
 	parser.add_argument('--stats', action='store_true', help='calculate mean, SD, and SE from data set')
 	parser.add_argument('--r_stats', action='store_true', help='calculate mean, SD, and SE from growth rates of data set')
@@ -131,7 +132,7 @@ def functions(args):
 
 	# make sure at least one data set is specified
 	if not args.u and not args.od:
-		process_log += '\nERROR: Data set not specified.'
+		print('ERROR: Data set not specified.')
 	if args.u:
 		# parse function takes log file and exports u csv
 		if args.parse:
