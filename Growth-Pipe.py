@@ -103,6 +103,7 @@ def functions(args):
 	with open(args.config) as file:
 		reader = csv.reader(file)
 		for row in reader:
+			# removes any ending slashes that may exist in csv
 			if row[1][-1] == '/':
 				row[1] = row[1][:-1]
 			paths[row[0]] = row[1]
