@@ -226,6 +226,15 @@ def functions(args):
 			f.close()
 			odfile.close()
 			process_log += '\n\tParsed csv created and exported.'
+		# parse function takes odlog file and exports od csv
+		if args.odlog:
+			process_log += '\nParsing od from odlog file...'
+			# tell user if file exists and will be overwritten or if new file will be made
+			if os.path.exists(exp + paths['od'] + '.csv'):
+				process_log += '\n\tOutput file exists, will overwrite.'
+			else:
+				process_log += '\n\tOutput file not found, will make new file.'
+			parse_odlog(exp + paths['odlog'], exp + paths['od'])
 		# rate function takes od csv and exports od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
@@ -412,6 +421,16 @@ def parse_od(rdata):
 		data.append(tuple(d2))
 
 	return data
+
+
+def parse_odlog(intake, output):
+	"""
+	Parses optical density values from the odlog file.
+
+	:param intake: path to data
+	:param output: path for export
+	"""
+	# TODO finish this function
 
 
 def r_u_csv(intake, output):
