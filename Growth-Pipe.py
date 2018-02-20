@@ -25,6 +25,10 @@ import math
 from datetime import datetime
 
 def main():
+	"""
+	Defines the command line arguments intaken by the program.
+	Ensures there is a config file to work with before calling the 'functions' function.
+	"""
 	# Allows warnings from divide by zero or log/ln negative number to be caught in try except
 	warnings.filterwarnings('error')
 
@@ -329,7 +333,8 @@ def machine_to_human(intake, output, process_log):
 
 def validate_output_path(args, output, function, process_log):
 	"""
-	Creates the output folder if it there is none.
+	Creates the output folder if there is none.
+	Parses limits for graphs based on command line parameters.
 
 	:param args: command line argument array for limit parsing
 	:param output: path for export
