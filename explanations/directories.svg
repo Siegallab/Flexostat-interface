@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1280 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:10;">
+    <g transform="matrix(0.532422,0,0,0.32254,-20.2872,0)">
+        <rect x="0" y="0" width="2480.32" height="2480.32" style="fill:white;"/>
+    </g>
+    <g id="Directories" transform="matrix(2.49939,0,0,2.49939,-1057.5,41.1034)">
+        <g transform="matrix(1,0,0,1,6.58076,179.953)">
+            <text x="478.162px" y="56.351px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:11px;">conﬁg-growth</text>
+        </g>
+        <g transform="matrix(1,0,0,1,-93.6802,-34.2435)">
+            <text x="912.481px" y="158.936px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:11px;">Import and</text>
+            <text x="909.737px" y="170.296px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:11px;">Export Files</text>
+        </g>
+        <g transform="matrix(1,0,0,1,-84.2431,51.8641)">
+            <text x="774.676px" y="30.858px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:11px;">Experiment/</text>
+        </g>
+        <g transform="matrix(1,0,0,1,-19.8217,55.1318)">
+            <text x="626.383px" y="29.436px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:12px;">Data/</text>
+        </g>
+        <g transform="matrix(0.104227,0,0,0.104227,490.907,170.922)">
+            <path d="M438.247,183.129L261.315,6.196L246.123,6.196L240.49,6.196L73.888,6.196L73.888,506L438.328,506L438.328,183.16L438.247,183.129ZM261.315,35.645L398.468,172.797L261.315,172.797L261.315,35.645ZM94.713,485.175L94.713,27.021L240.49,27.021L240.49,193.622L417.504,193.622L417.504,485.174L94.713,485.174L94.713,485.175Z" style="fill:rgb(55,64,77);fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(0.0686626,1.57133e-18,-3.2584e-18,0.142383,756.252,-71.2156)">
+            <path d="M460.244,1162.19L460.244,1128.75L660.079,1128.75L660.079,1097.7L759.126,1145.47L660.079,1193.23L660.079,1162.19L460.244,1162.19Z" style="fill:rgb(255,87,87);"/>
+        </g>
+        <g transform="matrix(-0.0686626,1.57133e-18,3.2584e-18,0.142383,839.977,-56.0187)">
+            <path d="M460.244,1162.19L460.244,1128.75L660.079,1128.75L660.079,1097.7L759.126,1145.47L660.079,1193.23L660.079,1162.19L460.244,1162.19Z" style="fill:rgb(255,87,87);"/>
+        </g>
+        <g transform="matrix(-2.63305e-18,-0.0686626,0.142383,-5.46005e-18,354.527,196.461)">
+            <path d="M460.244,1162.19L460.244,1128.75L660.079,1128.75L660.079,1097.7L759.126,1145.47L660.079,1193.23L660.079,1162.19L460.244,1162.19Z" style="fill:rgb(255,87,87);"/>
+        </g>
+        <g transform="matrix(0.104227,0,0,0.104227,818.622,58.4772)">
+            <path d="M438.247,183.129L261.315,6.196L246.123,6.196L240.49,6.196L73.888,6.196L73.888,506L438.328,506L438.328,183.16L438.247,183.129ZM261.315,35.645L398.468,172.797L261.315,172.797L261.315,35.645ZM94.713,485.175L94.713,27.021L240.49,27.021L240.49,193.622L417.504,193.622L417.504,485.174L94.713,485.174L94.713,485.175Z" style="fill:rgb(55,64,77);fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(0.336334,7.69692e-18,-5.91595e-18,0.258511,607.523,-193.13)">
+            <rect x="499.895" y="1079.4" width="36.27" height="108.199" style="fill:rgb(0,192,12);"/>
+        </g>
+        <g transform="matrix(2.82914e-17,-0.336334,0.258511,2.17452e-17,224.579,312.469)">
+            <rect x="499.895" y="1079.4" width="36.27" height="108.199" style="fill:rgb(0,192,12);"/>
+        </g>
+        <g transform="matrix(-0.273801,-3.3531e-17,3.10665e-17,-0.253677,922.457,386.49)">
+            <rect x="536.164" y="1102.23" width="915.095" height="59.13" style="fill:rgb(0,192,12);"/>
+        </g>
+        <g transform="matrix(-8.69906e-18,0.0473555,-0.253677,-4.65997e-17,804.711,64.1584)">
+            <rect x="536.164" y="1102.23" width="915.095" height="59.13" style="fill:rgb(0,192,12);"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-9.4002,168.015)">
+            <text x="512.72px" y="39.501px" style="font-family:'ArialUnicodeMS', 'Arial Unicode MS', sans-serif;font-size:13.6px;">CSV</text>
+        </g>
+        <g transform="matrix(1.52401,0,0,1.52401,582.835,40.9486)">
+            <path d="M46,15L46,11C46,9.896 45.104,9 44,9C44,9 19.352,9 18,9C16.531,9 15.516,5 14,5L3,5C1.896,5 1,5.896 1,7L1,44C1,45.104 1.896,46 3,46L42,46C43.104,46 44,45.104 44,44" style="fill:none;stroke:black;stroke-width:2px;"/>
+        </g>
+        <g transform="matrix(1.52401,0,0,1.52401,582.835,40.9486)">
+            <path d="M1,44L6,17C6,15.896 6.896,15 8,15L47,15C48.104,15 49,15.896 49,17L44,44" style="fill:none;stroke:black;stroke-width:2px;"/>
+        </g>
+        <g transform="matrix(1.52401,0,0,1.52401,679.657,40.9486)">
+            <path d="M46,15L46,11C46,9.896 45.104,9 44,9C44,9 19.352,9 18,9C16.531,9 15.516,5 14,5L3,5C1.896,5 1,5.896 1,7L1,44C1,45.104 1.896,46 3,46L42,46C43.104,46 44,45.104 44,44" style="fill:none;stroke:black;stroke-width:2px;"/>
+        </g>
+        <g transform="matrix(0.104227,0,0,0.104227,490.907,71.4388)">
+            <path d="M438.247,183.129L261.315,6.196L246.123,6.196L240.49,6.196L73.888,6.196L73.888,506L438.328,506L438.328,183.16L438.247,183.129ZM261.315,35.645L398.468,172.797L261.315,172.797L261.315,35.645ZM94.713,485.175L94.713,27.021L240.49,27.021L240.49,193.622L417.504,193.622L417.504,485.174L94.713,485.174L94.713,485.175Z" style="fill:rgb(55,64,77);fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(0.922979,0,0,0.922979,458.768,-62.7432)">
+            <text x="53.522px" y="182.889px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:14.7px;">PY</text>
+        </g>
+        <g transform="matrix(1.52401,0,0,1.52401,679.657,40.9486)">
+            <path d="M1,44L6,17C6,15.896 6.896,15 8,15L47,15C48.104,15 49,15.896 49,17L44,44" style="fill:none;stroke:black;stroke-width:2px;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,15.2419,-117.014)">
+            <text x="468.746px" y="182.737px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:12px;">Growth-Pipe</text>
+        </g>
+    </g>
+    <g id="Title" transform="matrix(0.911111,0,0,0.911111,421.603,347.479)">
+        <g transform="matrix(1,0,0,1,-171.7,6.05497)">
+            <text x="303.334px" y="159.21px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:50px;">Growth Rate Pipeline</text>
+            <rect x="303.334" y="164.215" width="600.098" height="2.49"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-120.854,49.3428)">
+            <text x="280.405px" y="195.606px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:33.333px;">use Python 3    -h for help</text>
+            <text x="280.405px" y="262.272px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:33.333px;">$ python3 Growth-Pipe.py -h</text>
+        </g>
+    </g>
+</svg>

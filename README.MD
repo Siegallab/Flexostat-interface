@@ -68,6 +68,7 @@ MacOS (and probably linux):
     - [x] b. analyze U growth rates
     - [x] c. deal with math error causing input
     - [x] d. test, final debug, and stable build
+	- [ ] e. allow flexoparsing from log.dat or odlog.dat file (for more data points)
 5. Mean, SD, SE
     - [x] a. calculate stats for growth rates
     - [x] b. test and finish stable build
@@ -78,7 +79,7 @@ MacOS (and probably linux):
     - [x] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
     - [x] b. x and y lim
 	- [x] c. allow option to display sd or se
-    - [ ] d. multiple data sets on a single graph
+    - [ ] d. multiple data sets on a single graph (slightly hard)
 #### Large Dilution Pipeline TODO
 1. Main functionality
 	- [ ] a. allow dynamic config variable changes
@@ -316,8 +317,11 @@ $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat
 ```
 
 ### Growth-Pipe Guide
-![Growth Rate Pipeline](/legacy_and_extra/growth_rate_analysis.png)
-The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* file from which this pipeline feeds from.
+The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* or *odlog.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* or *odlog.dat* file from which this pipeline feeds from.
+![Directories](/explanations/directories.png)
+The *Growth-Pipe.py* program will import from and export to two lower directories (Data and Experiment). The names of these two directories and all import and export files are specified within the *config-growth.csv* file. This config file exists in the same directory as the Growth-Pipe program. **Do not** change the *variable* columns in the config file.
+![Pipeline](/explanations/pipeline.png)
+The pipeline uses the file names and paths taken in from the config file in order to import and export all data. It also keeps track of the processes its executed which can be exported as a log file and/or printed to the screen. These functions are shown with the *grey* framework. The main functions of the program are shown in *green* pipes. 
 
 Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
 
