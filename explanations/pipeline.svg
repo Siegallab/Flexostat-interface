@@ -170,6 +170,17 @@
                     <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:42.566px;">odlog</text>
                 </g>
             </g>
+            <g id="blank" transform="matrix(1,0,0,1,116.74,-343.991)">
+                <g transform="matrix(0.211242,0,0,0.211242,810.641,700.687)">
+                    <path d="M438.247,183.129L261.315,6.196L246.123,6.196L240.49,6.196L73.888,6.196L73.888,506L438.328,506L438.328,183.16L438.247,183.129ZM261.315,35.645L398.468,172.797L261.315,172.797L261.315,35.645ZM94.713,485.175L94.713,27.021L240.49,27.021L240.49,193.622L417.504,193.622L417.504,485.174L94.713,485.174L94.713,485.175Z" style="fill:rgb(55,64,77);fill-rule:nonzero;"/>
+                </g>
+                <g transform="matrix(0.646062,0,0,0.646062,645.924,79.4984)">
+                    <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:42.566px;">DA<tspan x="352.464px " y="1080.84px ">T</tspan></text>
+                </g>
+                <g transform="matrix(0.646062,0,0,0.646062,641.295,140.093)">
+                    <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:42.566px;">blank</text>
+                </g>
+            </g>
             <g id="Arrows">
                 <g transform="matrix(4.86484e-17,-0.408594,0.288574,-2.6563e-17,746.309,1083.92)">
                     <path d="M460.244,1162.19L460.244,1128.75L725.392,1128.75L725.392,1097.7L759.126,1145.47L725.392,1193.23L725.392,1162.19L460.244,1162.19Z" style="fill:rgb(255,87,87);"/>
