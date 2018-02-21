@@ -10,8 +10,8 @@ BACKGROUND
 
 INSTRUCTIONS
 
-	Run using Python 3.6 on the command line as such
-	$ python3.6 growth-pipe.py -h
+	Run using Python 3 on the command line as such
+	$ python3 growth-pipe.py -h
 """
 
 import numpy
