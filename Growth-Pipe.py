@@ -22,6 +22,7 @@ import argparse
 import warnings
 import csv
 import math
+from math import log10
 from datetime import datetime
 
 def main():
@@ -89,7 +90,7 @@ def functions(args):
 	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
 	paths = {
 		# general local variables
-		'' : '', 'log file' : '', 'data directory' : '', 'experiment' : '', 'log processes' : '',
+		'' : '', 'log file' : '', 'odlog' : '', 'blank' : '', 'log processes' : '', 'data directory' : '', 'experiment' : '', 
 		# dilution local variables
 		'u' : '', 'u statistics' : '', 'u machine time' : '',
 		'u growth rates' : '', 'u growth statistics' : '',
@@ -234,7 +235,8 @@ def functions(args):
 				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
-			parse_odlog(exp + paths['odlog'], exp + paths['od'])
+			parse_odlog(exp + paths['odlog'], exp + paths['blank'], exp + paths['od'])
+			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes od csv and exports od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
@@ -423,14 +425,47 @@ def parse_od(rdata):
 	return data
 
 
-def parse_odlog(intake, output):
+def parse_odlog(odlog, blank, output):
 	"""
 	Parses optical density values from the odlog file.
 
-	:param intake: path to data
+	:param odlog: path to od data
+	:param blank: path to blank od data
 	:param output: path for export
 	"""
-	# TODO finish this function
+	blank_file = open(blank, 'r')
+	blank_content = blank_file.read()
+	blank_file.close()
+	blank_data = list(map(int, blank_content.split()))
+	btx = blank_data[0::2]
+	brx = blank_data[1::2]
+
+	odlog_file = open(odlog, 'r')
+	odlog_content = odlog_file.readlines()
+	odlog_file.close()
+	od_list = []
+	for line in odlog_content:
+		temp_ods = []
+		line = list(map(int, line.split()))
+		tx = line[1::2]
+		rx = line[2::2]
+		for num in range(8):
+			if tx[num] == 0 or rx[num] == 0 or brx[num] == 0 or btx[num] == 0:
+				temp_ods.append(0)
+				continue
+			blank_od = float(brx[num]) / float(btx[num])
+			od_measure = float(rx[num]) / float(tx[num])
+			temp_ods.append(log10(blank/od_measure))
+		od_list.append(temp_ods)
+	odfile = open(output + '.csv', 'w')
+	wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
+	# for od in od_list:
+	# 	wrod.writerow(od)
+	# od_df = pandas.DataFrame(od_list)
+	# od_df.to_csv('{}.csv'.format(output), index=False, header=False))
+	wrod.writerows(od_list)
+	odfile.close()
+	# TODO test this function
 
 
 def r_u_csv(intake, output):

@@ -1,5 +1,7 @@
-variable,path,description (omit all file extensions),variable,graph path,description (folder name for exporting graphs)
-log file,log_171020,dat file exported by the servostat experiment program,,,
+variable,path,description (omit all file extensions),graph variable,graph path,description (folder name for exporting graphs)
+log file,log_171020,"dat file of od, u, and z measurements processed by the main flexostat experiment program",,,
+odlog,odlog_171020,dat file of all ods viewed by the main flexostat experiment program,,,
+blank,blank_171020,dat file of blank od values used by the main flexostat experiment program,,,
 log processes,growth_pipe_log,text log of program processes,,,
 data directory,Data,path to the folder where you are storing all your experiment folders,,,
 experiment,10-20-17 test',"particular experiment folder to retrieve from and export to. If using date in mm-dd-yy format, add apostraphe at end to stop excel auto-format and the python program will ignore it",,,
