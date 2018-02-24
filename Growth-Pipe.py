@@ -433,7 +433,7 @@ def parse_odlog(odlog, blank, output):
 	:param blank: path to blank od data
 	:param output: path for export
 	"""
-	blank_file = open(blank, 'r')
+	blank_file = open(blank + '.csv', 'r')
 	blank_content = blank_file.read()
 	blank_file.close()
 	blank_data = list(map(int, blank_content.split()))
@@ -455,7 +455,7 @@ def parse_odlog(odlog, blank, output):
 				continue
 			blank_od = float(brx[num]) / float(btx[num])
 			od_measure = float(rx[num]) / float(tx[num])
-			temp_ods.append(log10(blank/od_measure))
+			temp_ods.append(log10(blank_od/od_measure))
 		od_list.append(temp_ods)
 	odfile = open(output + '.csv', 'w')
 	wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
