@@ -11,7 +11,7 @@ BACKGROUND
 INSTRUCTIONS
 
 	Run using Python 3 on the command line as such
-	$ python3 growth-pipe.py -h
+	$ python3 Growth-Pipe.py -h
 """
 
 import numpy
@@ -88,7 +88,7 @@ def functions(args):
 
 	# begin log to keep track of program processes
 	# read in config file and save all config variables to local variables in a dictionary
-	process_log = '\n[growth-pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
+	process_log = '\n[Growth-Pipe] ' + datetime.now().strftime("%Y-%m-%d %H:%M")
 	paths = {
 		# general local variables
 		'' : '', 'log file' : '', 'odlog' : '', 'blank' : '', 'log processes' : '', 'data directory' : '', 'experiment' : '', 

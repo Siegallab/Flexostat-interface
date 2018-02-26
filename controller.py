@@ -7,6 +7,7 @@ from mytimer import mytimer # imports mytimer fucntion from mytimer.py
 from math import log10 #Log10 function
 from time import time, sleep #Time.time() gives you the time. time.sleep(secs) causes the program to sleep for the goven number of seconds. 
 							#(https://docs.python.org/2/library/time.html)
+from ConfigParser import SafeConfigParser #Configuration file parser (https://docs.python.org/2/library/configparser.html)
 
 import json #Javascript object notation (https://docs.python.org/2/library/json.html)
 import threading #constructs higher-level threading interfaces on top of the lower level thread module. (https://docs.python.org/2/library/threading.html)
@@ -19,7 +20,7 @@ debug = False #what does this do
 
 
 class Controller(object): #define new object type
-	def __init__(self, cparams, logfiles, pparams, cport, pport):
+	def __init__(self, cparams, logfiles, pparams, cport, pport, config_filename):
 		"""Initialize the controller.
 
 		Args:
@@ -47,6 +48,9 @@ class Controller(object): #define new object type
 
 		# Make the pump driver as appropriate.
 		self.pump = pumpdriver.Pump(cparams, logfiles, pparams, cport, pport)
+
+		# Config filename from servostat
+		self.config_filename = config_filename
 
 		# Data from config.ini
 		self.logfiles = logfiles
@@ -134,10 +138,10 @@ class Controller(object): #define new object type
 		with self.stdout_lock:
 			print output_s
 
-		# Store the reported data locally.
+		# Stores all reported data locally in 2D matrix
 		with self.OD_datalock:
-			self.tx_val = data[0::2]
-			self.rx_val = data[1::2]
+			self.tx_val.append(data[0::2])
+			self.rx_val.append(data[1::2])
 
 	def parseline(self, line):
 		"""Parses a line from the serial port.
@@ -196,10 +200,21 @@ class Controller(object): #define new object type
 			* compute control value
 			* do dilution (control valves and pumps)
 		"""
+		# Update cparams
+		with self.stdout_lock:
+			config = SafeConfigParser()
+			config.read(self.config_filename)
+			temp_cparams = dict(config.items('controller'))
+			if not temp_cparams['setpoint'] == self.cparams['setpoint']:
+				self.cparams = temp_cparams
+				print 'Set points updated'
 
+		# Averages down columns of 2D matrix for best estimate
 		with self.OD_datalock:
-			tx = self.tx_val
-			rx = self.rx_val
+			tx = map(int,array(self.tx_val).mean(axis=0)))
+			rx = map(int,array(self.rx_val).mean(axis=0)))
+			self.tx_val = []
+			self.rx_val = []
 
 		if len(rx) == 0 or len(tx) == 0:
 			# Have no measurements yet

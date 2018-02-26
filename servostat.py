@@ -45,7 +45,7 @@ def Main():
     
     # Make and start the controler
     cont = Controller(controller_params, logs, pump_params,
-                      cont_port, pump_port)
+                      cont_port, pump_port, args.config_filename)
     cont.start()
     
     # Setup network configue port

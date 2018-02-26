@@ -54,6 +54,13 @@ MacOS (and probably linux):
 * Pumping volumes that take longer than 'period' seconds to process will result in a negative timer value being set, which in turn causes a timer overflow and the program to sleep for nearly 2^32 seconds (many years).
 
 ### TODO
+#### Controller TODO
+1. OD Averaging
+	- [x] a. save all OD reads, then average for dilution
+	- [ ] b. debug with real experiment
+2. Updating Parameters
+	- [x] a. compares controller config variables and updates if different
+	- [x] b. intakes init parameter with location of config file (servostat)
 #### Growth Rate Pipeline TODO
 1. Figure out implementation
     - [x] a. allow for easy user and automated use
@@ -79,11 +86,10 @@ MacOS (and probably linux):
     - [x] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
     - [x] b. x and y lim
 	- [x] c. allow option to display sd or se
-    - [ ] d. multiple data sets on a single graph (slightly hard)
-#### Large Dilution Pipeline TODO
+#### Block Dilutions Pipeline TODO
 1. Main functionality
-	- [ ] a. allow dynamic config variable changes
-    - [ ] b. ensure flexostat files can update variables
+	- [x] a. allow dynamic config variable changes
+    - [x] b. ensure flexostat files can update variables
     - [ ] c. software and hardware test, debug, and stable build
 2. Statistics
 	- [ ] a. way to document time intervals of dilution
@@ -104,6 +110,8 @@ MacOS (and probably linux):
     - [ ] b. compare stats with experimental
     - [ ] c. output status report
     - [ ] d. output graphs
+3. Data Presentation
+	- [ ] a. multiple data sets on a single graph
 #### Organization TODO
 1. GitHub
 	- [ ] a. organize github files
