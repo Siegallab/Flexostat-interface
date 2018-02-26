@@ -68,7 +68,7 @@ MacOS (and probably linux):
     - [x] b. analyze U growth rates
     - [x] c. deal with math error causing input
     - [x] d. test, final debug, and stable build
-	- [ ] e. allow flexoparsing from log.dat or odlog.dat file (for more data points)
+	- [x] e. allow flexoparsing from log.dat or odlog.dat file (for more data points)
 5. Mean, SD, SE
     - [x] a. calculate stats for growth rates
     - [x] b. test and finish stable build

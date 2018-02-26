@@ -41,7 +41,8 @@ def main():
 			Select at least one function: --parse (-p), --odlog,
 					--rate (-r), --stats, --r_stats, --graph
 			
-			Optional changes: --config, --log (-l), --print, --interval (-i)
+			Optional changes: --config, --log (-l), --print
+			Optional stats parameters: --interval (-i)
 			Optional graph parameters: --xlim (-x), --ylim (-y), --sd, --se
 						""")
 
@@ -433,20 +434,20 @@ def parse_odlog(odlog, blank, output):
 	:param blank: path to blank od data
 	:param output: path for export
 	"""
-	blank_file = open(blank + '.csv', 'r')
+	blank_file = open(blank + '.dat', 'r')
 	blank_content = blank_file.read()
 	blank_file.close()
 	blank_data = list(map(int, blank_content.split()))
 	btx = blank_data[0::2]
 	brx = blank_data[1::2]
 
-	odlog_file = open(odlog, 'r')
+	odlog_file = open(odlog + '.dat', 'r')
 	odlog_content = odlog_file.readlines()
 	odlog_file.close()
 	od_list = []
 	for line in odlog_content:
-		temp_ods = []
 		line = list(map(int, line.split()))
+		temp_ods = [int(line[0])]
 		tx = line[1::2]
 		rx = line[2::2]
 		for num in range(8):
@@ -459,13 +460,8 @@ def parse_odlog(odlog, blank, output):
 		od_list.append(temp_ods)
 	odfile = open(output + '.csv', 'w')
 	wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
-	# for od in od_list:
-	# 	wrod.writerow(od)
-	# od_df = pandas.DataFrame(od_list)
-	# od_df.to_csv('{}.csv'.format(output), index=False, header=False))
 	wrod.writerows(od_list)
 	odfile.close()
-	# TODO test this function
 
 
 def r_u_csv(intake, output):
