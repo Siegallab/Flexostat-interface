@@ -58,7 +58,7 @@ def main():
 			update = False
 			while True:
 				# Determine if OD set point for max or min was reached and update config file parameters appropriately
-				update, programlog = needs_update(args, controller, log, programlog, update)
+				update, programlog, controller = needs_update(args, controller, log, programlog, update)
 				if update:
 					# These three lines below update the local controller variable, then save it to the config file
 					config['controller'] = controller
@@ -67,10 +67,11 @@ def main():
 					# Print and/or save the log of program processes
 					programlog = update_programlog(args, log, programlog)
 					update = False
-				time.sleep(1)
+				time.sleep(5)
 		# At keyboard interrupt, save program log
 		except KeyboardInterrupt:
 			update_programlog(args, log, programlog)
+			time.sleep(1)
 	else:
 		print('ERROR: Config file or argument not found.')
 	print('Program end.\n')
@@ -86,60 +87,67 @@ def needs_update(args, controller, log, programlog, update):
 	:param log: config file log variables
 	:return: boolean if config file update needed or not
 	"""
+	# Save set points if they have not been saved before
 	if len(controller['savesetpoint'].split()) < 8:
 		controller['savesetpoint'] = controller['setpoint']
 		programlog += '\n[Block-Dilutions] saved setpoint in config file'
 		update = True
-	if args.odlog or args.fulllog:
-		if args.odlog:
-			blank_file = open(log['blanklog'], 'r')
-			blank_content = blank_file.read()
-			blank_file.close()
-			blank_data = list(map(int, blank_content.split()))
-			btx = blank_data[0::2]
-			brx = blank_data[1::2]
+	# If odlog argument specified, then compute ODs from blank and odlog file
+	if args.odlog:
+		blank_file = open(log['blanklog'], 'r')
+		blank_content = blank_file.read()
+		blank_file.close()
+		blank_data = list(map(int, blank_content.split()))
+		btx = blank_data[0::2]
+		brx = blank_data[1::2]
 
-			odlog_file = open(log['odlog'], 'r')
-			line = odlog_file.readlines()[-1]
-			odlog_file.close()
-			line = list(map(int, line.split()))
-			current_ods = [int(line[0])]
-			tx = line[1::2]
-			rx = line[2::2]
-			for num in range(8):
-				if tx[num] == 0 or rx[num] == 0 or brx[num] == 0 or btx[num] == 0:
-					current_ods.append(0)
-					continue
-				blank_od = float(brx[num]) / float(btx[num])
-				od_measure = float(rx[num]) / float(tx[num])
-				current_ods.append(log10(blank_od/od_measure))
-		else:
-			log_file = open(log['fulllog'], 'r')
-			line = log_file.readlines()[-1]  # Parse input file into list of lines
-			current_ods = []
-			d1 = line.split(":")
-			current_ods.append([int(d1[1][:-7])])
-			ods = d1[2][2:-6].split(",")
-			for od in ods:
-				current_ods.append(float(od))
-		if controller['setpoint'] == controller['savesetpoint']:
-			reference_ods = list(map(float, controller['setpoint'].split()))
-			change_ods = list(map(float, controller['blockstart'].split()))
-			for num in range(8):
-				if not current_ods[num+1] == (reference_ods[num]-(reference_ods[num]*0.05)):
-					update = True
-					reference_ods[num] = change_ods[num]
-					programlog += '\n{}\n[Block-Dilutions] channel {} change'.format(current_ods, num)
-		else:
-			reference_ods = list(map(float, controller['setpoint'].split()))
-			change_ods = list(map(float, controller['savesetpoint'].split()))
-			for num in range(8):
-				if not current_ods[num+1] == (reference_ods[num]+(reference_ods[num]*0.05)):
-					update = True
-					reference_ods[num] = change_ods[num]
-					programlog += '\n{}\n[Block-Dilutions] channel {} change'.format(current_ods, num)
-		controller['setpoint'] = ' '.join(str(e) for e in reference_ods)
-	return update, programlog
+		odlog_file = open(log['odlog'], 'r')
+		line = odlog_file.readlines()[-1]
+		odlog_file.close()
+		line = list(map(int, line.split()))
+		current_ods = [int(line[0])]
+		tx = line[1::2]
+		rx = line[2::2]
+		for num in range(8):
+			if tx[num] == 0 or rx[num] == 0 or brx[num] == 0 or btx[num] == 0:
+				current_ods.append(0)
+				continue
+			blank_od = float(brx[num]) / float(btx[num])
+			od_measure = float(rx[num]) / float(tx[num])
+			current_ods.append(log10(blank_od/od_measure))
+	# If fulllog argument specified, then use flexoparse code to get ODs from fullog file
+	else:
+		log_file = open(log['fulllog'], 'r')
+		line = log_file.readlines()[-1]  # Parse input file into list of lines
+		current_ods = []
+		d1 = line.split(":")
+		current_ods.append([int(d1[1][:-7])])
+		ods = d1[2][2:-6].split(",")
+		for od in ods:
+			current_ods.append(float(od))
+	# If setpoint has original values, check if ODs have reached up to within 5% of setpoint
+	if controller['setpoint'] == controller['savesetpoint']:
+		reference_ods = list(map(float, controller['setpoint'].split()))
+		change_ods = list(map(float, controller['blockstart'].split()))
+		for num in range(8):
+			if not current_ods[num+1] == (reference_ods[num]-(reference_ods[num]*0.05)):
+				update = True
+				reference_ods[num] = change_ods[num]
+				# Saves the OD measurement and channel number when setpoint reached
+				programlog += '\n{}\n[Block-Dilutions] channel {} change'.format(current_ods, num)
+	# If setpoint has blockstart values, check if ODs have reached down to within 5% of setpoint
+	else:
+		reference_ods = list(map(float, controller['setpoint'].split()))
+		change_ods = list(map(float, controller['savesetpoint'].split()))
+		for num in range(8):
+			if not current_ods[num+1] == (reference_ods[num]+(reference_ods[num]*0.05)):
+				update = True
+				reference_ods[num] = change_ods[num]
+				# Saves the OD measurement and channel number when setpoint reached
+				programlog += '\n{}\n[Block-Dilutions] channel {} change'.format(current_ods, num)
+	# Convert any changed setpoints back into string
+	controller['setpoint'] = ' '.join(str(e) for e in reference_ods)
+	return update, programlog, controller
 
 
 def update_programlog(args, log, programlog):
