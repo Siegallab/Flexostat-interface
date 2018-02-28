@@ -137,8 +137,8 @@
             <g transform="matrix(0.551745,0,0,0.551745,854.408,180.89)">
                 <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:50px;">LOG</text>
             </g>
-            <g transform="matrix(0.551745,0,0,0.551745,833.098,246.533)">
-                <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:50px;">blocklog</text>
+            <g transform="matrix(0.551745,0,0,0.551745,850.637,247.485)">
+                <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:50px;">block</text>
             </g>
         </g>
         <g id="config" transform="matrix(0.571633,0,0,0.571633,41.3434,47.2616)">
