@@ -32,7 +32,7 @@ def main():
 					description="""
 			Block Dilutions Pipeline
 			------------------------
-			Optional functions: --fulllog, --delay, --config, 
+			Optional functions: --full_log, --delay, --config, 
 					--out (-o), --schedule (-s), --interval (-i)
 						""")
 

@@ -291,15 +291,15 @@ def functions(args):
 		print(process_log)
 	if args.log:
 		# if previous process log file found, save contents before overwriting
-		if os.path.exists(exp + paths['log processes'] + '.txt'):
+		if os.path.exists(exp + paths['log processes'] + '.log'):
 			process_log += '\nPrevious process log found, will add to content.'
-			with open(exp + paths['log processes'] + '.txt', 'r') as log_file:
+			with open(exp + paths['log processes'] + '.log', 'r') as log_file:
 				old_log = log_file.read()
 				process_log = process_log + '\n\n' + old_log
 			log_file.close()
 		else:
 			process_log += '\nNo process log found, will create new.'
-		with open(exp + paths['log processes'] + '.txt', 'w') as log_file:
+		with open(exp + paths['log processes'] + '.log', 'w') as log_file:
 			log_file.write(process_log)
 		log_file.close()
 

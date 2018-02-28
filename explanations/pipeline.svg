@@ -311,7 +311,7 @@
                     <path d="M438.247,183.129L261.315,6.196L246.123,6.196L240.49,6.196L73.888,6.196L73.888,506L438.328,506L438.328,183.16L438.247,183.129ZM261.315,35.645L398.468,172.797L261.315,172.797L261.315,35.645ZM94.713,485.175L94.713,27.021L240.49,27.021L240.49,193.622L417.504,193.622L417.504,485.174L94.713,485.174L94.713,485.175Z" style="fill:rgb(55,64,77);fill-rule:nonzero;"/>
                 </g>
                 <g transform="matrix(0.551745,0,0,0.551745,857.587,180.616)">
-                    <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:50px;">TXT</text>
+                    <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:50px;">LOG</text>
                 </g>
                 <g transform="matrix(0.551745,0,0,0.551745,791.967,246.533)">
                     <text x="296.493px" y="1080.84px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:50px;">Log Processes</text>
