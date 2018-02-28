@@ -26,6 +26,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
     * [Primer_auto Guide](#primer_auto-guide)
     * [Flexoparser_csv Guide](#flexoparser_csv-guide)
 	* [Growth-Pipe Guide](#growth-pipe-guide)
+	* [Block-Dilutions Guide](#block-dilutions-guide)
 5. [Hardware Setup](#hardware-setup)
     * [RPi Setup Guide](#raspberry-pi-settup-guide)
     * [Board Framework Installation](#board-framework-installation)
@@ -351,6 +352,25 @@ The *--graph* function for graphing data requires you to specify main u/od data,
 $ python3 Growth-Pipe.py --od --graph 4 --xlim 0-5 --se
 ```
 
+### Block-Dilutions Guide
+The program is meant to change the *config.ini* file that is continually read by the experiment Controller program in order for large dilutions to occur in the experiment and give wide ranges between which the cell cultures can grow without dilutions. The program can either be run where each chamber's variables in the *config.ini* file are changed depending on their current ODs or where all chambers' variables in the *config.ini* file are changed together after specific intervals of time. The program allows for easy scheduling of how often to check the OD and/or interval status through crontab.
+![Blocks](/explanations/blocks.png)
+The program reads in OD data from either the *odlog.dat* and *blank.dat* or *log.dat* files, as well as the set point variables for each chamber from the *config.ini* file, and reports in the *block.log* file when individual chambers have reached their set points. Depending on if the program is set to run based on individual chambers or all together on a scheduled interval, the program will update variables in the *config.ini* file appropriately and report these changes in the *block.log* file.
+
+Run this pipeline using **Python 2.7**. The order of arguments on the command line does not matter.
+
+Running this code through the command line will generate an explanation of all functions of the pipeline.
+```Shell
+$ python2.7 Block-Dilutions.py -h
+```
+The program is set to run large dilutions on individual chamber set points by default, so running large dilutions on a schedule together will require the *--schedule* command. By default the program will take the time interval from the *config.ini* and if there is none it will take 1 hour. To set the time interval and update the config variable use *--interval* followed by an hour unit. Below we are setting the interval to 5 hours. It is recommended to delay the first run of the program by a few minutes using the *--delay* as such. Below we set the delay to 10 minutes.
+```Shell
+$ python2.7 Block-Dilutions.py --schedule --interval 5 --delay 10
+```
+By default, the program reads from *config.ini* for information on where other files are located and for set point information. To change this use the *--config* command. Below we use the *exp-10.ini* file instead. Any updates reported to the *block.log* file by the program can also be printed out using the *--out* command like such.
+```Shell
+$ python2.7 Block-Dilutions.py --config exp-10.ini --out
+```
 ---
 ## Hardware Setup
 ### Raspberry pi settup guide

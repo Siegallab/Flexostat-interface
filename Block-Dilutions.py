@@ -37,7 +37,7 @@ def main():
 						""")
 
 	parser.add_argument('--full_log', action='store_true', help='use full log for OD input (instead of default od log)')
-	parser.add_argument('--delay', default='10', help="delay startup of first run by minutes (default '10' = 10 mins)")
+	parser.add_argument('--delay', default='0', help="delay startup of first run by minutes")
 	parser.add_argument('--config', default='config.ini', help="change config file from default 'config.ini'")
 	parser.add_argument('-o', '--out', action='store_true', help='program processes printing')
 	parser.add_argument('-i', '--interval', default='0', help='specify hour interval (default config, otherwise 1)')
@@ -92,9 +92,8 @@ def check_config(args, controller, log, programlog):
 	# Save set points if they have not been saved before and delay program for specified time
 	if len(controller['savesetpoint'].split()) < 1:
 		controller['savesetpoint'] = controller['setpoint']
-		if float(args.delay) < 1:
-			args.delay = '1'
-		time.sleep(float(args.delay)*60)
+		if not float(args.delay) <= 0:
+			time.sleep(float(args.delay)*60)
 		programlog += ' updated setpoint'
 	# If block interval, set to config otherwise 1 if not specified, save as float, and update config to match
 	if args.schedule:
