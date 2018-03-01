@@ -15,11 +15,13 @@ INSTRUCTIONS
 """
 
 import os
+import csv
 import time
 import argparse
 from math import log10
 from datetime import datetime
 from configparser import SafeConfigParser
+
 
 def main():
 	"""
@@ -32,8 +34,9 @@ def main():
 					description="""
 			Block Dilutions Pipeline
 			------------------------
-			Optional functions: --full_log, --delay, --config, 
-					--out (-o), --schedule (-s), --interval (-i)
+			Select one main function: --schedule (-s), --chamber (-c)
+			Optional changes: --full_log, --delay, --config, 
+					--out (-o), --interval (-i)
 						""")
 
 	parser.add_argument('--full_log', action='store_true', help='use full log for OD input (instead of default od log)')
@@ -41,74 +44,54 @@ def main():
 	parser.add_argument('--config', default='config.ini', help="change config file from default 'config.ini'")
 	parser.add_argument('-o', '--out', action='store_true', help='program processes printing')
 	parser.add_argument('-i', '--interval', default='0', help='specify hour interval (default config, otherwise 1)')
-	parser.add_argument('-s', '--schedule', action='store_true', help='use interval dilution schedule')
+	parser.add_argument('-c', '--chamber', action='store_true', help='use individual chamber OD for dilutions')
+	parser.add_argument('-s', '--schedule', action='store_true', help='use interval dilution schedule for dilutions')
 
 	args = parser.parse_args()
 
-	# Ensure config file exists, then read it in
-	if os.path.exists(args.config):
+	# Ensure config file exists and function specified, then read in config variables
+	if os.path.exists(args.config) and (args.schedule != args.chamber):
 		config = SafeConfigParser()
 		config.read(args.config)
 		controller = dict(config.items('controller'))
 		log = dict(config.items('log'))
-		programlog = ''
 
-		# Update config file with new arguments if needed, then read in current ods
-		controller, programlog = check_config(args, controller, log, programlog)
-		current_ods = read_ods(args, log)
-		# If schedule, update controller and programlog if block interval elapsed
+		# The log is organized for schedule and chamber respectively like so:
+		# [date, time, schedule, start/end, experiment time and current ODs]
+		# [date, time, chamber, start (1) or end (0) for chamber 1, 2, 3, 4, 5, 6, 7, 8, experiment time and current ODs]
 		if args.schedule:
-			controller, programlog = check_blockinterval(current_ods, log, controller, programlog)
-		# Record when chambers have reacted their setpoints, and change chamber setpoints if not schedule
-		controller, programlog = compare_ods(args, current_ods, controller, programlog)
-		if len(programlog) > 0:
-			# These three lines below update the local controller variable, then save it to the config file
-			config['controller'] = controller
-			config_update = open(args.config, 'w')
-			config.write(config_update)
-			# Print and/or save the log of program processes
-			programlog = '\n' + datetime.now().strftime("%Y-%m-%d %H:%M") + programlog
-			if args.out:
-				print(programlog)
-			blocklog_file = open(log['blocklog'], 'a')
-			blocklog_file.write(programlog)
-			blocklog_file.close()
-	else:
-		print('ERROR: Config file.')
-	print('Program end.\n')
-
-
-def check_config(args, controller, log, programlog):
-	"""
-	Compares current od measurements (either from odlog or fulllog) with the current set point.
-	If set point has been reached, then replaces set point with appropriate set point from config file.
-
-	:param args: command line arguments for program
-	:param controller: config file controller variables
-	:param log: config file log variables
-	:param programlog: string describing updates being made
-	:return: updated controller and updated programlog
-	"""
-	# Save set points if they have not been saved before and delay program for specified time
-	if len(controller['savesetpoint'].split()) < 1:
-		controller['savesetpoint'] = controller['setpoint']
-		if not float(args.delay) <= 0:
-			time.sleep(float(args.delay)*60)
-		programlog += ' updated setpoint'
-	# If block interval, set to config otherwise 1 if not specified, save as float, and update config to match
-	if args.schedule:
-		if float(args.interval) <= 0:
-			args.block_interval = 1
-			if len(controller['blockinterval']) > 0:
-				args.interval = float(controller['blockinterval'])
+			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'schedule', '', '']
 		else:
-			args.interval = float(args.interval)
-		if not args.interval == float(controller['blockinterval']):
-			controller['blockinterval'] = str(args.interval)
-		programlog += ' updated blockinterval'
-	if not os.path.exists(log['blocklog']):
-		programlog += ' created blocklog'
-	return controller, programlog
+			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'chamber'] + (['']*9)
+		# Read in current ODs and make sure config variables match command line arguments
+		current_ods = read_ods(args, log)
+		controller = update_config(args, config, controller)
+
+		# If blocklog doesn't exist, start dilution blocks and create
+		if not os.path.exists(log['blocklog']) and args.schedule:
+			programlog = programlog[0:2] + ['start', ','.join(current_ods)]
+			update_log(args, log, programlog)
+		elif not os.path.exists(log['blocklog']) and args.chamber:
+			programlog = programlog[0:2] + ([1]*8) + [','.join(current_ods)]
+			update_log(args, log, programlog)
+		else:
+			blocklog_file = open(log['blocklog'], 'r')
+			prevlog = list(csv.reader(blocklog_file))[-1]
+			blocklog_file.close()
+
+			# Update controller and programlog if block interval elapsed
+			if args.schedule:
+				controller, programlog = check_blockinterval(current_ods, log, controller, programlog, prevlog)
+			# Update controller and programlog with new setpoints and chamber report when each chamber reaches their setpoint
+			else:
+				controller, programlog = compare_ods(args, current_ods, controller, programlog)
+			# If a change was made based on the last element being filled, then update config and log
+			if len(programlog[-1]) > 0:
+				update_config(args, config, controller)
+				update_log(args, log, programlog)
+	else:
+		print('ERROR: Config file not found or function not specified correctly.')
+	print('Program end.\n')
 
 
 def read_ods(args, log):
@@ -155,67 +138,116 @@ def read_ods(args, log):
 	return current_ods
 
 
+def update_config(args, config, controller):
+	"""
+	Updates the config file to match command line arguments and program updates.
+
+	:param args: command line arguments for program
+	:param config: variable holding all config variables from file
+	:param controller: config file controller variables
+	:return: updated controller variables
+	"""
+	# Save set points if they have not been saved before and delay program for specified time
+	if len(controller['savesetpoint'].split()) < 1:
+		controller['savesetpoint'] = controller['setpoint']
+		if not float(args.delay) <= 0:
+			time.sleep(float(args.delay)*60)
+		print('updated setpoint')
+	# If block interval, set to config otherwise 1 if not specified, save as float, and update config to match
+	if args.schedule:
+		if float(args.interval) <= 0:
+			args.block_interval = 1
+			if len(controller['blockinterval']) > 0:
+				args.interval = float(controller['blockinterval'])
+		else:
+			args.interval = float(args.interval)
+		if not args.interval == float(controller['blockinterval']):
+			controller['blockinterval'] = str(args.interval)
+		print('updated blockinterval')
+
+	config['controller'] = controller
+	config_update = open(args.config, 'w')
+	config.write(config_update)
+
+	return controller
+
+
+def update_log(args, log, programlog):
+	"""
+	Updates the blocklog file with new updates and prints out if specified.
+
+	:param args: command line arguments for program
+	:param log: config file log variables
+	:param programlog: list of updated status
+	"""
+	if args.out:
+		print(' '.join(programlog))
+	blocklog_file = open(log['blocklog'], 'a')
+	wr = csv.writer(blocklog_file)
+	wr.writerow(programlog)
+	blocklog_file.close()
+
+
+def check_blockinterval(current_ods, log, controller, programlog, prevlog):
+	"""
+	Determines if the block interval time has passed.
+	Updates controller and programlog appropriately.
+
+	:param current_ods: real ods from od log or full log file
+	:param log: config file log variables
+	:param controller: config file controller variables
+	:param programlog: list of updated status
+	:param prevlog: list of previous status
+	:return: updated controller and programlog
+	"""
+	past = datetime.strptime(prevlog[0] + ' ' + prevlog[1], "%Y-%m-%d %H:%M")
+	diff = datetime.now() - past
+	# If block interval reached (elapsed time = diff between current time and last blocklog entry)
+	#	then update the controller setpoints appropriately
+	if (diff.seconds/3600) >= float(controller['blockinterval']):
+		if controller['setpoint'] == controller['savesetpoint']:
+			controller['setpoint'] = controller['blockstart']
+			programlog[3] = 'end'
+			programlog[-1] = ','.join(current_ods)
+			programlog = ' block end ods {}'.format(','.join(current_ods)) + programlog
+		else: 
+			controller['setpoint'] = controller['savesetpoint']
+			programlog[3] = 'start'
+			programlog[-1] = ','.join(current_ods)
+			programlog = ' block start ods {}'.format(','.join(current_ods)) + programlog
+	return controller, programlog
+
+
 def compare_ods(args, current_ods, controller, programlog):
 	"""
 	Compares the current ods with the set points.
-	Updates controller, update, and programlog appropriately.
+	Updates controller and programlog appropriately.
 
 	:param args: command line arguments for program
 	:param current_ods: real ods from od log or full log file
 	:param controller: controller parameters from config file
-	:param programlog: string describing updates being made
+	:param programlog: list of updated status
 	:return: updated controller and programlog variables
 	"""
 	reference_ods = list(map(float, controller['setpoint'].split()))
 	block_ods = list(map(float, controller['blockstart'].split()))
 	save_ods = list(map(float, controller['savesetpoint'].split()))
+	change = ''
 	for num in range(8):
 		# If setpoint has original values, check if ODs have reached up to within 5% of setpoint
-		if reference_ods[num] == save_ods[num] and not current_ods[num+1] == (reference_ods[num]-(reference_ods[num]*0.05)):
-			programlog += ' chamber {} end ods {}'.format(num, ','.join(current_ods))
-			# Update setpoint OD with new setpoint
-			if not args.schedule:
-				reference_ods[num] = block_ods[num]
+		if reference_ods[num] == save_ods[num] and not current_ods[num+1] >= (reference_ods[num]-(reference_ods[num]*0.05)):
+			# Update setpoint OD with new setpoint and mark change in programlog
+			reference_ods[num] = block_ods[num]
+			programlog[num+3] = 0
+			programlog[-1] = ','.join(current_ods)
 		# Otherwise setpoint has blockstart values, check if ODs have reached down to within 5% of setpoint
-		elif not current_ods[num+1] == (reference_ods[num]+(reference_ods[num]*0.05)):
-			programlog += ' chamber {} start ods {}'.format(num, ','.join(current_ods))
-			# Update setpoint OD with new setpoint
-			if not args.schedule:
-				reference_ods[num] = save_ods[num]
-	# Update controller setpoints OD with new setpoints
-	if not args.schedule:
-		controller['setpoint'] = ' '.join(str(e) for e in reference_ods)
-	return controller, programlog
+		elif not current_ods[num+1] <= (reference_ods[num]+(reference_ods[num]*0.05)):
+			# Update setpoint OD with new setpoint and mark change in programlog
+			reference_ods[num] = save_ods[num]
+			programlog[num+3] = 1
+			programlog[-1] = ','.join(current_ods)
 
-
-def check_blockinterval(current_ods, log, controller, programlog):
-	"""
-	Determines if the block interval time has passed.
-	Updates controller and programlog.
-
-	:param current_ods: real ods from od log or full log file
-	:param log: config file log variables
-	:param controller: config file controller variables
-	:param programlog: string describing updates being made
-	:return: updated controller and programlog
-	"""
-	# Blocklog may not exist on first run, so it will be created on the first update
-	if os.path.exists(log['blocklog']):
-		blocklog_file = open(log['blocklog'], 'r')
-		blocklog_contents = blocklog_file.readlines()
-		blocklog_file.close()
-
-		past = datetime.strptime(blocklog_contents[-1][0:16], "%Y-%m-%d %H:%M")
-		diff = datetime.now() - past
-		# If block interval reached (elapsed time = diff between current time and last blocklog entry)
-		#	then update the controller setpoints appropriately
-		if (diff.seconds/3600) >= float(controller['blockinterval']):
-			if controller['setpoint'] == controller['savesetpoint']:
-				controller['setpoint'] = controller['blockstart']
-				programlog += ' block end ods {}'.format(','.join(current_ods))
-			else: 
-				controller['setpoint'] = controller['savesetpoint']
-				programlog += ' block start ods {}'.format(','.join(current_ods))
+	controller['setpoint'] = ' '.join(str(e) for e in reference_ods)
 	return controller, programlog
 
 
