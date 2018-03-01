@@ -363,13 +363,13 @@ Running this code through the command line will generate an explanation of all f
 ```Shell
 $ python2.7 Block-Dilutions.py -h
 ```
-The program is set to run large dilutions on individual chamber set points by default, so running large dilutions on a schedule together will require the *--schedule* command. By default the program will take the time interval from the *config.ini* and if there is none it will take 1 hour. To set the time interval and update the config variable use *--interval* followed by an hour unit. Below we are setting the interval to 5 hours. It is recommended to delay the first run of the program by a few minutes using the *--delay* as such. Below we set the delay to 10 minutes.
+Run large dilutions on a schedule together with the *--schedule* command, as shown. By default the program will take the time interval from the *config.ini* and if there is none it will take 1 hour. To set the time interval and update the config variable use *--interval* followed by an hour unit. Below we are setting the interval to 5 hours. It is recommended to delay the first run of the program by a few minutes using the *--delay* as such. Below we set the delay to 10 minutes.
 ```Shell
 $ python2.7 Block-Dilutions.py --schedule --interval 5 --delay 10
 ```
-By default, the program reads from *config.ini* for information on where other files are located and for set point information. To change this use the *--config* command. Below we use the *exp-10.ini* file instead. Any updates reported to the *block.log* file by the program can also be printed out using the *--out* command like such.
+Run large dilutions on a chamber by chamber basis based on their individual ODs with the *--chamber* command, as shown. By default, the program reads from *config.ini* for information on where other files are located and for set point information. To change this use the *--config* command. Below we use the *exp-10.ini* file instead. Any updates reported to the *block.log* file by the program can also be printed out using the *--out* command like such.
 ```Shell
-$ python2.7 Block-Dilutions.py --config exp-10.ini --out
+$ python2.7 Block-Dilutions.py --chamber --config exp-10.ini --out
 ```
 ---
 ## Hardware Setup
