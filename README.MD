@@ -20,7 +20,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
 2. [File Overview](#file-overview)
 3. [Up and Running](#up-and-running)
     * [RPi SSH Access](#raspberrypi-ssh-access)
-    * [Running the Code](#running-the-code)
+    * [Running an Experiment](#running-an-experiment)
     * [Git](#git)
 4. [Files In-depth](#files-in-depth)
     * [Primer_auto Guide](#primer_auto-guide)
@@ -145,7 +145,7 @@ To Access the Pi via SSH type the following command into the command line in ter
 ```
 * when prompted type in the password printed on the Pi.
 
-### Running the Code
+### Running an Experiment
 Make sure you are in the right folder:
 ```Shell
 * $ cd ~/Flexostat-interface
