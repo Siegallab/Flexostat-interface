@@ -305,7 +305,7 @@ the commands are:
 For further questions and troubleshooting see comments in the code.
 
 ### Flexoparser_csv guide
-Flexoparser_csv has 2 mandatory arguments and 3 optional arguments:
+[Flexoparser_csv](legacy_and_extra/Flexoparser_csv.py) has 2 mandatory arguments and 3 optional arguments:
 
 * -i The input file. Must be log.dat output file. The file must be in the same directory as the code or the line must explicity direct to the location of the file.
 * -f The output filename you want. This filename provided will be followed by _OD, _U and _Z for each of the respective outputs. If you want it to output it in a specific directory you must explicity describe it.
