@@ -16,7 +16,6 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
 		* [Block Dilutions Pipeline](#block-dilutions-pipeline-todo)
 		* [Media Monitoring](#media-monitoring-todo)
 		* [Analysis](#analysis-todo)
-		* [Organization](#organization-todo)
 2. [File Overview](#file-overview)
 3. [Up and Running](#up-and-running)
     * [RPi SSH Access](#raspberrypi-ssh-access)
@@ -42,7 +41,9 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
    * flask (for the plotserver, which plots the experiment in a browser)
 
 To install requirements, run:
+```Bash
 $ sudo pip install numpy pygments pySerial flask
+```
 
 ### Configuration
 For now see the official turbidostat page.
@@ -94,8 +95,8 @@ MacOS (and probably linux):
     - [x] b. ensure flexostat files can update variables
     - [ ] c. software and hardware test, debug, and stable build
 2. Statistics
-	- [ ] a. way to document time intervals of dilution
-    - [ ] b. automated blocking of growth intervals
+	- [x] a. way to document time intervals of dilution
+    - [x] b. automated blocking of growth intervals
     - [ ] c. stats and graphs
 #### Media Monitoring TODO
 1. Main functionality
@@ -114,10 +115,6 @@ MacOS (and probably linux):
     - [ ] d. output graphs
 3. Data Presentation
 	- [ ] a. multiple data sets on a single graph
-#### Organization TODO
-1. GitHub
-	- [ ] a. organize github files
-    - [ ] b. update and simplify README
 
 ---
 ## File Overview
