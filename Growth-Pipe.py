@@ -3,7 +3,7 @@
 BACKGROUND
 
 	Created January 31, 2018
-		by David Klein, building on previous code from Maxwell Raderstorf
+		by David Klein, using previous code from Maxwell Raderstorf
 		contributions found at https://github.com/Siegallab/Flexostat-interface
 	An open source feature contribution to the Klavins Lab Flexostat project
 		project found at https://github.com/Flexostat/Flexostat-interface
@@ -103,8 +103,8 @@ def functions(args):
 		# optical density graph local variables
 		'od graphs' : '', 'od statistics graphs' : '', 'od growth rates graphs' : '', 'od growth statistics graphs' : ''
 	}
-	with open(args.config) as file:
-		reader = csv.reader(file)
+	with open(args.config) as config_file:
+		reader = csv.reader(config_file)
 		for row in reader:
 			# removes any ending slashes that may exist in csv
 			if row[1][-1] == '/':
@@ -114,7 +114,7 @@ def functions(args):
 				if row[4][-1] == '/':
 					row[4] = row[1][:-1]
 			paths[row[3]] = row[4]
-	file.close()
+	config_file.close()
 
 	# ensure data and experiment directories exist
 	# format paths to variable appropriately

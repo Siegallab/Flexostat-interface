@@ -3,7 +3,7 @@
 BACKGROUND
 
 	Created February 26, 2018
-		by David Klein, building on previous code from Maxwell Raderstorf
+		by David Klein, using previous code from Maxwell Raderstorf
 		contributions found at https://github.com/Siegallab/Flexostat-interface
 	An open source feature contribution to the Klavins Lab Flexostat project
 		project found at https://github.com/Flexostat/Flexostat-interface
