@@ -30,9 +30,9 @@
     <g id="Reporting" transform="matrix(1.13747,0,0,1.13747,-194.522,-67.5995)">
         <g transform="matrix(1,0,0,1,119.062,-30.6926)">
             <text x="160.722px" y="377.943px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">--report</text>
-            <text x="81.562px" y="394.466px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">Report after each unit of time,</text>
-            <text x="107.796px" y="410.99px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">speciﬁed with crontab,</text>
-            <text x="143.804px" y="427.513px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">has elapsed</text>
+            <text x="126.03px" y="394.466px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">Report each time</text>
+            <text x="119.808px" y="410.99px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">the program is run.</text>
+            <text x="110.46px" y="427.513px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">Specify using crontab</text>
         </g>
         <g transform="matrix(1,0,0,1,9.96347,4.53308)">
             <text x="893.174px" y="458.53px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">--start</text>
@@ -99,6 +99,12 @@
         <g transform="matrix(1,0,0,1,14.6461,17.5136)">
             <text x="877.336px" y="425.605px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">450ml</text>
         </g>
+        <g transform="matrix(0.879144,0,0,0.879144,250.113,82.4303)">
+            <text x="62.982px" y="229.268px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Reporting</text>
+            <rect x="62.982" y="231.811" width="104.063" height="1.758"/>
+            <text x="62.988px" y="254.053px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Functions</text>
+            <rect x="62.988" y="256.596" width="104.051" height="1.758"/>
+        </g>
     </g>
     <g id="Communication" transform="matrix(1.13747,0,0,1.13747,-182.265,-73.6695)">
         <g id="Background1" serif:id="Background" transform="matrix(0.123807,0,0,0.123807,-59.2854,-50.2651)">
@@ -162,6 +168,12 @@
         <g transform="matrix(1,0,0,1,-10.3615,6.04375)">
             <text x="913.47px" y="221.523px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">--print</text>
             <text x="863.364px" y="238.046px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">Print to the <tspan x="944.895px 952.895px 961.794px " y="238.046px 238.046px 238.046px ">Ter</tspan>minal</text>
+        </g>
+        <g transform="matrix(0.879144,0,0,0.879144,360.728,68.4923)">
+            <text x="559.362px" y="31.381px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Communication</text>
+            <rect x="559.362" y="33.924" width="166.734" height="1.758"/>
+            <text x="590.703px" y="56.166px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Functions</text>
+            <rect x="590.703" y="58.709" width="104.051" height="1.758"/>
         </g>
     </g>
     <defs>
