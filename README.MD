@@ -101,8 +101,8 @@ MacOS (and probably linux):
     - [ ] c. stats and graphs
 #### Media Monitoring TODO
 1. Main functionality
-	- [ ] a. calculate remaining percentage and amount of media
-    - [ ] b. notify experimenters
+	- [x] a. calculate remaining percentage and amount of media
+    - [x] b. notify experimenters
 #### Analysis TODO
 1. Significance Calculation
 	- [ ] a. percent change
