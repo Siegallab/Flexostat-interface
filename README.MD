@@ -26,6 +26,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
     * [Flexoparser_csv Guide](#flexoparser_csv-guide)
 	* [Growth-Pipe Guide](#growth-pipe-guide)
 	* [Block-Dilutions Guide](#block-dilutions-guide)
+	* [Media-Monitor Guide](#media-monitor-guide)
 5. [Hardware Setup](#hardware-setup)
     * [RPi Setup Guide](#raspberry-pi-settup-guide)
     * [Board Framework Installation](#board-framework-installation)
@@ -368,6 +369,8 @@ Run large dilutions on a chamber by chamber basis based on their individual ODs 
 ```Shell
 $ python2.7 Block-Dilutions.py --chamber --config exp-10.ini --out
 ```
+### Media-Monitor Guide
+
 ---
 ## Hardware Setup
 ### Raspberry pi settup guide

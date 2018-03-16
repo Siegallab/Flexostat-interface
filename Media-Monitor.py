@@ -11,7 +11,7 @@ BACKGROUND
 INSTRUCTIONS
 
 	Run using Python 3 on the command line as such
-	$ python3 Media-Reporter.py -h
+	$ python3 Media-Monitor.py -h
 """
 
 import csv
@@ -27,7 +27,7 @@ def main():
 
 	parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
 					description="""
-			Media Reporter Program
+			Media Monitor Program
 			-----------------------------
 			Select at least one communication method: --print (-p), --text (-t), --email (-e)
 			Select at least one reporting function: --report (-r), --percent (-p), --limit (-m), --amount (-a)
