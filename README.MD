@@ -357,7 +357,7 @@ The program reads in OD data from either the *odlog.dat* and *blank.dat* or *log
 
 Run this pipeline using **Python 2.7**. The order of arguments on the command line does not matter.
 
-Running this code through the command line will generate an explanation of all functions of the pipeline.
+Running this code through the command line will generate an explanation of all functions of the program.
 ```Shell
 $ python2.7 Block-Dilutions.py -h
 ```
@@ -375,6 +375,11 @@ This program is meant to monitor the media levels of the experiment. You initial
 ![Monitor](/explanations/monitor.png)
 
 Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
+
+Running this code through the command line will generate an explanation of all functions of the program.
+```Shell
+$ python3 Media-Monitor.py -h
+```
 
 Below is an example of how to start running the program in crontab. The starting amount of 450ml is specified using *--start 450*. Every 2 hours it will check the media and report when the media has reached 25% of the starting amount using *--percent 25*, when the media only has 50ml left using *--limit 50*, and every time 100ml of media is used using *--amount 100*. You can also set the program to report every time it runs using *--report*. This run will email the reports to yourEmail@gmail.com using *--email yourEmail@gmail.com*.
 ```Shell
