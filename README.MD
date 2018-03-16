@@ -370,6 +370,16 @@ Run large dilutions on a chamber by chamber basis based on their individual ODs 
 $ python2.7 Block-Dilutions.py --chamber --config exp-10.ini --out
 ```
 ### Media-Monitor Guide
+This program is meant to monitor the media levels of the experiment. You initialize the program with a starting amount of media using *--start*, then a *media.log* file will be created (change the name with *--log*). The program is best run using crontab. There are four ways to specify when to report the media level and percent, and three ways to communicate the report (text and email require setting up in the code).
+
+![Monitor](/explanations/monitor.png)
+
+Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
+
+Below is an example of how to start running the program in crontab. The starting amount of 450ml is specified using *--start 450*. Every 2 hours it will check the media and report when the media has reached 25% of the starting amount using *--percent 25*, when the media only has 50ml left using *--limit 50*, and every time 100ml of media is used using *--amount 100*. You can also set the program to report every time it runs using *--report*. This run will email the reports to yourEmail@gmail.com using *--email yourEmail@gmail.com*.
+```Shell
+$ 0 2 * * * python3 Media-Monitor.py --start 450 --percent 25 --limit 50 --email yourEmail@gmail.com
+```
 
 ---
 ## Hardware Setup
