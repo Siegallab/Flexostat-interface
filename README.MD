@@ -370,7 +370,7 @@ Run large dilutions on a chamber by chamber basis based on their individual ODs 
 $ python2.7 Block-Dilutions.py --chamber --config exp-10.ini --out
 ```
 ### Media-Monitor Guide
-This program is meant to monitor the media levels of the experiment. You initialize the program with a starting amount of media using *--start*, then a *media.log* file will be created (change the name with *--log*). The program is best run using crontab. There are four ways to specify when to report the media level and percent, and three ways to communicate the report (text and email require setting up in the code).
+This program is meant to monitor the media levels of the experiment. You initialize the program with a starting amount of media using *--start*, then the *media.log* file will be read in unless or created if it doesn't exist (change the name with *--log*) along with the *config.ini* file for the main experiment (edit this input name with *--config*). The program is best run using crontab. There are four ways to specify when to report the media level and percent, and three ways to communicate the report (text and email require setting up in the code).
 
 ![Monitor](/explanations/monitor.png)
 
