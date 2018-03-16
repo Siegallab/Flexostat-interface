@@ -15,6 +15,7 @@ INSTRUCTIONS
 """
 
 import csv
+import argparse
 from datetime import datetime
 from numpy import array
 
@@ -30,18 +31,18 @@ def main():
 			Media Monitor Program
 			-----------------------------
 			Select at least one communication method: --print (-p), --text (-t), --email (-e)
-			Select at least one reporting function: --report (-r), --percent (-p), --limit (-m), --amount (-a)
+			Select at least one reporting function: --report (-r), --percent (-n), --limit (-m), --amount (-a)
 			Optional parameters: --config (-c), --log (l), --start (-s), 
 						""")
 
-	parser.add_argument('-p', '--print', action='store_true', 'print out media report to command line')
-	parser.add_argument('-t', '--text', default='0', 'send SMS text message media report to specified number (must set Twilio parameters inside code)')
-	parser.add_argument('-e', '--email', action='store_true', 'email media report (must set parameters inside code)')
+	parser.add_argument('-p', '--print', action='store_true', help='print out media report to command line')
+	parser.add_argument('-t', '--text', default='0', help='send SMS text message media report to specified number (must set Twilio parameters inside code)')
+	parser.add_argument('-e', '--email', action='store_true', help='email media report (must set parameters inside code)')
 	parser.add_argument('-c', '--config', default='config.ini', help="change config file from default 'config.ini'")
 	parser.add_argument('-l', '--log', default='media.log', help="change exported media log file from 'media.log'")
 	parser.add_argument('-s', '--start', default='0', help='start program with new starting media amount in ml amount if no log file exists')
 	parser.add_argument('-r', '--report', action='store_true', help='program will report media whenever it run (specify time interval with crontab)')
-	parser.add_argument('-p', '--percent', default='0', help="specify percent limit when report wanted (e.g. '10' reports when 10% of starting media is left)")
+	parser.add_argument('-n', '--percent', default='0', help="specify percent limit when report wanted (e.g. '10' reports when 10%% of starting media is left)")
 	parser.add_argument('-m', '--limit', default='0', help="specify ml limit when report wanted (e.g. '100' reports when 100 mls has been reached)")
 	parser.add_argument('-a', '--amount', default='0', help="specify ml amount interval when report wanted (e.g. '100' reports every time 100 mls are consumed)")
 
@@ -137,8 +138,8 @@ def report_build(args, udata, last_report):
 	current_amount = float(last_report[3]) - total_dilutions
 	local_percent = (total_dilutions // float(last_report[3]))*100
 	total_percent = (current_amount // float(last_report[2]))*100
-	report_str = "Current media level is at " + current_amount + "ml.\n" +
-		"The experiment has consumed " + total_dilutions + "ml or " + local_percent + "% since the last report.\n" +
+	report_str = "Current media level is at " + current_amount + "ml.\n" + \
+		"The experiment has consumed " + total_dilutions + "ml or " + local_percent + "% since the last report.\n" + \
 		"Total media level is at " + total_percent + "% of the starting amount of " + last_report[2] + "ml."
 	if args.report:
 		decision = True
@@ -215,3 +216,6 @@ def email_report(address, message):
 
 	except Exception as e:
 		print('send_mail error: ' + str(e))
+
+
+main()
