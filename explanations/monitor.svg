@@ -28,7 +28,7 @@
         </g>
     </g>
     <g id="Reporting" transform="matrix(1.13747,0,0,1.13747,-109.257,-27.4257)">
-        <g transform="matrix(1,0,0,1,119.062,-30.6926)">
+        <g transform="matrix(1,0,0,1,924.532,59.7525)">
             <text x="160.722px" y="377.943px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">--report</text>
             <text x="126.03px" y="394.466px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">Report each time</text>
             <text x="119.808px" y="410.99px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:16px;">the program is run.</text>
@@ -99,21 +99,21 @@
         <g transform="matrix(1,0,0,1,14.6461,17.5136)">
             <text x="877.336px" y="425.605px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">450ml</text>
         </g>
-        <g transform="matrix(0.879144,0,0,0.879144,808.412,135.675)">
+        <g transform="matrix(0.879144,0,0,0.879144,258.1,202.903)">
             <text x="62.982px" y="229.268px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Reporting</text>
             <rect x="62.982" y="231.811" width="104.063" height="1.758"/>
             <text x="62.988px" y="254.053px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Functions</text>
             <rect x="62.988" y="256.596" width="104.051" height="1.758"/>
         </g>
     </g>
-    <g id="Communication" transform="matrix(1.13747,0,0,1.13747,-182.265,-73.6695)">
+    <g id="Communication" transform="matrix(1.13747,0,0,1.13747,-182.265,-52.6388)">
         <g id="Background1" serif:id="Background" transform="matrix(0.123807,0,0,0.123807,-59.2854,-50.2651)">
             <clipPath id="_clip2">
                 <rect x="7680" y="1610" width="525" height="451"/>
             </clipPath>
             <g clip-path="url(#_clip2)">
-                <g transform="matrix(7.10091,-0,-0,7.10091,1773.1,929.116)">
-                    <use xlink:href="#_Image3" x="832.571" y="96.592" width="74.935px" height="63.528px" transform="matrix(0.999133,0,0,0.99262,0,0)"/>
+                <g transform="matrix(7.10091,-0,-0,7.10091,1773.1,779.779)">
+                    <use xlink:href="#_Image3" x="832.571" y="117.779" width="74.935px" height="63.528px" transform="matrix(0.999133,0,0,0.99262,0,0)"/>
                 </g>
             </g>
         </g>
@@ -122,8 +122,8 @@
                 <rect x="34816" y="6144" width="2400" height="1714"/>
             </clipPath>
             <g clip-path="url(#_clip4)">
-                <g transform="matrix(26.6105,-0,-0,26.6105,4850.81,3592.4)">
-                    <use xlink:href="#_Image5" x="1134.95" y="95.729" width="91.199px" height="65.419px" transform="matrix(0.99129,0,0,0.991204,0,0)"/>
+                <g transform="matrix(26.6105,-0,-0,26.6105,4850.81,3032.77)">
+                    <use xlink:href="#_Image5" x="1134.95" y="116.946" width="91.199px" height="65.419px" transform="matrix(0.99129,0,0,0.991204,0,0)"/>
                 </g>
             </g>
         </g>
@@ -176,7 +176,7 @@
             <rect x="590.703" y="58.709" width="104.051" height="1.758"/>
         </g>
     </g>
-    <g id="File-I-O" serif:id="File I/O" transform="matrix(1.14062,0,0,1.14062,-15.1903,-15.6421)">
+    <g id="File-I-O" serif:id="File I/O" transform="matrix(1.14062,0,0,1.14062,-16.5004,15.7331)">
         <g id="config" transform="matrix(0.695384,0,0,0.695384,-647.494,-342.808)">
             <g transform="matrix(0.211242,0,0,0.211242,993.174,703.042)">
                 <path d="M438.247,183.129L261.315,6.196L246.123,6.196L240.49,6.196L73.888,6.196L73.888,506L438.328,506L438.328,183.16L438.247,183.129ZM261.315,35.645L398.468,172.797L261.315,172.797L261.315,35.645ZM94.713,485.175L94.713,27.021L240.49,27.021L240.49,193.622L417.504,193.622L417.504,485.174L94.713,485.174L94.713,485.175Z" style="fill:rgb(55,64,77);fill-rule:nonzero;"/>
@@ -230,6 +230,16 @@
         </g>
         <g transform="matrix(1,0,0,1,18.757,20.6766)">
             <text x="255.279px" y="139.133px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">Media-Monitor<tspan x="407.341px 414.009px " y="139.133px 139.133px ">.p</tspan>y</text>
+        </g>
+        <g transform="matrix(0.876712,0,0,0.876712,85.4036,-2.17064)">
+            <text x="129.162px" y="43.405px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:24px;">File I/O</text>
+            <rect x="129.162" y="45.948" width="77.344" height="1.758"/>
+        </g>
+        <g transform="matrix(0.876712,0,0,0.876712,48.5237,-17.9257)">
+            <text x="33.814px" y="359.333px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:16px;">$ python3 Media-Monitor.py -h</text>
+        </g>
+        <g transform="matrix(0.876712,0,0,0.876712,98.1379,-17.6417)">
+            <text x="-17.867px" y="329.334px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:16px;">use Python 3 <tspan x="126.133px " y="329.334px "> </tspan> -h for help</text>
         </g>
     </g>
     <defs>
