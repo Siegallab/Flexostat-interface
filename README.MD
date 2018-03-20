@@ -15,7 +15,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
         * [Growth Rate Pipeline](#growth-rate-pipeline-todo)
 		* [Block Dilutions Pipeline](#block-dilutions-pipeline-todo)
 		* [Media Monitoring](#media-monitoring-todo)
-		* [Analysis](#analysis-todo)
+		* [Future](#future-todo)
 2. [File Overview](#file-overview)
 3. [Up and Running](#up-and-running)
     * [RPi SSH Access](#raspberrypi-ssh-access)
@@ -90,6 +90,11 @@ MacOS (and probably linux):
     - [x] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
     - [x] b. x and y lim
 	- [x] c. allow option to display sd or se
+7. Implement blocking
+	- [ ] a. allow stats to be analyzed into blocks
+	- [ ] b. allow interval to still work in blocks
+8. Significance calculations
+	- [ ] a. stats calculate significant growth rate change
 #### Block Dilutions Pipeline TODO
 1. Main functionality
 	- [x] a. allow dynamic config variable changes
@@ -98,23 +103,16 @@ MacOS (and probably linux):
 2. Statistics
 	- [x] a. way to document time intervals of dilution
     - [x] b. automated blocking of growth intervals
-    - [ ] c. stats and graphs
 #### Media Monitoring TODO
 1. Main functionality
 	- [x] a. calculate remaining percentage and amount of media
-    - [x] b. notify experimenters
-#### Analysis TODO
-1. Significance Calculation
-	- [ ] a. percent change
-	- [ ] b. statistical significance
-	- [ ] c. output graphs
-	- [ ] d. implement functionality in previous pipelines
-2. Predictive Analysis
-	- [ ] a. predictive stats based on parameters
-    - [ ] b. compare stats with experimental
-    - [ ] c. output status report
-    - [ ] d. output graphs
-3. Data Presentation
+    - [x] b. ability to notify experimenters
+#### Future TODO
+This is a list of ideas thought about as ways to improve the turbidostat programs. These are non-essential and non-priority but may be convenient or useful for certain experiments.
+1. Predictive Analysis
+	- [ ] a. predictive stats based on researcher parameters
+    - [ ] b. compare theoretical stats with experimental
+2. Data Presentation
 	- [ ] a. multiple data sets on a single graph
 
 ---
