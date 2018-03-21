@@ -61,17 +61,19 @@ MacOS (and probably linux):
 #### Controller TODO
 1. OD Averaging
 	- [x] a. save all OD reads, then average for dilution
-	- [ ] b. debug with real experiment
 2. Updating Parameters
 	- [x] a. compares controller config variables and updates if different
 	- [x] b. intakes init parameter with location of config file (servostat)
+3. Debugging
+	- [x] a. stable build
+	- [ ] b. data (simulated or real) run
 #### Growth Rate Pipeline TODO
 1. Figure out implementation
     - [x] a. allow for easy user and automated use
     - [x] b. csv config file for defining file paths
     - [x] c. integrate flexoparser csv file functions
 2. Crontab automation
-    - [x] a. test and debug
+    - [x] a. see if it works on RPi
 3. Log file
     - [x] a. save and/or print program processes
 4. Growth rate analysis
@@ -91,22 +93,30 @@ MacOS (and probably linux):
     - [x] b. x and y lim
 	- [x] c. allow option to display sd or se
 7. Implement blocking
-	- [ ] a. allow stats to be analyzed into blocks
-	- [ ] b. allow interval to still work in blocks
+	- [x] a. allow stats to be analyzed into blocks
+	- [x] b. implement for both schedule and chamber-by-chamber
 8. Significance calculations
 	- [ ] a. stats calculate significant growth rate change
+9. Debugging
+	- [x] a. stable build
+	- [ ] b. data (simulated or real) run
 #### Block Dilutions Pipeline TODO
 1. Main functionality
 	- [x] a. allow dynamic config variable changes
     - [x] b. ensure flexostat files can update variables
-    - [ ] c. software and hardware test, debug, and stable build
 2. Statistics
 	- [x] a. way to document time intervals of dilution
     - [x] b. automated blocking of growth intervals
+3. Debugging
+	- [x] a. stable build
+	- [ ] b. data (simulated or real) run
 #### Media Monitoring TODO
 1. Main functionality
 	- [x] a. calculate remaining percentage and amount of media
     - [x] b. ability to notify experimenters
+2. Debugging
+	- [x] a. stable build
+	- [ ] b. data (simulated or real) run
 #### Future TODO
 This is a list of ideas thought about as ways to improve the turbidostat programs. These are non-essential and non-priority but may be convenient or useful for certain experiments.
 1. Predictive Analysis
