@@ -5,5 +5,5 @@
 *.png
 *.html
 *.komodo*
-
+*.pyc
 *.swp
