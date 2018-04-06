@@ -43,7 +43,7 @@ MacOS (and probably linux):
 ---
 ## File Overview
 
-For more information, see WIKI.MD
+For more information, see [WIKI.MD](https://github.com/Siegallab/Flexostat-interface/blob/master/WIKI.MD)
 
 ### Related Files
 * servostat.py is the main function to be run in the command line with a config file
