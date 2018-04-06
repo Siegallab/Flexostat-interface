@@ -664,7 +664,7 @@ def statistics(intake, output, interval, block):
 					new_block_r = []
 					start_time = row[1]
 			stats = pandas.DataFrame(block_r)
-		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False, header=False)
+			stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False, header=False)
 
 
 def graphs(args, intake, output, limits):
