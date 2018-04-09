@@ -13,6 +13,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
 3. [Software Setup](#software-setup)
     * [RPi SSH Access](#raspberrypi-ssh-access)
     * [Running an Experiment](#running-an-experiment)
+	* [Primer Auto Guide](#primer_auto-guide)
 5. [Hardware Setup](#hardware-setup)
 
 ---
@@ -142,6 +143,42 @@ ex $ screen -r 2477.pts-0.server1
 ctrl c
 $ exit
 ```
+
+### Primer_auto guide
+Make sure your present working directory is ~/Flexostat-interface. (type pwd in command line)
+
+If it is not type cd ~/Flexostat-interface.
+
+The primer auto has 4 inputs to be put into the command line.
+
+* the language: python
+* The script: always Primer_auto.py
+* The cylinder you want to dispense into:
+  * denote using -s
+  * print an integer between 1 and 8
+* The volume you want to dispense:
+  * denote using -v
+  * an integer between 0000 and 2000 always consisting of 4 digits
+  * (Printing a value >= 2000 will simply cause the pump to fill fully)
+  * ex. to dispense 500ul print 0500
+
+The entire line whould look like:
+```Shell
+ $ python Primer_auto.py -s # -v ####
+ ```
+
+A fifth input is present but does not need to be specified unless specifically needed. This input is the config file that specifies the parameters for the turbidostat to function on. The code is set to use "config.ini" as a default. This file must be in the same folder as the Primer_auto.py script for the code to run.
+
+The code is also directly dependant upon the controller.py script, cheapopumpdriver.py script and a number of imported modules. To avoid issues always run the script in the same directory (Flexostat-interface) as all other flexostat code files. Ensure that all modules imported at the head of the script are installed on the computer being used before running.
+
+The functional commands sent to the board in the code are sent using the line cport.write().
+
+the commands are:
+* "clo;" - closes all valves
+* "sel#;" - opens one selected valve. (0 is the solenoid, 1-8 are the cylinder valves)
+* "pmv####;" - Moves the pump to the specified position between 0 and 2000. To fill the pump a value >0 is used. To empty the pump the command "pmv0000;" is used.
+
+For further questions and troubleshooting see comments in the code.
 
 ---
 ## Hardware Setup
