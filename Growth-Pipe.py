@@ -182,11 +182,11 @@ def functions(args, paths, process_log, exp):
 
 			f.close()
 			ufile.close()
+			process_log = machine_to_human(exp + paths['u'], exp + paths['u machine time'], process_log)
 			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes u csv and exports u growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for u calculating...'
-			process_log = machine_to_human(exp + paths['u'], exp + paths['u machine time'], process_log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths['u growth rates'] + '.csv'):
@@ -201,18 +201,18 @@ def functions(args, paths, process_log, exp):
 			process_log += '\nStats for u calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['u'], exp + paths['u statistics'], args.interval, exp + paths['block'])
+				statistics(exp + paths['u'], exp + paths['u statistics'], args.interval, exp + paths['block'], exp + paths['od'])
 			else:
-				statistics(exp + paths['u'], exp + paths['u statistics'], args.interval, '')
+				statistics(exp + paths['u'], exp + paths['u statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# stats function takes u growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for u growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['u growth statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval, exp + paths['block'])
+				statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval, exp + paths['block'], exp + paths['od'])
 			else:
-				statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval, '')
+				statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# graph functions take specific od csv and exports graphs based on command line arguments
 		if args.graph:
@@ -258,6 +258,7 @@ def functions(args, paths, process_log, exp):
 
 			f.close()
 			odfile.close()
+			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
 			process_log += '\n\tParsed csv created and exported.'
 		# parse function takes odlog file and exports od csv
 		if args.odlog:
@@ -268,11 +269,11 @@ def functions(args, paths, process_log, exp):
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
 			parse_odlog(exp + paths['odlog'], exp + paths['blank'], exp + paths['od'])
+			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
 			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes od csv and exports od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
-			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
 
 			# tell user if file exists and will be overwritten or if new file will be made
 			if os.path.exists(exp + paths['od growth rates'] + '.csv'):
@@ -287,18 +288,18 @@ def functions(args, paths, process_log, exp):
 			process_log += '\nStats for od calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['od'], exp + paths['od statistics'], args.interval, exp + paths['block'])
+				statistics(exp + paths['od'], exp + paths['od statistics'], args.interval, exp + paths['block'], exp + paths['od'])
 			else:
-				statistics(exp + paths['od'], exp + paths['od statistics'], args.interval, '')
+				statistics(exp + paths['od'], exp + paths['od statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# stats function takes od growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for od growth rates calculating...'
 			dead, dead, process_log = validate_output_path(args, exp + paths['od growth statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval, exp + paths['block'])
+				statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval, exp + paths['block'], exp + paths['od'])
 			else:
-				statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval, '')
+				statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# graph functions take specific od csv and exports graphs based on command line arguments
 		if args.graph:
@@ -577,7 +578,7 @@ def od_rate(experiment, output):
 	df.to_csv(path_or_buf='{}.csv'.format(output), index=False)
 
 
-def statistics(intake, output, interval, block):
+def statistics(intake, output, interval, block, od_raw):
 	"""
 	Analyzes growth rate csv for general statistics (averages, standard deviation, and standard error).
 
@@ -585,85 +586,162 @@ def statistics(intake, output, interval, block):
 	:param output: path for export
 	:param interval: modify default hour time interval by multiplication
 	:param block: path to blocklog file
+	:param od_raw: optical density data for use in block analysis
 	"""
 	df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 
 	# if blocklog file is specified, then separate stats into blocks
 	if len(block) > 0:
+		# block information format: [date, time, schedule or chamber, new setpoints for chambers, human time (hr), experiment time, current ODs]
 		# for each chamber, will iterate through dataframe and iterate through blocklog data as each block time is reached
 		blocklog_file = open(block, 'r')
 		blocklog = csv.reader(blocklog_file)
 		blocklog_file.close()
-		for chamber in range(2, 10):
-			# for first blocklog row, define setpoint, next setpoint, start of block, end of block, block, and blocklog row 
-			setpoint = float(blocklog[0][2].split(',')[chamber-2])
-			next_setpoint = float(blocklog[1][2].split(',')[chamber-2])
-			row_start = 0
-			row_end = float(blocklog[0][4])
-			block = 1
-			block_row = 1
-			start_time = 0
-			end_time = 0
-			new_block_r = []
-			block_r = [['Block', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
-			for row in df.itertuples():
-				# if element is a number (not a NaN) then add to block
-				if not math.isnan(row[chamber]):
-					new_block_r.append(row[chamber])
-					end_time = row[1]
-				# if the end of the block has been reached, save stats on that block
-				if row[1] >= row_end and len(new_block_r) >= 1:
-					num = len(new_block_r)
-					mean = numpy.mean(new_block_r)
-					sd = numpy.std(new_block_r)
-					sem = sd / numpy.sqrt(num)
-					# compare current and next setpoint, if greater then it is a block period, if less then it is a dilution period (marked as 0)
-					if sum(setpoint) > sum(next_setpoint):
-						block_r.append([block, mean, sd, sem, row_start, row_end, start_time, end_time, num])
-						block += 1
-					else:
-						block_r.append([0, mean, sd, sem, row_start, row_end, start_time, end_time, num])
-					# iterate to next blocklog row, start of block, end of block, setpoint, and next setpoint
-					block_row += 1
-					row_start = row_end
-					setpoint = next_setpoint
-					try:
-						row_end = float(blocklog[block_row][4])
-						next_setpoint = float(blocklog[block_row][2].split(',')[chamber-2])
-					except:
-						row_end = numpy.mean(df.tail(2)['Time'])
-						next_setpoint = float(blocklog[block_row-2][2].split(',')[chamber-2])
-					new_block_r = []
-					start_time = row[1]
-			stats = pandas.DataFrame(block_r)
-			stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False, header=False)
+		if blocklog[0][2] == 'schedule':
+			for chamber in range(2, 10):
+				# for first blocklog row, define setpoint, next setpoint, start of block, end of block, block, and blocklog row 
+				setpoint = float(blocklog[0][2].split(',')[chamber-2])
+				next_setpoint = float(blocklog[1][2].split(',')[chamber-2])
+				block_append = [0, float(blocklog[0][4]), 0, 0]
+				new_block = []
+				block_row = 1
+				od_block = 1
+				u_block = 1
+				growth = True
+				max_reached = False
+				min_reached = False
+				ods = pandas.read_csv('{}.csv'.format(od_raw), header=None, names=['Time', 1, 2, 3, 4, 5, 6, 7, 8])
+				block_od = [['Block', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
+				block_u = [['Block', 'Upper or Lower' 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
+				for row in df.itertuples():
+					# if element is a number (not a NaN) then add to block
+					if not math.isnan(row[chamber]):
+						if len(new_block) == 0:
+							block_append[2] = row[1]
+						new_block.append(row[chamber])
+						block_append[3] = row[1]
+					# if in the growth phase and the max is reached for the first time, save the block as an OD block
+					if growth and not max_reached and ods.loc[ods['Time'] == row[1]][chamber-2] >= (setpoint-setpoint*0.05) and len(new_block) >= 1:
+						num = len(new_block)
+						mean = numpy.mean(new_block)
+						sd = numpy.std(new_block)
+						sem = sd / numpy.sqrt(num)
+						block_od.append([od_block, mean, sd, sem] + block_append + [num])
+						od_block += 1
+						max_reached = True
+						new_block = []
+					# if the lower minimum setpoint is reached, reset the list of elements for the next U block
+					if not growth and not min_reached and ods.loc[ods['Time'] == row[1]][chamber-2] <= (setpoint+setpoint*0.05):
+						min_reached = True
+						new_block = []
+					# if the end of the block has been reached, save stats on that block as a U block
+					if row[1] >= block_append[1] and len(new_block) >= 1:
+						num = len(new_block)
+						mean = numpy.mean(new_block)
+						sd = numpy.std(new_block)
+						sem = sd / numpy.sqrt(num)
+						# compare current and next setpoint, if greater then it is a block period, if less then it is a dilution period
+						if sum(setpoint) > sum(next_setpoint):
+							growth = False
+							min_reached = False
+							block_u.append([u_block, 'Upper', mean, sd, sem] + block_append + [num])
+						else:
+							growth = True
+							max_reached = False
+							block_u.append([u_block, 'Lower', mean, sd, sem] + block_append + [num])
+						u_block += 1
+						# iterate to next blocklog row, start of block, end of block, setpoint, and next setpoint
+						new_block = []
+						block_row += 1
+						block_append[0] = block_append[1]
+						setpoint = next_setpoint
+						try:
+							block_append[1] = float(blocklog[block_row][4])
+							next_setpoint = float(blocklog[block_row][2].split(',')[chamber-2])
+						except:
+							block_append[1] = numpy.mean(df.tail(2)['Time'])
+							next_setpoint = float(blocklog[block_row-2][2].split(',')[chamber-2])
+				stats = pandas.DataFrame(block_od)
+				stats.to_csv(path_or_buf='{}/od_ch{}.csv'.format(output, chamber-1), index=False, header=False)
+				stats = pandas.DataFrame(block_u)
+				stats.to_csv(path_or_buf='{}/u_ch{}.csv'.format(output, chamber-1), index=False, header=False)
+		else:
+			for chamber in range(2, 10):
+				# for first blocklog row, define setpoint, next setpoint, start of block, end of block, block, and blocklog row 
+				setpoint = float(blocklog[0][2].split(',')[chamber-2])
+				next_setpoint = float(blocklog[1][2].split(',')[chamber-2])
+				# block append holds [start of the block from blocklog, end of the block from blocklog, starting element time, and ending element time]
+				block_append = [0, float(blocklog[0][4]), 0, 0]
+				new_block = []
+				growth_block = 1
+				dilution_block = 1
+				block_row = 1
+				block = [['Growth or Dilution', 'Block', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
+				block_od = [['Block', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
+				for row in df.itertuples():
+					# if element is a number (not a NaN) then add to block
+					if not math.isnan(row[chamber]):
+						if len(new_block) == 0:
+							block_append[2] = row[1]
+						new_block.append(row[chamber])
+						block_append[3] = row[1]
+					# if the end of the block has been reached, save stats on that block
+					if row[1] >= block_append[1] and len(new_block) >= 1:
+						num = len(new_block)
+						mean = numpy.mean(new_block)
+						sd = numpy.std(new_block)
+						sem = sd / numpy.sqrt(num)
+						# compare current and next setpoint, if greater then it is a block period, if less then it is a dilution period
+						if sum(setpoint) > sum(next_setpoint):
+							block.append(['Growth', growth_block, mean, sd, sem] + block_append + [num])
+							block_od.append([growth_block, mean, sd, sem] + block_append + [num])
+							growth_block += 1
+						else:
+							block.append(['Dilution', growth_block, mean, sd, sem] + block_append + [num])
+							dilution_block += 1
+						# iterate to next blocklog row, start of block, end of block, setpoint, and next setpoint
+						new_block = []
+						block_row += 1
+						block_append[0] = block_append[1]
+						setpoint = next_setpoint
+						try:
+							block_append[1] = float(blocklog[block_row][4])
+							next_setpoint = float(blocklog[block_row][2].split(',')[chamber-2])
+						except:
+							block_append[1] = numpy.mean(df.tail(2)['Time'])
+							next_setpoint = float(blocklog[block_row-2][2].split(',')[chamber-2])
+				stats = pandas.DataFrame(block)
+				stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False, header=False)
+				stats = pandas.DataFrame(block_od)
+				stats.to_csv(path_or_buf='{}/od_ch{}.csv'.format(output, chamber-1), index=False, header=False)
 	# otherwise separate stats by hour
 	else:
 		# for each chamber, iterate through dataframe to calculate stats
 		for chamber in range(2, 10):
 			start_time = 0
 			end_time = 0
-			new_block_r = []
+			new_block = []
 			# multiple default 1 hour by command line argument
 			hour = 1 * float(interval)
-			block_r = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
+			block = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
 			for row in df.itertuples():
 				# if element is a number (not a NaN) then add to block
 				if not math.isnan(row[chamber]):
-					new_block_r.append(row[chamber])
+					if len(new_block) == 0:
+						start_time = row[1]
+					new_block.append(row[chamber])
 					end_time = row[1]
 				# if the end of the hour unit has been reached, then save stats on that hour
-				if row[1] >= hour and len(new_block_r) >= 1:
-					num = len(new_block_r)
-					mean = numpy.mean(new_block_r)
-					sd = numpy.std(new_block_r)
+				if row[1] >= hour and len(new_block) >= 1:
+					num = len(new_block)
+					mean = numpy.mean(new_block)
+					sd = numpy.std(new_block)
 					sem = sd / numpy.sqrt(num)
-					block_r.append([hour, mean, sd, sem, start_time, end_time, num])
+					block.append([hour, mean, sd, sem, start_time, end_time, num])
 					# multiple default 1 hour by command line argument
 					hour += 1 * float(interval)
-					new_block_r = []
-					start_time = row[1]
-			stats = pandas.DataFrame(block_r)
+					new_block = []
+			stats = pandas.DataFrame(block)
 			stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber-1), index=False, header=False)
 
 
