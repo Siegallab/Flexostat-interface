@@ -333,6 +333,8 @@ $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat
 ```
 
 ### Growth-Pipe Guide
+For a video explaining Growth-Pipe and Block-Dilutions please refer to [David's website.](http://www.kleinjdavid.com/research#growth-rate-analysis)
+
 The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* or *odlog.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* or *odlog.dat* file from which this pipeline feeds from.
 ![Directories](/explanations/directories.png)
 The *Growth-Pipe.py* program will import from and export to two lower directories (Data and Experiment). The names of these two directories and all import and export files are specified within the *config-growth.csv* file. This config file exists in the same directory as the Growth-Pipe program. **Do not** change the *variable* columns in the config file.
@@ -359,6 +361,8 @@ $ python3 Growth-Pipe.py --od --graph 4 --xlim 0-5 --se
 ```
 
 ### Block-Dilutions Guide
+For a video explaining Growth-Pipe and Block-Dilutions please refer to [David's website.](http://www.kleinjdavid.com/research#growth-rate-analysis)
+
 The program is meant to change the *config.ini* file that is continually read by the experiment Controller program in order for large dilutions to occur in the experiment and give wide ranges between which the cell cultures can grow without dilutions. The program can either be run where each chamber's variables in the *config.ini* file are changed depending on their current ODs or where all chambers' variables in the *config.ini* file are changed together after specific intervals of time. The program allows for easy scheduling of how often to check the OD and/or interval status through crontab.
 ![Blocks](/explanations/blocks.png)
 The program reads in OD data from either the *odlog.dat* and *blank.dat* or *log.dat* files, as well as the set point variables for each chamber from the *config.ini* file, and reports in the *block.log* file when individual chambers have reached their set points. Depending on if the program is set to run based on individual chambers or all together on a scheduled interval, the program will update variables in the *config.ini* file appropriately and report these changes in the *block.log* file.
