@@ -7,3 +7,8 @@
 *.komodo*
 *.pyc
 *.swp
+
+.Rhistory
+.idea
+.vscode
+.DS_Store
