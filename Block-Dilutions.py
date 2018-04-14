@@ -29,27 +29,7 @@ def main():
 	Ensures there is a config file to work with before running main loop.
 	Keyboard interrupt ends program.
 	"""
-
-	parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-					description="""
-			Block Dilutions Pipeline
-			------------------------
-			Select one main function: --schedule (-s), --chamber (-c)
-			Optional changes: --full_log, --delay, --config, 
-					--out (-o), --block (-b), --dilution (-d)
-						""")
-
-	parser.add_argument('--full_log', action='store_true', help='use full log for OD input (instead of default od log)')
-	parser.add_argument('--delay', default='0', help="delay startup of first run by minutes")
-	parser.add_argument('--config', default='config.ini', help="change config file from default 'config.ini'")
-	parser.add_argument('-o', '--out', action='store_true', help='program processes printing')
-	parser.add_argument('-b', '--block', default='0', help='specify hour interval for block (default config, otherwise 5)')
-	parser.add_argument('-d', '--dilution', default='0', help='specify hour interval for dilution (default config, otherwise 2.5)')
-	parser.add_argument('-c', '--chamber', action='store_true', help='use individual chamber OD for dilutions')
-	parser.add_argument('-s', '--schedule', action='store_true', help='use interval dilution schedule for dilutions')
-
-	args = parser.parse_args()
-
+	args = command_line_arguments()
 	# Ensure config file exists and function specified, then read in config variables
 	if os.path.exists(args.config) and (args.schedule != args.chamber):
 		config = SafeConfigParser()
@@ -93,6 +73,34 @@ def main():
 	else:
 		print('ERROR: Config file not found or function not specified correctly.')
 	print('Program end.\n')
+
+
+def command_line_arguments():
+	"""
+	Takes in command line argument parameters and displays help descriptions.
+
+	:return: variable containing all command line argument parameters
+	"""
+	parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+					description="""
+			Block Dilutions Pipeline
+			------------------------
+			Select one main function: --schedule (-s), --chamber (-c)
+			Optional changes: --full_log, --delay, --config, 
+					--out (-o), --block (-b), --dilution (-d)
+						""")
+
+	parser.add_argument('--full_log', action='store_true', help='use full log for OD input (instead of default od log)')
+	parser.add_argument('--delay', default='0', help="delay startup of first run by minutes")
+	parser.add_argument('--config', default='config.ini', help="change config file from default 'config.ini'")
+	parser.add_argument('-o', '--out', action='store_true', help='program processes printing')
+	parser.add_argument('-b', '--block', default='0', help='specify hour interval for block (default config, otherwise 5)')
+	parser.add_argument('-d', '--dilution', default='0', help='specify hour interval for dilution (default config, otherwise 2.5)')
+	parser.add_argument('-c', '--chamber', action='store_true', help='use individual chamber OD for dilutions')
+	parser.add_argument('-s', '--schedule', action='store_true', help='use interval dilution schedule for dilutions')
+
+	args = parser.parse_args()
+	return args
 
 
 def read_ods(args, log):

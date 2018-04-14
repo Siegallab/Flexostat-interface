@@ -38,7 +38,7 @@ def main():
 		paths, process_log, exp = config_variables(args)
 		process_log = functions(args, paths, process_log, exp)
 		# print and save process log
-		log_functions(args, process_log, exp)
+		log_functions(args, paths, process_log, exp)
 	else:
 		print('ERROR: Config file not found.')
 	print('Program end.\n')
@@ -783,11 +783,12 @@ def graphs(args, intake, output, limits):
 			plt.close()
 			
 
-def log_functions(args, process_log, exp):
+def log_functions(args, paths, process_log, exp):
 	"""
 	Prints and/or updates the log of processes from this growth rate program based on command line arguments.
 
 	:param args: command line argument array for deciding print and/or file write-out
+	:param paths: list with config file paths
 	:param process_log: log for keeping track of processes
 	:param exp: path to experiment
 	"""
