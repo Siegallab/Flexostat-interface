@@ -18,6 +18,8 @@ from datetime import datetime
 import os
 import argparse
 from configparser import ConfigParser
+import time
+import json
 
 def main():
 	"""
@@ -35,6 +37,7 @@ def main():
 		if diff >= float(args.block_time):
 			analyze_block(args)
 		last_time = now_time
+		time.sleep(3)
 	print('Program end.\n')
 
 
@@ -49,7 +52,7 @@ def command_line_parameters():
 			Experiment Simulator Program
 			----------------------------
 			Defaults: 0.4 true growth, 20 SD for OD noise, 
-				1 minute data production, 2 minute block analysis, 2 hour experiment length,
+				0.05 minute (3 second) data production, 0.1 minute (18 second) block analysis, 2 hour experiment length,
 				'config.ini' for config file
 			
 			Optional parameters: 
@@ -57,8 +60,8 @@ def command_line_parameters():
 
 	parser.add_argument('--growth', default='0.4', help='true growth rate, defaults to 0.4')
 	parser.add_argument('--noise', default='20', help='standard deviation of OD noise, defaults to 20')
-	parser.add_argument('--data_time', default='1', help='minute interval for each data production, defaults to 1')
-	parser.add_argument('--block_time', default='2', help='minute interval for each block analysis, defaults to 2')
+	parser.add_argument('--data_time', default='0.05', help='minute interval for each data production, defaults to 0.05 (3 seconds)')
+	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (18 seconds)')
 	parser.add_argument('--exp_len', default='120', help='minute length for entire simulated experiment, defaults to 120')
 	parser.add_argument('--config', default='config.ini', help='experiment config file, defaults to config.ini')
 
@@ -77,13 +80,31 @@ def produce_data(args):
 	controller = dict(config.items('controller'))
 	log = dict(config.items('log'))
 
-	true_GR = .4/60
-	start_OD = 1
-	timepoints = numpy.arange(1000)
+	logfile = open(log['fulllog'], 'r')  # open input file
+	logdata = logfile.readlines()
+	logfile.close()
 
-	true_OD = start_OD * numpy.exp(true_GR*timepoints)
-	OD_noise = numpy.random.normal(0, 20, (len(timepoints),))
-	observed_OD = true_OD+OD_noise
+	latest_OD = logdata[-1]
+	if len(latest_OD) < 1:
+		latest_OD = logdata[-2]
+	latest_OD = json.loads(latest_OD)['ods']
+	
+	true_GR = .4 / 60
+	true_OD = (true_GR * latest_OD) + latest_OD
+	OD_noise = numpy.random.normal(0, 0.002, (len(latest_OD),)) #pylint: disable=E1101
+	observed_OD = true_OD + OD_noise
+
+	time_secs = int(round(time.time()))
+	dlog = {'timestamp': time_secs,
+			'ods': [round(od, 4) for od in observed_OD]
+			#'u': u.tolist()[0],
+			#'z': [str(z) for z in self.z]}
+			}
+	log_str = json.dumps(dlog)
+
+	logfile = open(log['fulllog'], 'r')
+	logfile.write('%s\n' % log_str)
+	logfile.close()
 
 
 def analyze_block(args):
