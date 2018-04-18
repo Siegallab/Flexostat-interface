@@ -1,4 +1,3 @@
-
 """
 BACKGROUND
 
@@ -26,21 +25,20 @@ def main():
 	Ensures there is a config file to work with before calling the 'functions' function.
 	"""
 	args = command_line_parameters()
-	start_time = datetime.now()
-	last_time = datetime.now()
+	start_time, last_data, last_block = datetime.now(), datetime.now(), datetime.now()
 	od_subtraction = numpy.asarray([0.0] * 8)
 	try:
-		while (last_time - start_time).seconds/60 < float(args.exp_len):
-			now_time = datetime.now()
-			diff = (now_time - last_time).seconds/60
-			if diff >= float(args.data_time):
+		while (last_data - start_time).seconds/60 < float(args.exp_len):
+			if (datetime.now() - last_data).seconds/60 >= float(args.data_time):
 				od_subtraction = produce_data(args, od_subtraction)
-			#if diff >= float(args.block_time):
-			#	analyze_block(args)
-			last_time = now_time
-			time.sleep(3)
+				last_data = datetime.now()
+			if (datetime.now() - last_block).seconds/60 >= float(args.block_time):
+				analyze_block(args)
+				last_block = datetime.now()
+			time.sleep(1)
 	except KeyboardInterrupt:
-		print('Program end.\n')
+		print('Experiment-Simulator.py interrupt.\n')
+	print('Experiment-Simulator.py end.\n')
 
 
 def command_line_parameters():
@@ -64,7 +62,7 @@ def command_line_parameters():
 	parser.add_argument('--growth', default='0.4', help='true growth rate, defaults to 0.4')
 	parser.add_argument('--noise', default='0.002', help='standard deviation of OD noise, defaults to 0.002')
 	parser.add_argument('--data_time', default='0.05', help='minute interval for each data production, defaults to 0.05 (3 seconds)')
-	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (18 seconds)')
+	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (6 seconds)')
 	parser.add_argument('--exp_len', default='120', help='minute length for entire simulated experiment, defaults to 120')
 	parser.add_argument('--config', default='config.ini', help='experiment config file, defaults to config.ini')
 	parser.add_argument('--print', action='store_false', help='turn off print by using flag, defaults to on')
@@ -117,7 +115,7 @@ def produce_data(args, od_subtraction):
 	OD_noise = numpy.random.normal(0, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
 	for chamber in latest_OD:
 		if chamber < float(args.noise):
-			OD_noise = numpy.random.normal(float(args.noise)*2, float(args.noise), (len(latest_OD),))
+			OD_noise = numpy.random.normal(float(args.noise)*2, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
 	observed_OD = (true_OD + OD_noise) - od_subtraction
 
 	# compute the U and Z values based on OD
@@ -188,7 +186,8 @@ def analyze_block(args):
 
 	:param args: command line arguments for program
 	"""
-	os.system("python3 Block-Dilutions.py --full_log")
+	command = "python2.7 Block-Dilutions.py --full_log --config {} --out --chamber".format(args.config)
+	os.system(command)
 
 
 main()
