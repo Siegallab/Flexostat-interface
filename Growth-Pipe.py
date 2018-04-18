@@ -1,4 +1,3 @@
-
 """
 BACKGROUND
 
@@ -22,6 +21,7 @@ import argparse
 import warnings
 import csv
 import math
+import json
 from math import log10
 from datetime import datetime
 
@@ -35,10 +35,10 @@ def main():
 	args = command_line_parameters()
 
 	if os.path.exists(args.config):
-		paths, process_log, exp = config_variables(args)
-		process_log = functions(args, paths, process_log, exp)
+		paths, process_log = config_variables(args)
+		process_log = functions(args, paths, process_log)
 		# print and save process log
-		log_functions(args, paths, process_log, exp)
+		log_functions(args, paths, process_log)
 	else:
 		print('ERROR: Config file not found.')
 	print('Program end.\n')
@@ -116,18 +116,14 @@ def config_variables(args):
 		# optical density graph local variables
 		'od graphs' : '', 'od statistics graphs' : '', 'od growth rates graphs' : '', 'od growth statistics graphs' : ''
 	}
+	# loop through growth config file to collect Data and Experiment folder path
 	with open(args.config) as config_file:
 		reader = csv.reader(config_file)
 		for row in reader:
 			# removes any ending slashes that may exist in csv
 			if row[1][-1] == '/':
 				row[1] = row[1][:-1]
-			paths[row[0]] = row[1]
-			if len(row[4]) >= 1:
-				if row[4][-1] == '/':
-					row[4] = row[1][:-1]
-			paths[row[3]] = row[4]
-	config_file.close()
+			paths[row[0]] = row[4]
 
 	# ensure data and experiment directories exist
 	# format paths to variable appropriately
@@ -144,17 +140,32 @@ def config_variables(args):
 	else:
 		os.system("mkdir '{}'".format(exp))
 		process_log += '\nExperiment directory not found. Made new one.'
-	return paths, process_log, exp
+
+	# loop through growth config file to collect all other paths and add experiment path to their beginning
+	with open(args.config) as config_file:
+		reader = csv.reader(config_file)
+		for row in reader:
+			# removes any ending slashes that may exist in csv
+			if row[1][-1] == '/':
+				row[1] = row[1][:-1]
+			if not row[1] in ['data directory', 'experiment']:
+				paths[row[0]] = exp + row[1]
+			if len(row[4]) >= 1:
+				if row[4][-1] == '/':
+					row[4] = row[1][:-1]
+			paths[row[3]] = row[4]
+	config_file.close()
+
+	return paths, process_log
 
 
-def functions(args, paths, process_log, exp):
+def functions(args, paths, process_log):
 	"""
 	Runs all functions specified by the command line arguments using the config file variables, while taking not in the log variable.
 
 	:param args: list of command line arguments
 	:param paths: list with config file paths
 	:param process_log: log for keeping track of processes
-	:param exp: path to experiment
 	:return: log of all processes that were run
 	"""
 	# make sure at least one data set is specified
@@ -163,165 +174,140 @@ def functions(args, paths, process_log, exp):
 	if args.u:
 		# parse function takes log file and exports u csv
 		if args.parse:
-			with open(exp + paths['log file'] + '.dat') as f:  # open input file
-				log = f.read()
-
-			process_log += '\nParsing u from log file...'
-			udata = parse_u(log)
-
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['u'] + '.csv'):
+			if os.path.exists(paths['u']):
 				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
-
-			ufile = open(exp + paths['u'] + '.csv', 'w')
-			wru = csv.writer(ufile, quoting=csv.QUOTE_ALL)
-			for u in udata:
-				wru.writerow(u)
-
-			f.close()
-			ufile.close()
-			process_log = machine_to_human(exp + paths['u'], exp + paths['u machine time'], process_log)
+			parse_u(paths['log file'], paths['u'])
+			process_log = machine_to_human(paths['u'], paths['u machine time'], process_log)
 			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes u csv and exports u growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for u calculating...'
 
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['u growth rates'] + '.csv'):
+			if os.path.exists(paths['u growth rates']):
 				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
 
-			u_rate(exp + paths['u'], exp + paths['u growth rates'])
+			u_rate(paths['u'], paths['u growth rates'])
 			process_log += '\n\tGrowth rates calculated and exported.'
 		# stats function takes u csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for u calculating...'
-			dead, dead, process_log = validate_output_path(args, exp + paths['u statistics'], False, process_log)
+			dead, dead, process_log = validate_output_path(args, paths['u statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['u'], exp + paths['u statistics'], args.interval, exp + paths['block'], exp + paths['od'])
+				statistics(paths['u'], paths['u statistics'], args.interval, paths['block'], paths['od'])
 			else:
-				statistics(exp + paths['u'], exp + paths['u statistics'], args.interval, '', '')
+				statistics(paths['u'], paths['u statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# stats function takes u growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for u growth rates calculating...'
-			dead, dead, process_log = validate_output_path(args, exp + paths['u growth statistics'], False, process_log)
+			dead, dead, process_log = validate_output_path(args, paths['u growth statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval, exp + paths['block'], exp + paths['od'])
+				statistics(paths['u growth rates'], paths['u growth statistics'], args.interval, paths['block'], paths['od'])
 			else:
-				statistics(exp + paths['u growth rates'], exp + paths['u growth statistics'], args.interval, '', '')
+				statistics(paths['u growth rates'], paths['u growth statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# graph functions take specific od csv and exports graphs based on command line arguments
 		if args.graph:
 			if '1' in args.graph:
 				process_log += '\nGraphing for u...'
-				output, limits, process_log = validate_output_path(args, exp + paths['u graphs'], True, process_log)
-				graphs(args, exp + paths['u'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['u graphs'], True, process_log)
+				graphs(args, paths['u'], output, limits)
 				process_log += '\n\tGraphs exported.'
 			if '2' in args.graph:
 				process_log += '\nGraphing for u stats...'
-				output, limits, process_log = validate_output_path(args, exp + paths['u statistics graphs'], True, process_log)
-				graphs(args, exp + paths['u statistics'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['u statistics graphs'], True, process_log)
+				graphs(args, paths['u statistics'], output, limits)
 				process_log += '\n\tGraphs exported.'
 			if '3' in args.graph:
 				process_log += '\nGraphing for u growth rates...'
-				output, limits, process_log = validate_output_path(args, exp + paths['u growth rates graphs'], True, process_log)
-				graphs(args, exp + paths['u growth rates'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['u growth rates graphs'], True, process_log)
+				graphs(args, paths['u growth rates'], output, limits)
 				process_log += '\n\tGraphs exported.'
 			if '4' in args.graph:
 				process_log += '\nGraphing for u growth stats...'
-				output, limits, process_log = validate_output_path(args, exp + paths['u growth statistics graphs'], True, process_log)
-				graphs(args, exp + paths['u growth statistics'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['u growth statistics graphs'], True, process_log)
+				graphs(args, paths['u growth statistics'], output, limits)
 				process_log += '\n\tGraphs exported.'
 	if args.od:
 		# parse function takes log file and exports od csv
 		if args.parse:
 			process_log += '\nParsing od from log file...'
-			with open(exp + paths['log file'] + '.dat') as f:  # open input file
-				log = f.read()
-
-			oddata = parse_od(log)
-
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['od'] + '.csv'):
+			if os.path.exists(paths['od']):
 				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
-
-			odfile = open(exp + paths['od'] + '.csv', 'w')
-			wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
-			for od in oddata:
-				wrod.writerow(od)
-
-			f.close()
-			odfile.close()
-			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
+			parse_od(paths['log file'], paths['od'])
+			process_log = machine_to_human(paths['od'], paths['od machine time'], process_log)
 			process_log += '\n\tParsed csv created and exported.'
 		# parse function takes odlog file and exports od csv
 		if args.odlog:
 			process_log += '\nParsing od from odlog file...'
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['od'] + '.csv'):
+			if os.path.exists(paths['od']):
 				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
-			parse_odlog(exp + paths['odlog'], exp + paths['blank'], exp + paths['od'])
-			process_log = machine_to_human(exp + paths['od'], exp + paths['od machine time'], process_log)
+			parse_odlog(paths['odlog'], paths['blank'], paths['od'])
+			process_log = machine_to_human(paths['od'], paths['od machine time'], process_log)
 			process_log += '\n\tParsed csv created and exported.'
 		# rate function takes od csv and exports od growth rate csv
 		if args.rate:
 			process_log += '\nGrowth rates for od calculating...'
 
 			# tell user if file exists and will be overwritten or if new file will be made
-			if os.path.exists(exp + paths['od growth rates'] + '.csv'):
+			if os.path.exists(paths['od growth rates']):
 				process_log += '\n\tOutput file exists, will overwrite.'
 			else:
 				process_log += '\n\tOutput file not found, will make new file.'
 
-			od_rate(exp + paths['od'], exp + paths['od growth rates'])
+			od_rate(paths['od'], paths['od growth rates'])
 			process_log += '\n\tGrowth rates calculated and exported.'
 		# stats function takes od csv and exports a csv for each chamber
 		if args.stats:
 			process_log += '\nStats for od calculating...'
-			dead, dead, process_log = validate_output_path(args, exp + paths['od statistics'], False, process_log)
+			dead, dead, process_log = validate_output_path(args, paths['od statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['od'], exp + paths['od statistics'], args.interval, exp + paths['block'], exp + paths['od'])
+				statistics(paths['od'], paths['od statistics'], args.interval, paths['block'], paths['od'])
 			else:
-				statistics(exp + paths['od'], exp + paths['od statistics'], args.interval, '', '')
+				statistics(paths['od'], paths['od statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# stats function takes od growth rate csv and exports a csv for each chamber
 		if args.r_stats:
 			process_log += '\nStats for od growth rates calculating...'
-			dead, dead, process_log = validate_output_path(args, exp + paths['od growth statistics'], False, process_log)
+			dead, dead, process_log = validate_output_path(args, paths['od growth statistics'], False, process_log)
 			if args.block:
-				statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval, exp + paths['block'], exp + paths['od'])
+				statistics(paths['od growth rates'], paths['od growth statistics'], args.interval, paths['block'], paths['od'])
 			else:
-				statistics(exp + paths['od growth rates'], exp + paths['od growth statistics'], args.interval, '', '')
+				statistics(paths['od growth rates'], paths['od growth statistics'], args.interval, '', '')
 			process_log += '\n\tStats csv calculated and exported.'
 		# graph functions take specific od csv and exports graphs based on command line arguments
 		if args.graph:
 			if '1' in args.graph:
 				process_log += '\nGraphing for od...'
-				output, limits, process_log = validate_output_path(args, exp + paths['od graphs'], True, process_log)
-				graphs(args, exp + paths['od'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['od graphs'], True, process_log)
+				graphs(args, paths['od'], output, limits)
 				process_log += '\n\tGraphs exported.'
 			if '2' in args.graph:
 				process_log += '\nGraphing for od stats...'
-				output, limits, process_log = validate_output_path(args, exp + paths['od statistics graphs'], True, process_log)
-				graphs(args, exp + paths['od statistics'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['od statistics graphs'], True, process_log)
+				graphs(args, paths['od statistics'], output, limits)
 				process_log += '\n\tGraphs exported.'
 			if '3' in args.graph:
 				process_log += '\nGraphing for od growth rates...'
-				output, limits, process_log = validate_output_path(args, exp + paths['od growth rates graphs'], True, process_log)
-				graphs(args, exp + paths['od growth rates'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['od growth rates graphs'], True, process_log)
+				graphs(args, paths['od growth rates'], output, limits)
 				process_log += '\n\tGraphs exported.'
 			if '4' in args.graph:
 				process_log += '\nGraphing for od growth stats...'
-				output, limits, process_log = validate_output_path(args, exp + paths['od growth statistics graphs'], True, process_log)
-				graphs(args, exp + paths['od growth statistics'], output, limits)
+				output, limits, process_log = validate_output_path(args, paths['od growth statistics graphs'], True, process_log)
+				graphs(args, paths['od growth statistics'], output, limits)
 				process_log += '\n\tGraphs exported.'
 	return process_log
 
@@ -336,14 +322,14 @@ def machine_to_human(intake, output, process_log):
 	:param process_log: log for keeping track of processes
 	:return: returns updated log of program processes
 	"""
-	df = pandas.read_csv('{}.csv'.format(intake), header=None,
+	df = pandas.read_csv('{}'.format(intake), header=None,
 							names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 	time_start = df.iloc[0, 0]
 	# Checks if the first time point is in machine time
 	if time_start > 1:
 		process_log += '\n\tData set is using machine time. Converting to human time...'
 		# Renames the csv using machine time
-		command = "mv '{}.csv' '{}.csv'".format(intake, output)
+		command = "mv '{}' '{}'".format(intake, output)
 		os.system(command)
 		new_data = []
 		# Iterates through rows of csv and changes time point to hours in new row array
@@ -359,7 +345,7 @@ def machine_to_human(intake, output, process_log):
 				else:
 					new_row.append(element)
 			new_data.append(new_row)
-		numpy.savetxt('{}.csv'.format(intake), new_data, delimiter=",")
+		numpy.savetxt('{}'.format(intake), new_data, delimiter=",")
 		process_log += '\n\tData set is using machine time. Data set with human time created.'
 	else:
 		process_log += '\n\tData set is using human time.'
@@ -408,44 +394,48 @@ def validate_output_path(args, output, function, process_log):
 	return output, limits, process_log
 
 
-def parse_u(rdata):
+def parse_u(intake, output):
 	"""
 	Parses dilution values from the log file.
 
-	:param rdata: string of log file contents
-	:return: array of all dilution values
+	:param intake: path to data
+	:param output: path for export
 	"""
-	lines = rdata.split('\n')  # Parse input file into list of lines
-	data = []
-	for line in lines[:-1]:
-		d1 = line.split(":")
-		d2 = [int(d1[1][:-7])]
-		us = d1[3][2:-6].split(",")
-		for u in us:
-			d2.append(float(u))
-		data.append(tuple(d2))
+	logfile = open(intake, 'r')  # open input file
+	logdata = logfile.readlines()
+	logfile.close()
 
-	return data
+	udata = []
+	for line in logdata:
+		if len(line) > 0:
+			temp_data = json.loads(line)
+			udata.append([temp_data['timestamp']] + temp_data['u'])
+	ufile = open(output, 'w')
+	writer = csv.writer(ufile)
+	writer.writerows(udata)
+	ufile.close()
 
 
-def parse_od(rdata):
+def parse_od(intake, output):
 	"""
-	Parses optical density values from the log file.
+	Parses dilution values from the log file.
 
-	:param rdata: string of log file contents
-	:return: array of all optical density values
+	:param intake: path to data
+	:param output: path for export
 	"""
-	lines = rdata.split('\n')  # Parse input file into list of lines
-	data = []
-	for line in lines[:-1]:
-		d1 = line.split(":")
-		d2 = [int(d1[1][:-7])]
-		ods = d1[2][2:-6].split(",")
-		for od in ods:
-			d2.append(float(od))
-		data.append(tuple(d2))
+	logfile = open(intake, 'r')  # open input file
+	logdata = logfile.readlines()
+	logfile.close()
 
-	return data
+	udata = []
+	for line in logdata:
+		if len(line) > 0:
+			temp_data = json.loads(line)
+			udata.append([temp_data['timestamp']] + temp_data['ods'])
+	ufile = open(output, 'w')
+	writer = csv.writer(ufile)
+	writer.writerows(udata)
+	ufile.close()
 
 
 def parse_odlog(odlog, blank, output):
@@ -456,14 +446,14 @@ def parse_odlog(odlog, blank, output):
 	:param blank: path to blank od data
 	:param output: path for export
 	"""
-	blank_file = open(blank + '.dat', 'r')
+	blank_file = open(blank, 'r')
 	blank_content = blank_file.read()
 	blank_file.close()
 	blank_data = list(map(int, blank_content.split()))
 	btx = blank_data[0::2]
 	brx = blank_data[1::2]
 
-	odlog_file = open(odlog + '.dat', 'r')
+	odlog_file = open(odlog, 'r')
 	odlog_content = odlog_file.readlines()
 	odlog_file.close()
 	od_list = []
@@ -480,7 +470,7 @@ def parse_odlog(odlog, blank, output):
 			od_measure = float(rx[num]) / float(tx[num])
 			temp_ods.append(log10(blank_od/od_measure))
 		od_list.append(temp_ods)
-	odfile = open(output + '.csv', 'w')
+	odfile = open(output, 'w')
 	wrod = csv.writer(odfile, quoting=csv.QUOTE_ALL)
 	wrod.writerows(od_list)
 	odfile.close()
@@ -493,7 +483,7 @@ def u_rate(intake, output):
 	:param intake: path to data
 	:param output: path for export
 	"""
-	df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv('{}'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 	new_data_r = []
 	time_start = df.iloc[0, 0]
 	previous_time = df.iloc[0, 0]
@@ -521,7 +511,7 @@ def u_rate(intake, output):
 				new_row.append(round((numpy.log(1 + (element / 15000)) / time_difference), 6)) # pylint: disable=E1101
 		new_data_r.append(new_row)
 
-	numpy.savetxt('{}.csv'.format(output), new_data_r, delimiter=",")
+	numpy.savetxt('{}'.format(output), new_data_r, delimiter=",")
 
 
 def od_rate(experiment, output):
@@ -531,7 +521,7 @@ def od_rate(experiment, output):
 	:param intake: path to data
 	:param output: path for export
 	"""
-	df = pandas.read_csv('{}.csv'.format(experiment), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv('{}'.format(experiment), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 	new_data_r = []
 	time_start = df.iloc[0, 0]
 	previous_time = df.iloc[0, 0]
@@ -575,7 +565,7 @@ def od_rate(experiment, output):
 		new_data_r.append(new_row)
 
 	df = pandas.DataFrame(new_data_r)
-	df.to_csv(path_or_buf='{}.csv'.format(output), index=False)
+	df.to_csv(path_or_buf='{}'.format(output), index=False)
 
 
 def statistics(intake, output, interval, block, od_raw):
@@ -588,7 +578,7 @@ def statistics(intake, output, interval, block, od_raw):
 	:param block: path to blocklog file
 	:param od_raw: optical density data for use in block analysis
 	"""
-	df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv('{}'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 
 	# if blocklog file is specified, then separate stats into blocks
 	if len(block) > 0:
@@ -610,7 +600,7 @@ def statistics(intake, output, interval, block, od_raw):
 				growth = True
 				max_reached = False
 				min_reached = False
-				ods = pandas.read_csv('{}.csv'.format(od_raw), header=None, names=['Time', 1, 2, 3, 4, 5, 6, 7, 8])
+				ods = pandas.read_csv('{}'.format(od_raw), header=None, names=['Time', 1, 2, 3, 4, 5, 6, 7, 8])
 				block_od = [['Block', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
 				block_u = [['Block', 'Upper or Lower' 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
 				for row in df.itertuples():
@@ -771,7 +761,7 @@ def graphs(args, intake, output, limits):
 			plt.savefig('{}/ch{}.png'.format(output, chamber))
 			plt.close()
 	else:
-		df = pandas.read_csv('{}.csv'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+		df = pandas.read_csv('{}'.format(intake), header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
 		for chamber in range(1, 9):
 			df.plot.scatter(x='Time', y='{}'.format(chamber))
 			# If x or y limits are not zero, then resize graph to the inputted limits
@@ -783,28 +773,27 @@ def graphs(args, intake, output, limits):
 			plt.close()
 			
 
-def log_functions(args, paths, process_log, exp):
+def log_functions(args, paths, process_log):
 	"""
 	Prints and/or updates the log of processes from this growth rate program based on command line arguments.
 
 	:param args: command line argument array for deciding print and/or file write-out
 	:param paths: list with config file paths
 	:param process_log: log for keeping track of processes
-	:param exp: path to experiment
 	"""
 	if args.print:
 		print(process_log)
 	if args.log:
 		# if previous process log file found, save contents before overwriting
-		if os.path.exists(exp + paths['log processes'] + '.log'):
+		if os.path.exists(paths['log processes']):
 			process_log += '\nPrevious process log found, will add to content.'
-			with open(exp + paths['log processes'] + '.log', 'r') as log_file:
+			with open(paths['log processes'], 'r') as log_file:
 				old_log = log_file.read()
 				process_log = process_log + '\n\n' + old_log
 			log_file.close()
 		else:
 			process_log += '\nNo process log found, will create new.'
-		with open(exp + paths['log processes'] + '.log', 'w') as log_file:
+		with open(paths['log processes'], 'w') as log_file:
 			log_file.write(process_log)
 		log_file.close()
 
