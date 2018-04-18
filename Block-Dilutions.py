@@ -88,7 +88,7 @@ def command_line_arguments():
 			------------------------
 			Select one main function: --schedule (-s), --chamber (-c)
 			Optional changes: --full_log, --delay, --config, 
-					--out (-o), --block (-b), --dilution (-d)
+					--out (-o), --growth (-g), --dilution (-d)
 						""")
 
 	parser.add_argument('--full_log', action='store_true', help='use full log for OD input (instead of default od log)')
