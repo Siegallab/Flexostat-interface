@@ -13,7 +13,6 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
     * [TODO](#todo)
 		* [Controller](#controller-todo)
         * [Growth Rate Pipeline](#growth-rate-pipeline-todo)
-		* [Block Dilutions Pipeline](#block-dilutions-pipeline-todo)
 		* [Media Monitoring](#media-monitoring-todo)
 		* [Future](#future-todo)
 2. [File Overview](#file-overview)
@@ -59,54 +58,13 @@ MacOS (and probably linux):
 
 ### TODO
 #### Controller TODO
-1. OD Averaging
-	- [x] a. save all OD reads, then average for dilution
-2. Updating Parameters
-	- [x] a. compares controller config variables and updates if different
-	- [x] b. intakes init parameter with location of config file (servostat)
-3. Debugging
-	- [x] a. stable build
-	- [ ] b. data (simulated or real) run
+	- [ ] Test run with new changes
 #### Growth Rate Pipeline TODO
-1. Figure out implementation
-    - [x] a. allow for easy user and automated use
-    - [x] b. csv config file for defining file paths
-    - [x] c. integrate flexoparser csv file functions
-2. Crontab automation
-    - [x] a. see if it works on RPi
-3. Log file
-    - [x] a. save and/or print program processes
-4. Growth rate analysis
-    - [x] a. analyze OD growth rates from flexoparsed files
-    - [x] b. analyze U growth rates
-    - [x] c. deal with math error causing input
-    - [x] d. test, final debug, and stable build
-	- [x] e. allow flexoparsing from log.dat or odlog.dat file (for more data points)
-5. Mean, SD, SE
-    - [x] a. calculate stats for growth rates
-    - [x] b. test and finish stable build
-    - [x] c. fix nan's dropping stats
-    - [x] d. time interval control
-    - [x] e. stats for OD and U
-6. Data presentation
-    - [x] a. graphs for OD, U, R-OD, R-U, R-OD stats, R-U stats
-    - [x] b. x and y lim
-	- [x] c. allow option to display sd or se
-7. Implement blocking
+1. Implement blocking
 	- [x] a. allow stats to be analyzed into blocks
 	- [x] b. implement for both schedule and chamber-by-chamber
-8. Significance calculations
+2. Significance calculations
 	- [ ] a. stats calculate significant growth rate change
-9. Debugging
-	- [x] a. stable build
-	- [ ] b. data (simulated or real) run
-#### Block Dilutions Pipeline TODO
-1. Main functionality
-	- [x] a. allow dynamic config variable changes
-    - [x] b. ensure flexostat files can update variables
-2. Statistics
-	- [x] a. way to document time intervals of dilution
-    - [x] b. automated blocking of growth intervals
 3. Debugging
 	- [x] a. stable build
 	- [ ] b. data (simulated or real) run
@@ -138,9 +96,11 @@ This is a list of ideas thought about as ways to improve the turbidostat program
             * Use either chemostat of turbidostatController/SQ/_SIN (More details later on which does what)
     * The CTBasicServer object defined in network.py is used in servostat.py to create a basic network
     * stacktracer.py is used in servostat.py to create a stack trace as the program runs
-
     * Outputs data in the log files specified in the Log section of the config file
     * Testing Git Functionality
+* optional Block-Dilutions.py runs by crontab, in parallel with the main experiment programs, to allow larger dilutions with longer periods of undisturbed growth
+* optional Growth-Pipe.py calculates growth rates based on OD or U data, calculates summary statistics, produces graphs, and estimates significant changes in growth rate
+* optional Media-Monitor.py runs by crontab, in parallel with main experiment programs, to keep track of media levels and report to experimenters
 
 ---
 ## Up and Running
