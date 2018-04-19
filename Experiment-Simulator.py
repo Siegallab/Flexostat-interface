@@ -60,7 +60,7 @@ def command_line_parameters():
 						""")
 
 	parser.add_argument('--growth', default='0.4', help='true growth rate, defaults to 0.4')
-	parser.add_argument('--noise', default='0.002', help='standard deviation of OD noise, defaults to 0.002')
+	parser.add_argument('--noise', default='0.0005', help='standard deviation of OD noise, defaults to 0.0005')
 	parser.add_argument('--data_time', default='0.05', help='minute interval for each data production, defaults to 0.05 (3 seconds)')
 	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (6 seconds)')
 	parser.add_argument('--exp_len', default='120', help='minute length for entire simulated experiment, defaults to 120')
@@ -88,7 +88,7 @@ def produce_data(args, od_subtraction):
 
 	# if no log of data exists, then create the first line with a little density
 	if not os.path.exists(log['fulllog']):
-		dlog = {"timestamp": int(round(time.time())), "ods": [0.0001] * 8, "u": [0] * 8}
+		dlog = {"timestamp": int(round(time.time())), "ods": [0.01] * 8, "u": [0] * 8}
 		logfile = open(log['fulllog'], 'a')
 		log_str = json.dumps(dlog)
 		logfile.write('%s\n' % log_str)
@@ -113,9 +113,9 @@ def produce_data(args, od_subtraction):
 	true_GR = float(args.growth) / 60
 	true_OD = latest_OD * numpy.exp(true_GR)
 	OD_noise = numpy.random.normal(0, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
-	for chamber in latest_OD:
-		if chamber < float(args.noise):
-			OD_noise = numpy.random.normal(float(args.noise)*2, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
+	for chamber in range(len(latest_OD)):
+		if (true_OD[chamber] - latest_OD[chamber]) <= float(args.noise):
+			OD_noise[chamber] = numpy.random.normal(float(args.noise)*2, float(args.noise)) #pylint: disable=E1101
 	observed_OD = (true_OD + OD_noise) - od_subtraction
 
 	# compute the U and Z values based on OD
@@ -130,7 +130,7 @@ def produce_data(args, od_subtraction):
 		if out_us[chamber] > 0:
 			od_subtraction[chamber] = (6.23661e-05 * out_us[chamber]) + 0.001339
 		else:
-			od_subtraction[chamber] = 0
+			od_subtraction[chamber] = 0.0
 
 	# write line of data to full log file
 	time_secs = timestamp + 60
