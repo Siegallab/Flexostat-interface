@@ -41,7 +41,7 @@ def main():
 		log_functions(args, paths, process_log)
 	else:
 		print('ERROR: Config file not found.')
-	print('Program end.\n')
+	print('Growth-Pipe.py end.\n')
 
 
 def command_line_parameters():

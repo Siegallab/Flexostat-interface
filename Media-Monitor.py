@@ -92,7 +92,7 @@ def main():
 			print('ERROR: Communication or reporting method not specified.')
 	else:
 		print('ERROR: Config file not found.')
-	print('Program end.\n')
+	print('Media-Monitor.py end.\n')
 
 
 def parse_u(config_log, start_time):
