@@ -84,12 +84,12 @@ def command_line_arguments():
 	"""
 	parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
 					description="""
-			Block Dilutions Pipeline
-			------------------------
-			Select one main function: --schedule (-s), --chamber (-c)
-			Optional changes: --odlog, --delay, --config, 
-					--out (-o), --growth (-g), --dilution (-d)
-						""")
+	Block Dilutions Pipeline
+	------------------------
+	Select one main function: --schedule (-s), --chamber (-c)
+	Optional changes: --odlog, --delay, --config, 
+			--out (-o), --growth (-g), --dilution (-d)
+				""")
 
 	parser.add_argument('--odlog', action='store_true', help='use OD log for OD input (instead of default full log)')
 	parser.add_argument('--delay', default='0', help="delay startup of first run by minutes")
