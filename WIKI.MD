@@ -298,8 +298,6 @@ For a video explaining Growth-Pipe and Block-Dilutions please refer to [David's 
 The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* or *odlog.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* or *odlog.dat* file from which this pipeline feeds from.
 ![Directories](/explanations/directories.png)
 The *Growth-Pipe.py* program will import from and export to two lower directories (Data and Experiment). The names of these two directories and all import and export files are specified within the *config-growth.csv* file. This config file exists in the same directory as the Growth-Pipe program. **Do not** change the *variable* columns in the config file.
-![Pipeline](/explanations/pipeline.png)
-The pipeline uses the file names and paths taken in from the config file in order to import and export all data. It also keeps track of the processes its executed which can be exported as a log file and/or printed to the screen. These functions are shown with the *grey* framework. The main functions of the program are shown in *green* pipes. 
 
 Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
 
