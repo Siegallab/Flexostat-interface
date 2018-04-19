@@ -44,7 +44,7 @@ def main():
 		if args.schedule:
 			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'schedule', '', '']
 		else:
-			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'chamber'] + (['']*9)
+			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'chamber', '', '']
 		# Read in current ODs and make sure config variables match command line arguments
 		human_time, machine_time, current_ods = read_ods(args, log)
 		controller = update_config(args, config, controller)
