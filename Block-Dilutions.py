@@ -87,11 +87,11 @@ def command_line_arguments():
 			Block Dilutions Pipeline
 			------------------------
 			Select one main function: --schedule (-s), --chamber (-c)
-			Optional changes: --full_log, --delay, --config, 
+			Optional changes: --odlog, --delay, --config, 
 					--out (-o), --growth (-g), --dilution (-d)
 						""")
 
-	parser.add_argument('--full_log', action='store_true', help='use full log for OD input (instead of default od log)')
+	parser.add_argument('--odlog', action='store_true', help='use OD log for OD input (instead of default full log)')
 	parser.add_argument('--delay', default='0', help="delay startup of first run by minutes")
 	parser.add_argument('--config', default='config.ini', help="change config file from default 'config.ini'")
 	parser.add_argument('-o', '--out', action='store_true', help='program processes printing')
@@ -112,22 +112,8 @@ def read_ods(args, log):
 	:param log: config file log variables
 	:return: list of current od values, experiment time in human (hr) and machine units
 	"""
-	# If full log argument specified, then use flexoparse code to get ODs from fullog file
-	if args.full_log:
-		log_file = open(log['fulllog'], 'r')
-		log_data = log_file.readlines()
-		log_file.close()
-		first = log_data[0]
-		time_start = json.loads(first)['timestamp']
-		last_line = log_data[-1]
-		if len(last_line) < 1:
-			last_line = log_data[-2]
-		last_line = json.loads(last_line)
-		current_ods = list(last_line['ods'])
-		machine_time = last_line['timestamp']
-		human_time = (machine_time - time_start) / 3600
-	# Otherwise od log will be read, then compute ODs from blank and odlog file
-	else:
+	# if odlog specificed, compute compute ODs from blank and odlog file
+	if args.odlog:
 		blank_file = open(log['blanklog'], 'r')
 		blank_content = blank_file.read()
 		blank_file.close()
@@ -154,6 +140,20 @@ def read_ods(args, log):
 			blank_od = float(brx[num]) / float(btx[num])
 			od_measure = float(rx[num]) / float(tx[num])
 			current_ods.append(log10(blank_od/od_measure))
+	# otherwise use json standard library to get ODs from fulllog file
+	else:
+		log_file = open(log['fulllog'], 'r')
+		log_data = log_file.readlines()
+		log_file.close()
+		first = log_data[0]
+		time_start = json.loads(first)['timestamp']
+		last_line = log_data[-1]
+		if len(last_line) < 1:
+			last_line = log_data[-2]
+		last_line = json.loads(last_line)
+		current_ods = list(last_line['ods'])
+		machine_time = last_line['timestamp']
+		human_time = (machine_time - time_start) / 3600
 	return human_time, machine_time, current_ods
 
 
@@ -250,7 +250,7 @@ def update_log(args, log, programlog):
 	:param programlog: list of updated status
 	"""
 	if args.out:
-		print(programlog)
+		print("Block report: {}".format(programlog))
 	blocklog_file = open(log['blocklog'], 'a')
 	wr = csv.writer(blocklog_file)
 	wr.writerow(programlog)

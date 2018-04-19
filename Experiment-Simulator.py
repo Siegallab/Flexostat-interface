@@ -186,7 +186,7 @@ def analyze_block(args):
 
 	:param args: command line arguments for program
 	"""
-	command = "python2.7 Block-Dilutions.py --full_log --config {} --out --chamber".format(args.config)
+	command = "python2.7 Block-Dilutions.py --config {} --out --chamber".format(args.config)
 	os.system(command)
 
 
