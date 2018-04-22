@@ -53,7 +53,6 @@ def main():
 		# If blocklog doesn't exist, start dilution blocks and create
 		if not os.path.exists(log['blocklog']):
 			update_log(args, log, programlog)
-			update_log(args, log, programlog)
 		else:
 			blocklog_file = open(log['blocklog'], 'r')
 			prevlog = list(csv.reader(blocklog_file))[-1]
