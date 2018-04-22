@@ -54,9 +54,11 @@ def command_line_parameters():
 					description="""
 	Growth Rate Analysis Pipeline
 	-----------------------------
-	Select at least one function: --parse [u, od, odlog], --growth [u, od], 
+	Select at least one function: 
+		--parse [u, od, odlog], --growth [u, od], 
 		--stats [u, od, u_growth, od_growth], --block [u_growth, od_growth]
-		--graph [u, od, u_stats, od_stats, u_growth, od_growth, u_growth_stats, od_growth_stats, u_block, od_block]
+		--graph [u, od, u_stats, od_stats, u_growth, od_growth, 
+			u_growth_stats, od_growth_stats, u_block, od_block]
 
 	Single inputs: --parse u --growth u
 	Multiple inputs: --parse u od --growth u od
@@ -117,10 +119,10 @@ def config_variables(args):
 	}
 	# loop through growth config file to collect Data and Experiment folder path
 	with open(args.config) as config_file:
-		reader = csv.reader(config_file)
+		reader = list(csv.reader(config_file))
 		for row in reader:
 			# removes any ending slashes that may exist in csv
-			if row[1][-1] == '/':
+			if len(row[1]) > 0 and row[1][-1] == '/':
 				row[1] = row[1][:-1]
 			paths[row[0]] = row[1]
 
@@ -142,16 +144,15 @@ def config_variables(args):
 
 	# loop through growth config file to collect all other paths and add experiment path to their beginning
 	with open(args.config) as config_file:
-		reader = csv.reader(config_file)
+		reader = list(csv.reader(config_file))
 		for row in reader:
 			# removes any ending slashes that may exist in csv
-			if row[1][-1] == '/':
+			if len(row[1]) > 0 and row[1][-1] == '/':
 				row[1] = row[1][:-1]
 			if not row[1] in ['data_directory', 'experiment']:
 				paths[row[0]] = exp + row[1]
-			if len(row[4]) >= 1:
-				if row[4][-1] == '/':
-					row[4] = row[1][:-1]
+			if len(row[4]) > 0 and row[4][-1] == '/':
+				row[4] = row[1][:-1]
 			paths[row[3]] = exp + row[4]
 	config_file.close()
 
@@ -194,9 +195,11 @@ def functions(args, paths, process_log):
 	if args.block:
 		for i in args.block:
 			if i == 'u_growth':
+				validate_output_path(args, paths['u_block'], False)
 				block(paths[i], paths['block'], paths['u_block'], paths['od'], 'u')
 				process_log += '\n\tBlock stats csv calculated and exported.'
 			elif i == 'od_growth':
+				validate_output_path(args, paths['od_block'], False)
 				block(paths[i], paths['block'], paths['od_block'], paths['od'], 'od')
 				process_log += '\n\tBlock stats csv calculated and exported.'
 	if args.graph:
@@ -220,7 +223,7 @@ def machine_to_human(intake, output):
 	:param intake: path to data
 	:param output: path for export
 	"""
-	df = pandas.read_csv(intake, header=None, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv(intake, header=None, names=['Time',1,2,3,4,5,6,7,8])
 	time_start = df.iloc[0, 0]
 	# Checks if the first time point is in machine time
 	if time_start > 1:
@@ -360,7 +363,7 @@ def u_growth(intake, output):
 		# time point and time difference is calculated (should always be 60 sec)
 		new_row.append(df['Time'][row] - time_start)
 		time_difference = df['Time'][row] - df['Time'][row - 1]
-		for chamber in range(8):
+		for chamber in range(1, 9):
 			# if first row of data frame (determined by time point) or zero value, it is arbitrarily set to zero
 			if df[chamber][row] == 0:
 				new_row.append(float(0))
@@ -381,14 +384,13 @@ def od_growth(intake, output):
 	"""
 	df = pandas.read_csv(intake, header=None, names=['Time',1,2,3,4,5,6,7,8])
 	new_data_r = []
-	time_start = df['Time'][0]
 	time_difference = 0
 	for row in range(1, df.shape[0]):
 		new_row = []
 		# time point and time difference is calculated (should always be 60 sec)
-		new_row.append(df['Time'][row] - time_start)
+		new_row.append(df['Time'][row])
 		time_difference = df['Time'][row] - df['Time'][row - 1]
-		for chamber in range(8):
+		for chamber in range(1, 9):
 			# negative OD's are ignored with growth rate being a blank space
 			if df[chamber][row] < 0 or df[chamber][row - 1] < 0:
 				new_row.append(None)
@@ -415,7 +417,7 @@ def stats(intake, output, interval):
 	"""
 	df = pandas.read_csv(intake, header=None, names=['Time',1,2,3,4,5,6,7,8])
 	# for each chamber, iterate through dataframe to calculate stats
-	for chamber in range(8):
+	for chamber in range(1, 9):
 		start_time, end_time = 0, 0
 		new_block = []
 		# multiple default 1 hour by command line argument
@@ -437,7 +439,7 @@ def stats(intake, output, interval):
 				hour += 1 * float(interval)
 				new_block = []
 		stats = pandas.DataFrame(block)
-		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber + 1), index=False, header=False)
+		stats.to_csv(path_or_buf='{}/ch{}.csv'.format(output, chamber), index=False, header=False)
 
 
 def block(intake, block, output, odraw, dataset):
@@ -450,11 +452,11 @@ def block(intake, block, output, odraw, dataset):
 	:param odraw: optical density data for use in block analysis
 	:param dataset: specifying either OD or U blocks
 	"""
-	df = pandas.read_csv(intake, header=None, names=['Time', 1, 2, 3, 4, 5, 6, 7, 8])
+	df = pandas.read_csv(intake, header=None, names=['Time',1,2,3,4,5,6,7,8])
 	# block information format: [date, time, schedule or chamber, new setpoints for chambers, human time (hr), experiment time, current ODs]
 	# for each chamber, will iterate through dataframe and iterate through blocklog data as each block time is reached
 	blocklog_file = open(block, 'r')
-	blocklog = csv.reader(blocklog_file)
+	blocklog = list(csv.reader(blocklog_file))
 	blocklog_file.close()
 
 	if blocklog[0][2] == 'schedule':
@@ -463,11 +465,17 @@ def block(intake, block, output, odraw, dataset):
 		perchamber = True
 		if dataset == 'u':
 			return
-	for chamber in range(8):
+	for chamber in range(1, 9):
 		blockcount = 0
-		blockdict = create_blockdict(blocklog, chamber)
+		blockdict = { 'setpoint' : [float(blocklog[0][3].split(',')[chamber - 1])], 'start' : [0.0], 'start time' : 0.0, 'end time' : 0.0, 'new block' : [] }
+		count = 0
+		for row in blocklog:
+			if not float(row[3].split(',')[chamber - 1]) == blockdict['setpoint'][count]:
+				blockdict['setpoint'].append(float(row[3].split(',')[chamber - 1]))
+				blockdict['start'].append(float(row[4]))
+				count += 1
 		growth, max_reached, min_reached = True, False, False
-		ods = pandas.read_csv(odraw, header=None, names=['Time', 1, 2, 3, 4, 5, 6, 7, 8])
+		ods = pandas.read_csv(odraw, header=None, names=['Time',1,2,3,4,5,6,7,8])
 		if dataset == 'od':
 			outblock = [['Block', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
 		else:
@@ -485,12 +493,12 @@ def block(intake, block, output, odraw, dataset):
 				blockdict['new block'].append(df[chamber][row])
 				blockdict['end time'] = df['Time'][row]
 			# if in the growth phase and the max is reached for the first time, save the block as an OD block
-			if growth and not max_reached and ods.loc[ods['Time'] == df['Time'][row + 1]][chamber] >= (blockdict['setpoint'][blockcount] - blockdict['setpoint'][blockcount] * 0.05):
-				if dataset == 'od':
+			if growth and not max_reached and ods[chamber][row] >= (blockdict['setpoint'][blockcount] - blockdict['setpoint'][blockcount] * 0.05):
+				if not perchamber and dataset == 'od':
 					blockdict, outblock = update_outblock(blockdict, blockcount, outblock, '')
 				max_reached = True
 			# if the lower minimum setpoint is reached, reset the list of elements for the next U block
-			if not growth and not min_reached and ods.loc[ods['Time'] ==  df['Time'][row + 1]][chamber] <= (blockdict['setpoint'][blockcount] + blockdict['setpoint'][blockcount] * 0.05):
+			if not growth and not min_reached and ods[chamber][row] <= (blockdict['setpoint'][blockcount] + blockdict['setpoint'][blockcount] * 0.05):
 				min_reached = True
 			# if the end of the block has been reached, save stats on that block as a U block
 			if df['Time'][row + 1] >= blockdict['start'][blockcount + 1]:
@@ -505,27 +513,13 @@ def block(intake, block, output, odraw, dataset):
 					max_reached = False
 					if dataset == 'u':
 						blockdict, outblock = update_outblock(blockdict, blockcount, outblock, 'Lower')
+				if perchamber and dataset == 'od':
+					lockdict, outblock = update_outblock(blockdict, blockcount, outblock, '')
 				blockcount += 1
+			if blockcount + 1 >= len(blockdict['setpoint']):
+				break
 		stats = pandas.DataFrame(outblock)
-		stats.to_csv(path_or_buf='{}/{}_ch{}.csv'.format(output, dataset, chamber + 1), index=False, header=False)
-
-
-def create_blockdict(blocklog, chamber):
-	"""
-	Populates a dictionary with variables for keeping track of each block
-
-	:param blocklog: contents of the block log file
-	:param chamber: the current working chamber
-	:return: dictionary of block variables
-	"""
-	blockdict = { 'setpoint' : [float(blocklog[0][2].split(',')[chamber])], 'start' : [0.0], 'start time' : 0.0, 'end time' : 0.0, 'new_block' : [] }
-	count = 0
-	for row in blocklog:
-		if not float(row[2].split(',')[chamber]) == blockdict['setpoint'][count]:
-			blockdict['setpoint'].append(float(row[2].split(',')[chamber]))
-			blockdict['start'].append(float(row[4]))
-			count += 1
-	return blockdict
+		stats.to_csv(path_or_buf='{}/{}_ch{}.csv'.format(output, dataset, chamber), index=False, header=False)
 
 
 def update_outblock(blockdict, blockcount, outblock, alignment):
@@ -557,9 +551,9 @@ def graph(intake, output, limits):
 	:param output: path for export
 	:param limits: x and y limits to use for graphs
 	"""
-	df = pandas.read_csv(intake, header=1, names=['Time', '1', '2', '3', '4', '5', '6', '7', '8'])
+	df = pandas.read_csv(intake, header=None, names=['Time',1,2,3,4,5,6,7,8])
 	for chamber in range(1, 9):
-		df.plot.scatter(x='Time', y=str(chamber))
+		df.plot.scatter(x='Time', y=chamber)
 		# If x or y limits are not zero, then resize graph to the inputted limits
 		if limits[0] != limits[1]:
 			plt.xlim(limits[0], limits[1])
