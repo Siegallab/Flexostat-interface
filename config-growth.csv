@@ -1,5 +1,5 @@
 variable,path,description (include all file extensions),graph variable,graph path,description (folder name for exporting graphs)
-logfile,log_171020.dat,"dat file of od, u, and z measurements produced by the main flexostat experiment program",,,
+fulllog,log_171020.dat,"dat file of od, u, and z measurements produced by the main flexostat experiment program",,,
 odlog,odlog_171020.dat,dat file of all ods produced by the main flexostat experiment program,,,
 blank,blank_171020.dat,dat file of blank od values used by the main flexostat experiment program,,,
 block,block.csv,csv file of non-dilution blocks produced from the block dilutions program,,,
