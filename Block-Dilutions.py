@@ -42,19 +42,17 @@ def main():
 		# [date, time, schedule, new setpoints for chambers, human time (hr), experiment time, current ODs]
 		# [date, time, chamber, new setpoints for chambers, human time (hr), experiment time, current ODs]
 		if args.schedule:
-			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'schedule', '', '']
+			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'schedule']
 		else:
-			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'chamber', '', '']
+			programlog = [datetime.now().strftime("%Y-%m-%d"), datetime.now().strftime("%H:%M"), 'chamber']
 		# Read in current ODs and make sure config variables match command line arguments
 		human_time, machine_time, current_ods = read_ods(args, log)
+		programlog = programlog + [','.join(controller['setpoint'].split()), human_time, machine_time, ','.join(str(e) for e in current_ods)]
 		controller = update_config(args, config, controller)
 
 		# If blocklog doesn't exist, start dilution blocks and create
-		if not os.path.exists(log['blocklog']) and args.schedule:
-			programlog = programlog[0:3] + [','.join(controller['setpoint'].split()), human_time, machine_time, ','.join(str(e) for e in current_ods)]
+		if not os.path.exists(log['blocklog']):
 			update_log(args, log, programlog)
-		elif not os.path.exists(log['blocklog']) and args.chamber:
-			programlog = programlog[0:3] + [','.join(controller['setpoint'].split()), human_time, machine_time, ','.join(str(e) for e in current_ods)]
 			update_log(args, log, programlog)
 		else:
 			blocklog_file = open(log['blocklog'], 'r')
