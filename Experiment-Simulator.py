@@ -28,7 +28,7 @@ def main():
 	start_time, last_data, last_block = datetime.now(), datetime.now(), datetime.now()
 	od_subtraction = numpy.asarray([0.0] * 8)
 	try:
-		while (last_data - start_time).seconds/60 < float(args.exp_len):
+		while (datetime.now() - start_time).seconds/60 < float(args.exp_len):
 			if (datetime.now() - last_data).seconds/60 >= float(args.data_time):
 				od_subtraction = produce_data(args, od_subtraction)
 				last_data = datetime.now()
@@ -54,8 +54,11 @@ def command_line_parameters():
 	Simply run with the command: python Experiment-Simulator.py
 	
 	All parameters are optional. These are the defaults:
-		0.4 true growth, 20 SD for OD noise, 'config.ini' for config file
-		0.05 minute (3 second) data production, 0.1 minute (18 second) block analysis, 2 hour experiment length
+		0.4 true growth, 20 SD for OD noise, 
+		'config.ini' for config file,
+		0.05 minute (3 second) data production, 
+		0.1 minute (18 second) block analysis, 
+		2 hour experiment length,
 		print is on
 						""")
 
