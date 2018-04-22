@@ -127,7 +127,7 @@ def read_ods(args, log):
 		line = list(map(int, line.split()))
 		current_ods = []
 		machine_time = int(line[0])
-		human_time = (machine_time - time_start) / 3600
+		human_time = float(machine_time - time_start) / 3600
 		tx = line[1::2]
 		rx = line[2::2]
 		for num in range(8):
@@ -150,7 +150,7 @@ def read_ods(args, log):
 		last_line = json.loads(last_line)
 		current_ods = list(last_line['ods'])
 		machine_time = last_line['timestamp']
-		human_time = (machine_time - time_start) / 3600
+		human_time = float(machine_time - time_start) / 3600
 	return human_time, machine_time, current_ods
 
 
