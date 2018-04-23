@@ -150,7 +150,7 @@ def read_ods(args, log):
 		last_line = json.loads(last_line)
 		current_ods = list(last_line['ods'])
 		machine_time = last_line['timestamp']
-		human_time = float(machine_time - time_start) / 3600
+		human_time = round(float(machine_time - time_start) / 3600, 4)
 	return human_time, machine_time, current_ods
 
 
