@@ -197,13 +197,12 @@ def check_blockinterval(current_ods, controller, programlog, prevlog):
 	:param prevlog: list of previous status
 	:return: updated controller and programlog
 	"""
-	past = datetime.strptime(prevlog[0] + ' ' + prevlog[1], "%Y-%m-%d %H:%M")
-	diff = datetime.now() - past
+	diff = float(programlog[5]) - float(prevlog[5])
 	# If block interval reached (elapsed time = diff between current time and last blocklog entry)
 	#	then update the controller setpoints appropriately
-	if controller['setpoint'] == controller['savesetpoint'] and (diff.seconds/3600) >= float(controller['growthinterval']):
+	if controller['setpoint'] == controller['savesetpoint'] and diff/3600 >= float(controller['growthinterval']):
 		controller['setpoint'] = controller['blockstart']
-	elif controller['setpoint'] == controller['blockstart'] and (diff.seconds/3600) >= float(controller['dilutioninterval']):
+	elif controller['setpoint'] == controller['blockstart'] and diff/3600 >= float(controller['dilutioninterval']):
 		controller['setpoint'] = controller['savesetpoint']
 	programlog[3] = ','.join(controller['setpoint'].split())
 	programlog[-1] = ','.join(str(e) for e in current_ods)

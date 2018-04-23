@@ -53,23 +53,32 @@ def command_line_parameters():
 	----------------------------
 	Simply run with the command: python Experiment-Simulator.py
 	
-	All parameters are optional. These are the defaults:
-		0.4 true growth, 20 SD for OD noise, 
+	All parameters are optional. 
+	Defaults:
+		0.4 true growth rate, 20 SD for OD noise, 
 		'config.ini' for config file,
 		0.05 minute (3 second) data production, 
-		0.1 minute (18 second) block analysis, 
+		0.1 minute (6 second) block analysis, 
 		2 hour experiment length,
+		print is on
+	Block Dilution defaults:
+		'config.ini' for config file,
+		chamber mode,
 		print is on
 						""")
 
-	parser.add_argument('--growth', default='0.4', help='true growth rate, defaults to 0.4')
+	parser.add_argument('--rate', default='0.4', help='true growth rate, defaults to 0.4')
 	parser.add_argument('--noise', default='0.0005', help='standard deviation of OD noise, defaults to 0.0005')
 	parser.add_argument('--data_time', default='0.05', help='minute interval for each data production, defaults to 0.05 (3 seconds)')
 	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (6 seconds)')
 	parser.add_argument('--exp_len', default='120', help='minute length for entire simulated experiment, defaults to 120')
 	parser.add_argument('--config', default='config.ini', help='experiment config file, defaults to config.ini')
 	parser.add_argument('--print', action='store_false', help='turn off print by using flag, defaults to on')
-
+	parser.add_argument('--chamber', action='store_true', help='use individual chamber OD for dilutions, default mode')
+	parser.add_argument('--schedule', action='store_true', help='use interval dilution schedule for dilutions')
+	parser.add_argument('--growth', default='0', help="specify 'hour' interval for growth block in schedule mode (default config, otherwise 7)")
+	parser.add_argument('--dilution', default='0', help="specify 'hour' interval for dilution block in schedule mode (default config, otherwise 4)")
+	
 	args = parser.parse_args()
 	return args
 
@@ -113,7 +122,7 @@ def produce_data(args, od_subtraction):
 		zs = [None] * len(latest_OD)
 
 	# simulate OD with some noise based on the last reading
-	true_GR = float(args.growth) / 60
+	true_GR = float(args.rate) / 60
 	true_OD = latest_OD * numpy.exp(true_GR)
 	OD_noise = numpy.random.normal(0, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
 	# no noise will be implemented if the noise will prevent growth
@@ -191,7 +200,14 @@ def analyze_block(args):
 
 	:param args: command line arguments for program
 	"""
-	command = "python2.7 Block-Dilutions.py --config {} --out --chamber".format(args.config)
+	if args.schedule:
+		command = "python2.7 Block-Dilutions.py --config {} --out --schedule".format(args.config)
+	else:
+		command = "python2.7 Block-Dilutions.py --config {} --out --chamber".format(args.config)
+	if float(args.growth) > 0:
+		command += " --growth {}".format(args.growth)
+	if float(args.dilution) > 0:
+		command += " --dilution {}".format(args.growth)
 	os.system(command)
 
 
