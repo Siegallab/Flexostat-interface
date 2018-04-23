@@ -116,9 +116,11 @@ def produce_data(args, od_subtraction):
 	true_GR = float(args.growth) / 60
 	true_OD = latest_OD * numpy.exp(true_GR)
 	OD_noise = numpy.random.normal(0, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
+	# no noise will be implemented if the noise will prevent growth
 	for chamber in range(len(latest_OD)):
 		if (true_OD[chamber] - latest_OD[chamber]) <= float(args.noise):
-			OD_noise[chamber] = numpy.random.normal(float(args.noise)*2, float(args.noise)) #pylint: disable=E1101
+			OD_noise[chamber] = 0
+		#	OD_noise[chamber] = numpy.random.normal(float(args.noise)*2, float(args.noise)) #pylint: disable=E1101
 	observed_OD = (true_OD + OD_noise) - od_subtraction
 
 	# compute the U and Z values based on OD
