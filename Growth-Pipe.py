@@ -483,30 +483,29 @@ def block(intake, block, output, odraw, dataset):
 						state = 'initial dilution'
 						if mode == 'chamber':
 							state = 'dilution'
-							blockdict, count, outblock = update_outblock(blockdict, count, outblock, '')
 						if dataset == 'u':
-							blockdict, count, outblock = update_outblock(blockdict, count, outblock, 'Upper')
+							blockdict, outblock = update_outblock(blockdict, count, outblock, 'Upper')
+						else:
+							blockdict, outblock = update_outblock(blockdict, count, outblock, '')
 					else:
 						state = 'initial growth'
 						if mode == 'chamber':
 							state = 'growth'
-							count += 1
 						if dataset == 'u':
-							blockdict, count, outblock = update_outblock(blockdict, count, outblock, 'Lower')
+							blockdict, outblock = update_outblock(blockdict, count, outblock, 'Lower')
+					count += 1
 			except:
 				if row == df.shape[0] - 1:
 					blockdict['start'].append('')
-					if dataset == 'od' and state == 'growth':
+					if dataset == 'od':
 						update_outblock(blockdict, count, outblock, '')
 					elif dataset == 'u' and state == 'stable growth':
 						update_outblock(blockdict, count, outblock, 'Upper')
 					elif dataset == 'u' and state == 'stable dilution':
 						update_outblock(blockdict, count, outblock, 'Lower')
-			if state == 'initial growth' and ods[ods['Time'] == df['Time'][row]][chamber] >= (blockdict['setpoint'][count] - blockdict['setpoint'][count] * 0.05):
+			if state == 'initial growth' and ods[ods['Time'] == df['Time'][row]][chamber].values[0] >= (blockdict['setpoint'][count] - blockdict['setpoint'][count] * 0.05):
 				state = 'stable growth'
-				if dataset == 'od':
-					blockdict, count, outblock = update_outblock(blockdict, count, outblock, '')
-			if state == 'initial dilution' and ods[ods['Time'] == df['Time'][row]][chamber] <= (blockdict['setpoint'][count] + blockdict['setpoint'][count] * 0.05):
+			if state == 'initial dilution' and ods[ods['Time'] == df['Time'][row]][chamber].values[0] <= (blockdict['setpoint'][count] + blockdict['setpoint'][count] * 0.05):
 				state = 'stable dilution'
 			if dataset == 'od' and state in ['growth', 'initial growth'] and not math.isnan(df[chamber][row]):
 				if len(blockdict['new block']) == 0:
@@ -540,8 +539,7 @@ def update_outblock(blockdict, count, outblock, alignment):
 		else:
 			outblock.append([count + 1, mean, sd, sem, blockdict['start'][count], blockdict['start'][count + 1], blockdict['start time'], blockdict['end time'], num])
 	blockdict['new block'] = []
-	count += 1
-	return blockdict, count, outblock
+	return blockdict, outblock
 
 
 def graph(intake, output, limits):

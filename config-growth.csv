@@ -1,11 +1,11 @@
-variable,path,description (include all file extensions),graph variable,graph path,description (folder name for exporting graphs)
+variable,path,"description (include all file extensions, leave blank if not applicable)",graph variable,graph path,"description (folder name for exporting graphs, leave blank if not applicable)"
 fulllog,simlog.dat,"dat file of od, u, and z measurements produced by the main flexostat experiment program",,,
 odlog,,dat file of all ods produced by the main flexostat experiment program,,,
 blank,,dat file of blank od values used by the main flexostat experiment program,,,
 block,block.csv,csv file of non-dilution blocks produced from the block dilutions program,,,
 log_processes,growth-pipe.log,text log of program processes,,,
 data_directory,Data/,path to the folder where you are storing all your experiment folders,,,
-experiment,04-22-18/,"particular experiment folder to retrieve from and export to. If using date in mm-dd-yy format, add apostraphe at end to stop excel auto-format and the python program will ignore it",,,
+experiment,04-23-18/,particular experiment folder to retrieve from and export to,,,
 u,u.csv,csv file for dilution data,u_graphs,u_graphs/,
 u_stats,u_stats/,folder for statistics for dilutions,u_stats_graphs,u_stats_graphs/,
 u_machine_time,u_machine.csv,csv file for machine time dilution data,,,
