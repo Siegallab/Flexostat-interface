@@ -166,9 +166,9 @@
             <text x="278.849px" y="195.606px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:38.11px;">use Python 2.7    -h for help</text>
             <text x="233.109px" y="271.825px" style="font-family:'AndaleMono', 'Andale Mono', monospace;font-size:38.11px;">$ python2.7 Block-Dilutions.py -h</text>
         </g>
-        <g transform="matrix(0.915663,-0.401948,0.401948,0.915663,-215.648,300.684)">
-            <text x="769.995px" y="346.962px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:18px;">Optional</text>
-            <text x="749.991px" y="365.55px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:18px;">--full_log</text>
+        <g transform="matrix(0.905558,0.424223,-0.424223,0.905558,139.527,-412.469)">
+            <text x="749.991px" y="346.962px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:18px;">Optional</text>
+            <text x="749.991px" y="365.55px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:18px;">--odlog</text>
         </g>
         <g transform="matrix(1,0,0,1,94.8149,-32.2878)">
             <text x="749.991px" y="346.962px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:22px;">--schedule / --chamber</text>

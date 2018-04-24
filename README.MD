@@ -61,6 +61,7 @@ For more information, see [WIKI.MD](https://github.com/Siegallab/Flexostat-inter
     * Testing Git Functionality
 * optional Block-Dilutions.py runs by crontab, in parallel with the main experiment programs, to allow larger dilutions with longer periods of undisturbed growth ([WIKI.MD](WIKI.MD) for more info)
 * optional Growth-Pipe.py calculates growth rates based on OD or U data, calculates summary statistics, produces graphs, and estimates significant changes in growth rate ([WIKI.MD](WIKI.MD) for more info)
+* optional Experiment-Simulator.py simulates a real experiment and generates full log data
 * optional Media-Monitor.py runs by crontab, in parallel with main experiment programs, to keep track of media levels and report to experimenters ([WIKI.MD](WIKI.MD) for more info)
 
 ---

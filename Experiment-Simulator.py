@@ -147,7 +147,7 @@ def produce_data(args, od_subtraction):
 			od_subtraction[chamber] = 0.0
 
 	# write line of data to full log file
-	time_secs = timestamp + 60
+	time_secs = timestamp + int(controller['period'])
 	dlog = {'timestamp': time_secs, 'ods': [round(od, 4) for od in observed_OD],
 	        'u': out_us, 'z': [str(z) for z in out_zs]}
 	log_str = json.dumps(dlog)

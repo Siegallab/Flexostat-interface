@@ -25,6 +25,7 @@ This is the python software for the klavins lab turbidostot (see http://klavinsl
     * [Flexoparser_csv Guide](#flexoparser_csv-guide)
 	* [Growth-Pipe Guide](#growth-pipe-guide)
 	* [Block-Dilutions Guide](#block-dilutions-guide)
+	* [Experiment-Simulator Guide](#experiment-simulator-guide)
 	* [Media-Monitor Guide](#media-monitor-guide)
 5. [Hardware Setup](#hardware-setup)
     * [RPi Setup Guide](#raspberry-pi-settup-guide)
@@ -100,6 +101,7 @@ This is a list of ideas thought about as ways to improve the turbidostat program
     * Testing Git Functionality
 * optional Block-Dilutions.py runs by crontab, in parallel with the main experiment programs, to allow larger dilutions with longer periods of undisturbed growth
 * optional Growth-Pipe.py calculates growth rates based on OD or U data, calculates summary statistics, produces graphs, and estimates significant changes in growth rate
+* optional Experiment-Simulator.py simulates a real experiment and generates full log data
 * optional Media-Monitor.py runs by crontab, in parallel with main experiment programs, to keep track of media levels and report to experimenters
 
 ---
@@ -305,17 +307,17 @@ Running this code through the command line will generate an explanation of all f
 ```Shell
 $ python3 Growth-Pipe.py -h
 ```
-Running this code will generate all the data and statistics for dilutions (u) and optical density (od). *--parse* will parse the u and od data from the full log file, *--growth* will analyze the growth rates for both u and od, *--stats* will calculate mean, standard deviation, and standard error for the growth data.
+Running this code will generate all the data and statistics for dilutions (u) and optical density (od). *--parse* will parse the u and od data from the full log file, *--growth* will analyze the growth rates for both u and od, *--block* will calculate mean, standard deviation, and standard error for the growth data according to the recorded data in the block log file.
 ```Shell
-$ python3 Growth-Pipe.py --parse u od --growth u od --stats u_growth od_growth
+$ python3 Growth-Pipe.py --parse u od --growth u od --block u_growth od_growth
 ```
-If you already had the optical density growth rates but wanted to calculate statistics for them every 30 minutes as opposed to the default hour intervals, you would use the *--interval* flag and specify an hour multiplier as such.
+If you already parsed the optical density but wanted to calculate statistics for them every 30 minutes as opposed to the default hour intervals, you would use the *--interval* flag and specify an hour multiplier as such.
 ```Shell
 $ python3 Growth-Pipe.py --stats od --interval 0.5
 ```
-The *--graph* function for graphing data allows you to specify any data set. You can specify x and y limits as well as error bars based on either standard deviation (*--sd*) or standard error (*--se*). This code below will generate graphs for hours 0 to 5 based on dilution growth rate data and optical density growth rate data, using standard error for the error bars.
+The *--graph* function for graphing data allows you to specify any data set. You can specify x and y limits as well as error bars based on either standard deviation (*--sd*) or standard error (*--se*). This code below will generate graphs for hours 0 to 5 based on block dilution growth rate data and block optical density growth rate data, using standard error for the error bars.
 ```Shell
-$ python3 Growth-Pipe.py --graph u_growth od_growth --xlim 0-5 --se
+$ python3 Growth-Pipe.py --graph u_block od_block --xlim 0-5 --se
 ```
 
 ### Block-Dilutions Guide
@@ -323,7 +325,7 @@ For a video explaining Growth-Pipe and Block-Dilutions please refer to [David's 
 
 The program is meant to change the *config.ini* file that is continually read by the experiment Controller program in order for large dilutions to occur in the experiment and give wide ranges between which the cell cultures can grow without dilutions. The program can either be run where each chamber's variables in the *config.ini* file are changed depending on their current ODs or where all chambers' variables in the *config.ini* file are changed together after specific intervals of time. The program allows for easy scheduling of how often to check the OD and/or interval status through crontab.
 ![Blocks](/explanations/blocks.png)
-The program reads in OD data from either the *odlog.dat* and *blank.dat* or *log.dat* files, as well as the set point variables for each chamber from the *config.ini* file, and reports in the *block.log* file when individual chambers have reached their set points. Depending on if the program is set to run based on individual chambers or all together on a scheduled interval, the program will update variables in the *config.ini* file appropriately and report these changes in the *block.log* file.
+The program reads in OD data from either the *odlog.dat* and *blank.dat* or *log.dat* files, as well as the set point variables for each chamber from the *config.ini* file, and reports in the *block.log* file when individual chambers have reached their set points. Depending on if the program is set to run based on individual chambers or all together on a scheduled interval, the program will update variables in the *config.ini* file appropriately and report these changes in the block log file.
 
 Run this pipeline using **Python 2.7**. The order of arguments on the command line does not matter.
 
@@ -331,14 +333,24 @@ Running this code through the command line will generate an explanation of all f
 ```Shell
 $ python2.7 Block-Dilutions.py -h
 ```
-Run large dilutions on a schedule together with the *--schedule* command, as shown. By default the program will take the time interval from the *config.ini* and if there is none it will take 1 hour. To set the time interval and update the config variable use *--interval* followed by an hour unit. Below we are setting the interval to 5 hours. It is recommended to delay the first run of the program by a few minutes using the *--delay* as such. Below we set the delay to 10 minutes.
+Run large dilutions on a schedule together with the *--schedule* command, as shown. By default the program will take the time interval from the *config.ini* and if there is none it will take 7 hours for growth and 4 hours for dilution. Edit these defaults by using *--growth* and *--dilution*. Delay the first run of the code with *--delay*. The code blow will allow growth for 10 hours followed by dilution for 3 hours, with a 10 minute delay in the first run.
 ```Shell
-$ python2.7 Block-Dilutions.py --schedule --interval 5 --delay 10
+$ python2.7 Block-Dilutions.py --schedule --growth 10 --dilution 3 --delay 10
 ```
-Run large dilutions on a chamber by chamber basis based on their individual ODs with the *--chamber* command, as shown. By default, the program reads from *config.ini* for information on where other files are located and for set point information. To change this use the *--config* command. Below we use the *exp-10.ini* file instead. Any updates reported to the *block.log* file by the program can also be printed out using the *--out* command like such.
+Run large dilutions on a chamber by chamber basis based on their individual ODs with the *--chamber* command, as shown below. By default, the program reads from *config.ini* for information on where other files are located and for set point information. To change this use the *--config* command. Below we use the *exp-10.ini* file instead. Any updates reported to the block log file by the program can also be printed out using the *--out* command like such.
 ```Shell
 $ python2.7 Block-Dilutions.py --chamber --config exp-10.ini --out
 ```
+### Experiment-Simulator Guide
+This program allows you to simulate an experiment and generate days worth of full log data within a couple hours. This program will run based on the parameters in the *config.ini* file and can be run with the Block-Dilution.py program.  
+
+Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
+
+Running this code through the command line will generate an explanation of all functions of the pipeline and the arguments they allow as input.
+```Shell
+$ python3 Experiment-Simulator.py -h
+```
+
 ### Media-Monitor Guide
 This program is meant to monitor the media levels of the experiment. You initialize the program with a starting amount of media using *--start*, then the *media.log* file will be read in or created if it doesn't exist (change the name with *--log*) along with the *config.ini* file for the main experiment (edit this input name with *--config*). The program is best run using crontab. There are four ways to specify when to report the media level and percent, and three ways to communicate the report (text and email require setting up in the code).
 
