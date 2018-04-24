@@ -18,6 +18,9 @@ import csv
 import argparse
 from datetime import datetime
 from numpy import array
+from configparser import ConfigParser
+import os
+import json
 
 
 def main():
@@ -103,19 +106,16 @@ def parse_u(config_log, start_time):
 	:param start_time: machine time of last media log report
 	:return: array of all dilution values
 	"""
-	fulllog_file = open(config_log['fulllog'], 'r')
-	fulllog = fulllog_file.readlines()
-	fulllog_file.close()
+	logfile = open(config_log['fulllog'], 'r')  # open input file
+	logdata = logfile.readlines()
+	logfile.close()
 
 	data = []
-	for line in fulllog:
-		d1 = line.split(":")
-		d2 = [int(d1[1][:-7])]
-		if d2[0] > start_time:
-			us = d1[3][2:-6].split(",")
-			for u in us:
-				d2.append(float(u))
-			data.append(d2)
+	for line in logdata:
+		if len(line) > 0:
+			temp_data = json.loads(line)
+			if temp_data['timestamp'] > start_time:
+				data.append(temp_data['u'])
 	return data
 
 

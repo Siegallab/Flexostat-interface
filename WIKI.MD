@@ -295,27 +295,27 @@ $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat
 ### Growth-Pipe Guide
 For a video explaining Growth-Pipe and Block-Dilutions please refer to [David's website.](http://www.kleinjdavid.com/research#growth-rate-analysis)
 
-The pipeline is made to deal with dilution (u) or optical density (od) data. The functions include **parsing** the data from the *log.dat* or *odlog.dat* file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, and **graphing** any of the those data sets. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the *log.dat* or *odlog.dat* file from which this pipeline feeds from.
+The pipeline is made to deal with a wide variety of data based on dilution (u) or optical density (od). The functions include **parsing** the data from the full log or od log file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, calculating general statistics on **blocks** from the Block-Dilutions.py output, and **graphing** any data set. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the full log or od log file from which this pipeline feeds from.
 ![Directories](/explanations/directories.png)
-The *Growth-Pipe.py* program will import from and export to two lower directories (Data and Experiment). The names of these two directories and all import and export files are specified within the *config-growth.csv* file. This config file exists in the same directory as the Growth-Pipe program. **Do not** change the *variable* columns in the config file.
+The Growth-Pipe.py program will import from and export to two lower directories (Data and Experiment). The names of these two directories and all import and export files are specified within the *config-growth.csv* file. This config file exists in the same directory as the Growth-Pipe program. **Do not** change the *variable* columns in the config file. **Do** include all file extensions.
 
 Run this pipeline using **Python 3**. The order of arguments on the command line does not matter.
 
-Running this code through the command line will generate an explanation of all functions of the pipeline.
+Running this code through the command line will generate an explanation of all functions of the pipeline and the arguments they allow as input.
 ```Shell
 $ python3 Growth-Pipe.py -h
 ```
-Running this code will generate all the data and statistics for dilutions (u) and optical density (od). The flags *--u* and *--od* tell the program to analyze both sets of data. *--parse* will parse the u and od data from the *log.dat* file, *--stats* will calculate mean, standard deviation, and standard error for this data, *--rate* will analyze the growth rates for both u and od, and *--r_stats* will calculate the mean, standard deviation, and standard error for the growth rate data.
+Running this code will generate all the data and statistics for dilutions (u) and optical density (od). *--parse* will parse the u and od data from the full log file, *--growth* will analyze the growth rates for both u and od, *--stats* will calculate mean, standard deviation, and standard error for the growth data.
 ```Shell
-$ python3 Growth-Pipe.py --u --od --parse --stats --rate --r_stats
+$ python3 Growth-Pipe.py --parse u od --growth u od --stats u_growth od_growth
 ```
 If you already had the optical density growth rates but wanted to calculate statistics for them every 30 minutes as opposed to the default hour intervals, you would use the *--interval* flag and specify an hour multiplier as such.
 ```Shell
-$ python3 Growth-Pipe.py --od --r_stats --interval 0.5
+$ python3 Growth-Pipe.py --stats od --interval 0.5
 ```
-The *--graph* function for graphing data requires you to specify main u/od data, general statistics data, growth rate data, and/or growth rate statistics data using *1*,*2*,*3*, and *4* respectively. You can specify x and y limits as well as error bars based on either standard deviation (*--sd*) or standard error (*--se*). This code below will generate graphs for the first 5 hours based on optical density growth rate statistics data, using standard error for the error bars.
+The *--graph* function for graphing data allows you to specify any data set. You can specify x and y limits as well as error bars based on either standard deviation (*--sd*) or standard error (*--se*). This code below will generate graphs for hours 0 to 5 based on dilution growth rate data and optical density growth rate data, using standard error for the error bars.
 ```Shell
-$ python3 Growth-Pipe.py --od --graph 4 --xlim 0-5 --se
+$ python3 Growth-Pipe.py --graph u_growth od_growth --xlim 0-5 --se
 ```
 
 ### Block-Dilutions Guide

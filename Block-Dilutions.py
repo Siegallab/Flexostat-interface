@@ -127,7 +127,7 @@ def read_ods(args, log):
 		line = list(map(int, line.split()))
 		current_ods = []
 		machine_time = int(line[0])
-		human_time = (machine_time - time_start) / 3600
+		human_time = float(machine_time - time_start) / 3600
 		tx = line[1::2]
 		rx = line[2::2]
 		for num in range(8):
@@ -150,7 +150,7 @@ def read_ods(args, log):
 		last_line = json.loads(last_line)
 		current_ods = list(last_line['ods'])
 		machine_time = last_line['timestamp']
-		human_time = (machine_time - time_start) / 3600
+		human_time = round(float(machine_time - time_start) / 3600, 4)
 	return human_time, machine_time, current_ods
 
 
@@ -197,13 +197,12 @@ def check_blockinterval(current_ods, controller, programlog, prevlog):
 	:param prevlog: list of previous status
 	:return: updated controller and programlog
 	"""
-	past = datetime.strptime(prevlog[0] + ' ' + prevlog[1], "%Y-%m-%d %H:%M")
-	diff = datetime.now() - past
+	diff = float(programlog[5]) - float(prevlog[5])
 	# If block interval reached (elapsed time = diff between current time and last blocklog entry)
 	#	then update the controller setpoints appropriately
-	if controller['setpoint'] == controller['savesetpoint'] and (diff.seconds/3600) >= float(controller['growthinterval']):
+	if controller['setpoint'] == controller['savesetpoint'] and diff/3600 >= float(controller['growthinterval']):
 		controller['setpoint'] = controller['blockstart']
-	elif controller['setpoint'] == controller['blockstart'] and (diff.seconds/3600) >= float(controller['dilutioninterval']):
+	elif controller['setpoint'] == controller['blockstart'] and diff/3600 >= float(controller['dilutioninterval']):
 		controller['setpoint'] = controller['savesetpoint']
 	programlog[3] = ','.join(controller['setpoint'].split())
 	programlog[-1] = ','.join(str(e) for e in current_ods)
