@@ -121,24 +121,19 @@ def config_variables(args):
 	with open(args.config) as config_file:
 		reader = list(csv.reader(config_file))
 		for row in reader:
-			# removes any ending slashes that may exist in csv
-			if len(row[1]) > 0 and row[1][-1] == '/':
-				row[1] = row[1][:-1]
-			paths[row[0]] = row[1]
+			if row[0] in ['data_directory', 'experiment']:
+				# removes any ending slashes that may exist in csv
+				if len(row[1]) > 0 and row[1][-1] == '/':
+					row[1] = row[1][:-1]
+				paths[row[0]] = row[1]
 
 	# ensure data and experiment directories exist
 	# format paths to variable appropriately
-	if paths['experiment'][-1] == "'":
-		paths['experiment'] = paths['experiment'][:-1]
-	if os.path.exists(paths['data_directory']):
-		process_log += '\nData directory found.'
-	else:
+	if not os.path.exists(paths['data_directory']):
 		os.system("mkdir '{}'".format(paths['data_directory']))
 		process_log += '\nData directory not found. Made new one.'
 	exp = '{}/{}/'.format(paths['data_directory'], paths['experiment'])
-	if os.path.exists(exp):
-		process_log += '\nExperiment directory found.'
-	else:
+	if not os.path.exists(exp):
 		os.system("mkdir '{}'".format(exp))
 		process_log += '\nExperiment directory not found. Made new one.'
 
@@ -425,16 +420,16 @@ def stats(intake, output, interval):
 	for chamber in range(1, 9):
 		start_time, end_time = 0, 0
 		new_block = []
-		# multiple default 1 hour by command line argument
+		# multiply default 1 hour by command line argument
 		hour = 1 * float(interval)
 		block = [['Hour', 'Mean', 'SD', 'SE', 'Start Time', 'End Time', 'n']]
-		for row in range(df.shape[0] ):
+		for row in range(df.shape[0]):
 			# if the end of the hour unit has been reached, then save stats on that hour
-			if df['Time'][row] >= hour and len(new_block) >= 1:
+			if (df['Time'][row] >= hour or row == df.shape[0] - 1) and len(new_block) >= 1:
 				num, mean, sd = len(new_block), numpy.mean(new_block), numpy.std(new_block)
 				sem = sd / numpy.sqrt(num)
 				block.append([hour, mean, sd, sem, start_time, end_time, num])
-				# multiple default 1 hour by command line argument
+				# multiply default 1 hour by command line argument
 				hour += 1 * float(interval)
 				new_block = []
 			# if element is a number (not a NaN) then add to block
@@ -482,23 +477,31 @@ def block(intake, block, output, odraw, dataset):
 			outblock = [['Block', 'Alignment', 'Mean', 'SD', 'SE', 'Block Start', 'Block End', 'Start Time', 'End Time', 'n']]
 		ods = pandas.read_csv(odraw, header=None, names=['Time', 1, 2, 3, 4, 5, 6, 7, 8])
 		for row in range(df.shape[0]):
-			if count + 1 >= len(blockdict['start']):
-				break
-			if df['Time'][row] >= blockdict['start'][count + 1]:
-				if blockdict['setpoint'][count] > blockdict['setpoint'][count + 1]:
-					state = 'initial dilution'
-					if mode == 'chamber':
-						state = 'dilution'
-						blockdict, count, outblock = update_outblock(blockdict, count, outblock, '')
-					if dataset == 'u':
-						blockdict, count, outblock = update_outblock(blockdict, count, outblock, 'Upper')
-				else:
-					state = 'initial growth'
-					if mode == 'chamber':
-						state = 'growth'
-						count += 1
-					if dataset == 'u':
-						blockdict, count, outblock = update_outblock(blockdict, count, outblock, 'Lower')
+			try:
+				if df['Time'][row] >= blockdict['start'][count + 1]:
+					if blockdict['setpoint'][count] > blockdict['setpoint'][count + 1]:
+						state = 'initial dilution'
+						if mode == 'chamber':
+							state = 'dilution'
+							blockdict, count, outblock = update_outblock(blockdict, count, outblock, '')
+						if dataset == 'u':
+							blockdict, count, outblock = update_outblock(blockdict, count, outblock, 'Upper')
+					else:
+						state = 'initial growth'
+						if mode == 'chamber':
+							state = 'growth'
+							count += 1
+						if dataset == 'u':
+							blockdict, count, outblock = update_outblock(blockdict, count, outblock, 'Lower')
+			except:
+				if row == df.shape[0] - 1:
+					blockdict['start'].append('')
+					if dataset == 'od' and state == 'growth':
+						update_outblock(blockdict, count, outblock, '')
+					elif dataset == 'u' and state == 'stable growth':
+						update_outblock(blockdict, count, outblock, 'Upper')
+					elif dataset == 'u' and state == 'stable dilution':
+						update_outblock(blockdict, count, outblock, 'Lower')
 			if state == 'initial growth' and ods[ods['Time'] == df['Time'][row]][chamber] >= (blockdict['setpoint'][count] - blockdict['setpoint'][count] * 0.05):
 				state = 'stable growth'
 				if dataset == 'od':
