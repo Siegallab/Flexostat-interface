@@ -100,7 +100,7 @@ def produce_data(args, od_subtraction):
 
 	# if no log of data exists, then create the first line with a little density
 	if not os.path.exists(log['fulllog']):
-		dlog = {"timestamp": int(round(time.time())), "ods": [0.25] * 8, "u": [0] * 8}
+		dlog = {"timestamp": int(round(time.time())), "ods": [0.01] * 8, "u": [0] * 8}
 		logfile = open(log['fulllog'], 'a')
 		log_str = json.dumps(dlog)
 		logfile.write('%s\n' % log_str)
