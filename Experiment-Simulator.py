@@ -55,7 +55,7 @@ def command_line_parameters():
 	
 	All parameters are optional. 
 	Defaults:
-		0.4 true growth rate, 20 SD for OD noise, 
+		0.4 true growth rate, 0.0005 SD for OD noise, 
 		'config.ini' for config file,
 		0.05 minute (3 second) data production, 
 		0.1 minute (6 second) block analysis, 
@@ -71,7 +71,7 @@ def command_line_parameters():
 	parser.add_argument('--noise', default='0.0005', help='standard deviation of OD noise, defaults to 0.0005')
 	parser.add_argument('--data_time', default='0.05', help='minute interval for each data production, defaults to 0.05 (3 seconds)')
 	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (6 seconds)')
-	parser.add_argument('--exp_len', default='120', help='minute length for entire simulated experiment, defaults to 120')
+	parser.add_argument('--exp_len', default='120', help='real minute length for entire simulated experiment, defaults to 120')
 	parser.add_argument('--config', default='config.ini', help='experiment config file, defaults to config.ini')
 	parser.add_argument('--print', action='store_false', help='turn off print by using flag, defaults to on')
 	parser.add_argument('--chamber', action='store_true', help='use individual chamber OD for dilutions, default mode')
@@ -100,11 +100,12 @@ def produce_data(args, od_subtraction):
 
 	# if no log of data exists, then create the first line with a little density
 	if not os.path.exists(log['fulllog']):
-		dlog = {"timestamp": int(round(time.time())), "ods": [0.01] * 8, "u": [0] * 8}
+		dlog = {"timestamp": int(round(time.time())), "ods": [0.25] * 8, "u": [0] * 8}
 		logfile = open(log['fulllog'], 'a')
 		log_str = json.dumps(dlog)
 		logfile.write('%s\n' % log_str)
 		logfile.close()
+		od_subtraction = numpy.asarray([0.0] * 8)
 
 	# read in the log data and save the variables from the last line
 	logfile = open(log['fulllog'], 'r')  # open input file
@@ -122,14 +123,13 @@ def produce_data(args, od_subtraction):
 		zs = [None] * len(latest_OD)
 
 	# simulate OD with some noise based on the last reading
-	true_GR = float(args.rate) / 60
-	true_OD = latest_OD * numpy.exp(true_GR)
+	true_GR = float(args.rate) * (int(controller['period']) / 3600)
+	true_OD = latest_OD * numpy.exp(true_GR - od_subtraction)
 	OD_noise = numpy.random.normal(0, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
 	# no noise will be implemented if the noise will prevent growth
 	for chamber in range(len(latest_OD)):
 		if (true_OD[chamber] - latest_OD[chamber]) <= float(args.noise):
 			OD_noise[chamber] = 0
-		#	OD_noise[chamber] = numpy.random.normal(float(args.noise)*2, float(args.noise)) #pylint: disable=E1101
 	observed_OD = (true_OD + OD_noise) - od_subtraction
 
 	# compute the U and Z values based on OD
@@ -142,7 +142,7 @@ def produce_data(args, od_subtraction):
 	# calculate value to subtract from next OD
 	for chamber in range(8):
 		if out_us[chamber] > 0:
-			od_subtraction[chamber] = (6.23661e-05 * out_us[chamber]) + 0.001339
+			od_subtraction[chamber] = out_us[chamber] * (int(controller['period']) / 3600)
 		else:
 			od_subtraction[chamber] = 0.0
 
