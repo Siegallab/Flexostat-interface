@@ -296,7 +296,7 @@ $ python Flexoparser_csv.py -i ~/Flexostat-interface/Data/log.dat -f ~/Flexostat
 
 ### Growth-Pipe Guide
 For a video explaining Growth-Pipe and Block-Dilutions please refer to [David's website.](http://www.kleinjdavid.com/research#growth-rate-analysis)
-
+![Pipeline](/explanations/pipeline.png)
 The pipeline is made to deal with a wide variety of data based on dilution (u) or optical density (od). The functions include **parsing** the data from the full log or od log file made by the main flexostat experiment, calculating the **growth rates**, calculating general **statistics** on either the parsed data or the growth rate data, calculating general statistics on **blocks** from the Block-Dilutions.py output, and **graphing** any data set. All paths and filenames need to be specified in the *config-growth.csv* file then all functions can be run from a single command line input. This allows for easy scheduling of this pipeline through crontab as the main flexostat experiment continuously updates the full log or od log file from which this pipeline feeds from.
 ![Directories](/explanations/directories.png)
 The Growth-Pipe.py program will import from and export to two lower directories (Data and Experiment). The names of these two directories and all import and export files are specified within the *config-growth.csv* file. This config file exists in the same directory as the Growth-Pipe program. **Do not** change the *variable* columns in the config file. **Do** include all file extensions.
