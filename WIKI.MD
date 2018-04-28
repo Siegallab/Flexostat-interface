@@ -59,23 +59,15 @@ MacOS (and probably linux):
 
 ### TODO
 #### Controller TODO
-	- [ ] Test run with new changes
+1. Debugging
+	- [ ] a. Test run with new changes
 #### Growth Rate Pipeline TODO
-1. Implement blocking
-	- [x] a. allow stats to be analyzed into blocks
-	- [x] b. implement for both schedule and chamber-by-chamber
-2. Significance calculations
+1. Significance calculations
 	- [ ] a. stats calculate significant growth rate change
-3. Debugging
-	- [x] a. stable build
-	- [ ] b. data (simulated or real) run
+	- [ ] b. simulated or real run after previous
 #### Media Monitoring TODO
-1. Main functionality
-	- [x] a. calculate remaining percentage and amount of media
-    - [x] b. ability to notify experimenters
-2. Debugging
-	- [x] a. stable build
-	- [ ] b. data (simulated or real) run
+1. Debugging
+	- [ ] a. simulated or real run
 #### Future TODO
 This is a list of ideas thought about as ways to improve the turbidostat programs. These are non-essential and non-priority but may be convenient or useful for certain experiments.
 1. Predictive Analysis
