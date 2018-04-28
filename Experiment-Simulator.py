@@ -29,10 +29,10 @@ def main():
 	od_subtraction = numpy.asarray([0.0] * 8)
 	try:
 		while (datetime.now() - start_time).seconds/60 < float(args.exp_len):
-			if (datetime.now() - last_data).seconds/60 >= float(args.data_time):
+			if (datetime.now() - last_data).seconds >= float(args.data_time):
 				od_subtraction = produce_data(args, od_subtraction)
 				last_data = datetime.now()
-			if (datetime.now() - last_block).seconds/60 >= float(args.block_time):
+			if (datetime.now() - last_block).seconds >= float(args.block_time):
 				analyze_block(args)
 				last_block = datetime.now()
 			time.sleep(1)
@@ -57,8 +57,8 @@ def command_line_parameters():
 	Defaults:
 		0.4 true growth rate, 0.0005 SD for OD noise, 
 		'config.ini' for config file,
-		0.05 minute (3 second) data production, 
-		0.1 minute (6 second) block analysis, 
+		2 second data production, 
+		5 second block analysis, 
 		2 hour experiment length,
 		print is on
 	Block Dilution defaults:
@@ -69,8 +69,8 @@ def command_line_parameters():
 
 	parser.add_argument('--rate', default='0.4', help='true growth rate, defaults to 0.4')
 	parser.add_argument('--noise', default='0.0005', help='standard deviation of OD noise, defaults to 0.0005')
-	parser.add_argument('--data_time', default='0.05', help='minute interval for each data production, defaults to 0.05 (3 seconds)')
-	parser.add_argument('--block_time', default='0.1', help='minute interval for each block analysis, defaults to 0.1 (6 seconds)')
+	parser.add_argument('--data_time', default='2', help='second interval for each data production, defaults to 2 seconds')
+	parser.add_argument('--block_time', default='5', help='second interval for each block analysis, defaults to 5 seconds')
 	parser.add_argument('--exp_len', default='120', help='real minute length for entire simulated experiment, defaults to 120')
 	parser.add_argument('--config', default='config.ini', help='experiment config file, defaults to config.ini')
 	parser.add_argument('--print', action='store_false', help='turn off print by using flag, defaults to on')
@@ -130,7 +130,7 @@ def produce_data(args, od_subtraction):
 	for chamber in range(len(latest_OD)):
 		if (true_OD[chamber] - latest_OD[chamber]) <= float(args.noise):
 			OD_noise[chamber] = 0
-	observed_OD = (true_OD + OD_noise) - od_subtraction
+	observed_OD = true_OD + OD_noise
 
 	# compute the U and Z values based on OD
 	out_us, out_zs = [], []
