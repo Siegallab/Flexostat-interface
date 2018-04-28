@@ -579,7 +579,7 @@ def stats_graph(intake, output, limits, interval, prefix, sd, se):
 		if sd:
 			df.plot.scatter(x=interval, y='Mean', yerr='SD')
 		elif se:
-			df.plot.scatter(x=interval, y='Mean', yerr='SD')
+			df.plot.scatter(x=interval, y='Mean', yerr='SE')
 		else:
 			df.plot.scatter(x=interval, y='Mean')
 		# If x or y limits are not zero, then resize graph to the inputted limits
