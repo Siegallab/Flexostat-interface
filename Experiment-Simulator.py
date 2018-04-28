@@ -143,6 +143,7 @@ def produce_data(args, od_subtraction):
 	for chamber in range(8):
 		if out_us[chamber] > 0:
 			od_subtraction[chamber] = out_us[chamber] * (int(controller['period']) / 3600)
+			#od_subtraction[chamber] = (6.23661e-05 * out_us[chamber]) + 0.001339 # calculate linear od change
 		else:
 			od_subtraction[chamber] = 0.0
 
