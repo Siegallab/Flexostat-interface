@@ -132,8 +132,12 @@ def config_variables(args):
 	if not os.path.exists(paths['data_directory']):
 		os.system("mkdir '{}'".format(paths['data_directory']))
 		process_log += '\nData directory not found. Made new one.'
-	exp = '{}/{}/'.format(paths['data_directory'], paths['experiment'])
-	if not os.path.exists(exp):
+	exp = ''
+	if len(paths['data_directory']) > 0:
+		exp += paths['data_directory'] + '/'
+	if len(paths['experiment']) > 0:
+		exp += paths['experiment'] + '/'
+	if len(exp) > 0 and not os.path.exists(exp):
 		os.system("mkdir '{}'".format(exp))
 		process_log += '\nExperiment directory not found. Made new one.'
 
