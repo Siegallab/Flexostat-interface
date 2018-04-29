@@ -124,7 +124,7 @@ def produce_data(args, od_subtraction):
 
 	# simulate OD with some noise based on the last reading
 	true_GR = float(args.rate) * (int(controller['period']) / 3600)
-	true_OD = latest_OD * numpy.exp(true_GR - od_subtraction)
+	true_OD = latest_OD * numpy.exp(true_GR - od_subtraction) 
 	OD_noise = numpy.random.normal(0, float(args.noise), (len(latest_OD),)) #pylint: disable=E1101
 	# no noise will be implemented if the noise will prevent growth
 	for chamber in range(len(latest_OD)):
@@ -142,7 +142,7 @@ def produce_data(args, od_subtraction):
 	# calculate value to subtract from next OD
 	for chamber in range(8):
 		if out_us[chamber] > 0:
-			od_subtraction[chamber] = out_us[chamber] * (int(controller['period']) / 3600)
+			od_subtraction[chamber] = out_us[chamber]/100
 			#od_subtraction[chamber] = (6.23661e-05 * out_us[chamber]) + 0.001339 # calculate linear od change
 		else:
 			od_subtraction[chamber] = 0.0
