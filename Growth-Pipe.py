@@ -129,7 +129,7 @@ def config_variables(args):
 
 	# ensure data and experiment directories exist
 	# format paths to variable appropriately
-	if not os.path.exists(paths['data_directory']):
+	if len(paths['data_directory']) > 0 and not os.path.exists(paths['data_directory']):
 		os.system("mkdir '{}'".format(paths['data_directory']))
 		process_log += '\nData directory not found. Made new one.'
 	exp = ''
