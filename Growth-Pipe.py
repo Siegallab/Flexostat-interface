@@ -132,7 +132,7 @@ def config_variables(args):
 	if len(paths['directory_path']) > 0:
 		exp = paths['directory_path'] + '/'
 		if not os.path.exists(paths['directory_path']):
-			os.system("mkdir '{}'".format(paths['data_directory']))
+			os.system("mkdir '{}'".format(paths['directory_path']))
 			process_log += '\nDirectory path not found. Made new one.'
 
 	# loop through growth config file to collect all other paths and add directory path to their beginning
