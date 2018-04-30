@@ -60,6 +60,7 @@ def command_line_parameters():
 		2 second data production, 
 		5 second block analysis, 
 		2 hour experiment length,
+		10 ml chamber volume,
 		print is on
 	Block Dilution defaults:
 		'config.ini' for config file,
@@ -76,8 +77,9 @@ def command_line_parameters():
 	parser.add_argument('--print', action='store_false', help='turn off print by using flag, defaults to on')
 	parser.add_argument('--chamber', action='store_true', help='use individual chamber OD for dilutions, default mode')
 	parser.add_argument('--schedule', action='store_true', help='use interval dilution schedule for dilutions')
-	parser.add_argument('--growth', default='0', help="specify 'hour' interval for growth block in schedule mode (default config, otherwise 7)")
-	parser.add_argument('--dilution', default='0', help="specify 'hour' interval for dilution block in schedule mode (default config, otherwise 4)")
+	parser.add_argument('--growth', default='0', help="specify 'hour' interval for growth block in schedule mode (default to config file, otherwise 7)")
+	parser.add_argument('--dilution', default='0', help="specify 'hour' interval for dilution block in schedule mode (default to config file, otherwise 4)")
+	parser.add_argument('--volume', default='10', help='specify ml chamber volume for negative growth from dilution, defaults to 10ml')
 	
 	args = parser.parse_args()
 	return args
@@ -142,7 +144,7 @@ def produce_data(args, od_subtraction):
 	# calculate value to subtract from next OD
 	for chamber in range(8):
 		if out_us[chamber] > 0:
-			od_subtraction[chamber] = out_us[chamber]/100
+			od_subtraction[chamber] = numpy.log(int(args.volume)/ (int(args.volume) + (out_us[chamber]/100))) #pylint: disable=E1101
 			#od_subtraction[chamber] = (6.23661e-05 * out_us[chamber]) + 0.001339 # calculate linear od change
 		else:
 			od_subtraction[chamber] = 0.0

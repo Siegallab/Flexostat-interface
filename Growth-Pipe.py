@@ -458,8 +458,8 @@ def block(intake, block, output, odraw, dataset):
 	if mode == 'chamber' and dataset == 'u':
 		return
 	for chamber in range(1, 9):
-		blockdict = {'setpoint': [float(blocklog[0][3].split(',')[chamber - 1])], 'start': [0.0], 'start time': 0.0,
-		             'end time': 0.0, 'new block': []}
+		blockdict = {'setpoint': [float(blocklog[0][3].split(',')[chamber - 1])], 
+					'start': [0.0], 'start time': 0.0, 'end time': 0.0, 'new block': []}
 		count = 0
 		for row in blocklog:
 			if not float(row[3].split(',')[chamber - 1]) == blockdict['setpoint'][count]:
