@@ -103,7 +103,7 @@ def config_variables(args):
 	paths = {
 		# general local variables
 		'' : '', 'fulllog' : '', 'odlog' : '', 'blank' : '', 'block' : '',
-		'log_processes' : '', 'data_directory' : '', 'experiment' : '', 
+		'log_processes' : '', 'directory_path' : '', 
 		# dilution local variables
 		'u' : '', 'u_stats' : '', 'u_machine_time' : '',
 		'u_growth' : '', 'u_growth_stats' : '', 'u_block' : '',
@@ -121,34 +121,28 @@ def config_variables(args):
 	with open(args.config) as config_file:
 		reader = list(csv.reader(config_file))
 		for row in reader:
-			if row[0] in ['data_directory', 'experiment']:
+			if row[0] == 'directory_path':
 				# removes any ending slashes that may exist in csv
 				if len(row[1]) > 0 and row[1][-1] == '/':
 					row[1] = row[1][:-1]
 				paths[row[0]] = row[1]
 
-	# ensure data and experiment directories exist
-	# format paths to variable appropriately
-	if len(paths['data_directory']) > 0 and not os.path.exists(paths['data_directory']):
-		os.system("mkdir '{}'".format(paths['data_directory']))
-		process_log += '\nData directory not found. Made new one.'
+	# ensure directory path exists, otherwise make new folder
 	exp = ''
-	if len(paths['data_directory']) > 0:
-		exp += paths['data_directory'] + '/'
-	if len(paths['experiment']) > 0:
-		exp += paths['experiment'] + '/'
-	if len(exp) > 0 and not os.path.exists(exp):
-		os.system("mkdir '{}'".format(exp))
-		process_log += '\nExperiment directory not found. Made new one.'
+	if len(paths['directory_path']) > 0:
+		exp = paths['directory_path'] + '/'
+		if not os.path.exists(paths['directory_path']):
+			os.system("mkdir '{}'".format(paths['data_directory']))
+			process_log += '\nDirectory path not found. Made new one.'
 
-	# loop through growth config file to collect all other paths and add experiment path to their beginning
+	# loop through growth config file to collect all other paths and add directory path to their beginning
 	with open(args.config) as config_file:
 		reader = list(csv.reader(config_file))
 		for row in reader:
 			# removes any ending slashes that may exist in csv
 			if len(row[1]) > 0 and row[1][-1] == '/':
 				row[1] = row[1][:-1]
-			if not row[1] in ['data_directory', 'experiment']:
+			if not row[1] in ['directory_path']:
 				paths[row[0]] = exp + row[1]
 			if len(row[4]) > 0 and row[4][-1] == '/':
 				row[4] = row[4][:-1]
