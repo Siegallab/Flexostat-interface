@@ -78,6 +78,7 @@ def command_line_parameters():
 						help="change config file from default 'config-growth.csv'")
 	parser.add_argument('--log', action='store_true', help='optional save program processes to log text file')
 	parser.add_argument('--print', action='store_true', help='optional program processes printing')
+	parser.add_argument('--volume', default='10', help='change ml volume of turbidostat chambers from default 10ml')
 
 	parser.add_argument('-i', '--interval', default='1',
 						help="modify default hour time interval for stats by multiplication (e.g. '-i 0.5' = 30 min, '-i 2' = 2 hrs)")
@@ -174,7 +175,7 @@ def functions(args, paths, process_log):
 	if args.growth:
 		for i in args.growth:
 			if i == 'u':
-				u_growth(paths[i], paths[i + '_growth'])
+				u_growth(paths[i], paths[i + '_growth'], args.volume)
 				process_log += '\n\tGrowth rates csv calculated and exported.'
 			elif i == 'od':
 				od_growth(paths[i], paths[i + '_growth'])
@@ -345,7 +346,7 @@ def parse_odlog(odlog, blank, output):
 	odfile.close()
 
 
-def u_growth(intake, output):
+def u_growth(intake, output, volume):
 	"""
 	Calculates growth rate data based on dilutions (u) and saves to csv.
 
@@ -367,7 +368,8 @@ def u_growth(intake, output):
 				new_row.append(float(0))
 			# rest of elements will be values that do not cause errors when calculating growth rate
 			else:
-				new_row.append(round((numpy.log(1 + (df[chamber][row] / 15000)) / time_difference), 6)) # pylint: disable=E1101
+				# convert dilution to ul then divide by the ml of the chamber
+				new_row.append(round((numpy.log(1 + ((df[chamber][row]/1000) / float(volume))) / time_difference), 6)) # pylint: disable=E1101
 		new_data_r.append(new_row)
 	df = pandas.DataFrame(new_data_r)
 	df.to_csv(path_or_buf=output, index=False, header=False)
