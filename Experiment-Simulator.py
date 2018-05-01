@@ -144,7 +144,7 @@ def produce_data(args, od_subtraction):
 	# calculate value to subtract from next OD
 	for chamber in range(8):
 		if out_us[chamber] > 0:
-			od_subtraction[chamber] = numpy.log(float(args.volume)/ (float(args.volume) + (out_us[chamber]/100))) #pylint: disable=E1101
+			od_subtraction[chamber] = numpy.log(float(args.volume)/ (float(args.volume) + (out_us[chamber]/1000))) #pylint: disable=E1101
 			#od_subtraction[chamber] = (6.23661e-05 * out_us[chamber]) + 0.001339 # calculate linear od change
 		else:
 			od_subtraction[chamber] = 0.0
