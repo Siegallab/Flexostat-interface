@@ -352,6 +352,7 @@ def u_growth(intake, output, volume):
 
 	:param intake: path to data
 	:param output: path for export
+	:param volume: volume of the turbidostat growth chamber
 	"""
 	df = pandas.read_csv(intake, header=None, names=['Time',1,2,3,4,5,6,7,8])
 	new_data_r = []
