@@ -51,9 +51,12 @@ def command_line_parameters():
 					description="""
 	Experiment Simulator Program
 	----------------------------
-	Simply run with the command: python Experiment-Simulator.py
-	
 	All parameters are optional. 
+	Run without customization: 
+		python Experiment-Simulator.py
+ 
+	Specify experimental parameters in configuration file
+		Defaults to config.ini
 	Defaults:
 		0.4 true growth rate, 0.0005 SD for OD noise, 
 		'config.ini' for config file,

@@ -84,6 +84,8 @@ def command_line_arguments():
 	Block Dilutions Pipeline
 	------------------------
 	Select one main function: --schedule (-s), --chamber (-c)
+	Specify experimental parameters in configuration file
+		Defaults to config.ini
 	Optional changes: --odlog, --delay, --config, 
 			--out (-o), --growth (-g), --dilution (-d)
 				""")
