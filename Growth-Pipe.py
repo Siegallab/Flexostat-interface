@@ -54,6 +54,8 @@ def command_line_parameters():
 					description="""
 	Growth Rate Analysis Pipeline
 	-----------------------------
+	Specify all I/O file paths in a CSV configuration file
+		defaults to config-growth.csv
 	Select at least one function: 
 		--parse [u, od, odlog], --growth [u, od], 
 		--stats [u, od, u_growth, od_growth], --block [u_growth, od_growth]
@@ -63,7 +65,7 @@ def command_line_parameters():
 	Single inputs: --parse u --growth u
 	Multiple inputs: --parse u od --growth u od
 
-	Optional changes: --config, --log, --print
+	Optional changes: --config, --log, --print, --volume
 	Optional stats parameters: --interval (-i)
 	Optional graph parameters: --xlim (-x), --ylim (-y), --sd, --se
 				""")
